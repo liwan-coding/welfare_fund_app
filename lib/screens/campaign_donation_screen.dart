@@ -460,13 +460,13 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${campaign.currentAmount.toStringAsFixed(0)} $riyal',
+            '${AppFormat.amount(campaign.currentAmount)} $riyal',
             style: AppType.title2.copyWith(color: p.label),
           ),
           Text(
             done
                 ? 'campaign_goal_achieved'.tr()
-                : '${'target_amount'.tr()}: ${campaign.targetAmount.toStringAsFixed(0)} $riyal',
+                : '${'target_amount'.tr()}: ${AppFormat.amount(campaign.targetAmount)} $riyal',
             style: AppType.footnote.copyWith(color: p.secondaryLabel),
           ),
           const SizedBox(height: AppSpace.sm),
@@ -521,7 +521,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
                 return Semantics(
                   button: true,
                   selected: selected,
-                  label: '${amount.toStringAsFixed(0)} $riyal',
+                  label: '${AppFormat.amount(amount)} $riyal',
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () {
@@ -538,7 +538,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
                         borderRadius: BorderRadius.circular(AppRadius.md),
                       ),
                       child: Text(
-                        '${amount.toStringAsFixed(0)} $riyal',
+                        '${AppFormat.amount(amount)} $riyal',
                         style: AppType.headline.copyWith(
                           color: selected ? Colors.white : p.label,
                         ),

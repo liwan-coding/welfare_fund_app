@@ -64,7 +64,7 @@ class AppTextField extends StatelessWidget {
           cursorColor: p.tint,
           decoration: InputDecoration(
             hintText: hint,
-            suffixIcon: suffix,
+            suffixIcon: suffix == null ? null : ExcludeFocus(child: suffix!),
             enabledBorder: errorText == null
                 ? null
                 : OutlineInputBorder(

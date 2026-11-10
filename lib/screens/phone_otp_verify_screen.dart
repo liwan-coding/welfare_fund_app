@@ -10,6 +10,7 @@ class PhoneOtpVerifyScreen extends StatefulWidget {
   final String verifyId;
   final String phone;
   final String? maskedPhone;
+
   /// في بيئة التطوير: إذا الباكند أرسل الرمز في الاستجابة (otp / dev_otp / debug_otp) نعرضه هنا للاختبار
   final String? devOtp;
 
@@ -200,8 +201,7 @@ class _PhoneOtpVerifyScreenState extends State<PhoneOtpVerifyScreen> {
   @override
   Widget build(BuildContext context) {
     final p = AppPalette.of(context);
-    final hasDevOtp =
-        _effectiveDevOtp != null && _effectiveDevOtp!.isNotEmpty;
+    final hasDevOtp = _effectiveDevOtp != null && _effectiveDevOtp!.isNotEmpty;
 
     return Scaffold(
       body: CustomScrollView(
@@ -209,7 +209,12 @@ class _PhoneOtpVerifyScreenState extends State<PhoneOtpVerifyScreen> {
           AppNavBar(title: 'verify_phone'.tr()),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(AppSpace.screen),
+              padding: EdgeInsets.fromLTRB(
+                AppSpace.screen,
+                AppSpace.screen,
+                AppSpace.screen,
+                AppSpace.screen + MediaQuery.paddingOf(context).bottom,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -224,7 +229,8 @@ class _PhoneOtpVerifyScreenState extends State<PhoneOtpVerifyScreen> {
                           // LTR isolate keeps the number as ****9633 in RTL.
                           '⁨$_displayPhone⁩',
                         ),
-                    style: AppType.subheadline.copyWith(color: p.secondaryLabel),
+                    style:
+                        AppType.subheadline.copyWith(color: p.secondaryLabel),
                   ),
                   if (hasDevOtp) ...[
                     const SizedBox(height: AppSpace.md),

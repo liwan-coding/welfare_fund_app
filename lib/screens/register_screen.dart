@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute, CupertinoSwitch;
+import 'package:flutter/cupertino.dart'
+    show CupertinoIcons, CupertinoPageRoute, CupertinoSwitch;
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:provider/provider.dart';
@@ -146,7 +147,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
           AppNavBar(title: 'create_new_account'.tr()),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(AppSpace.screen),
+              padding: EdgeInsets.fromLTRB(
+                AppSpace.screen,
+                AppSpace.screen,
+                AppSpace.screen,
+                AppSpace.screen + MediaQuery.paddingOf(context).bottom,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -207,8 +213,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     onSubmitted: (_) => _handleRegister(),
                     suffix: _visibilityToggle(
                       _isConfirmPasswordVisible,
-                      () => setState(() =>
-                          _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+                      () => setState(() => _isConfirmPasswordVisible =
+                          !_isConfirmPasswordVisible),
                     ),
                   ),
                   const SizedBox(height: AppSpace.lg),
@@ -240,7 +246,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: AppSpace.xl),
                   AppButton(
-                    label: _isLoading ? 'loading'.tr() : 'create_new_account'.tr(),
+                    label:
+                        _isLoading ? 'loading'.tr() : 'create_new_account'.tr(),
                     loading: _isLoading,
                     onPressed: _handleRegister,
                   ),

@@ -84,7 +84,7 @@ class CampaignCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '${campaign.currentAmount.toStringAsFixed(0)} $riyal',
+                              '${AppFormat.amount(campaign.currentAmount)} $riyal',
                               style: AppType.subheadline.copyWith(
                                 color: p.label,
                                 fontWeight: FontWeight.w600,
@@ -93,7 +93,7 @@ class CampaignCard extends StatelessWidget {
                             Text(
                               done
                                   ? 'campaign_goal_achieved'.tr()
-                                  : '/ ${campaign.targetAmount.toStringAsFixed(0)} $riyal',
+                                  : '/ ${AppFormat.amount(campaign.targetAmount)} $riyal',
                               style: AppType.footnote
                                   .copyWith(color: p.secondaryLabel),
                             ),

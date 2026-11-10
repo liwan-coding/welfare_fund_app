@@ -1519,7 +1519,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(width: AppSpace.sm),
           Text(
-            '${amount.toStringAsFixed(0)} ${'riyal'.tr()}',
+            '${AppFormat.amount(amount)} ${'riyal'.tr()}',
             style: AppType.headline.copyWith(color: p.success),
           ),
         ],

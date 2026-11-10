@@ -526,7 +526,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
       child: Row(
         children: [
           stat(
-            '${_totalAmount.toStringAsFixed(0)} ${'riyal'.tr()}',
+            '${AppFormat.amount(_totalAmount)} ${'riyal'.tr()}',
             'total_donations'.tr(),
             large: true,
           ),
@@ -562,7 +562,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
       title: title,
       subtitle: '${_formatDate(donation.date)} · ${status.text}',
       trailing: Text(
-        '${donation.amount.toStringAsFixed(0)} ${'riyal'.tr()}',
+        '${AppFormat.amount(donation.amount)} ${'riyal'.tr()}',
         style: AppType.headline.copyWith(color: p.label),
       ),
       showChevron: false,
@@ -606,7 +606,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                   style: AppType.footnote.copyWith(color: p.secondaryLabel),
                 ),
                 Text(
-                  '${donation.amount.toStringAsFixed(0)} ${'omani_riyal'.tr()}',
+                  '${AppFormat.amount(donation.amount)} ${'omani_riyal'.tr()}',
                   textAlign: TextAlign.center,
                   style: AppType.largeTitle.copyWith(color: p.label),
                 ),

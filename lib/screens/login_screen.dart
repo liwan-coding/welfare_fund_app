@@ -125,7 +125,12 @@ class _LoginScreenState extends State<LoginScreen> {
     final p = AppPalette.of(context);
 
     return Padding(
-      padding: const EdgeInsets.all(AppSpace.screen),
+      padding: EdgeInsets.fromLTRB(
+        AppSpace.screen,
+        AppSpace.screen,
+        AppSpace.screen,
+        AppSpace.screen + MediaQuery.paddingOf(context).bottom,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -156,7 +161,9 @@ class _LoginScreenState extends State<LoginScreen> {
             },
             onSubmitted: (_) => _handleLogin(),
             suffix: IconButton(
-              tooltip: _isPasswordVisible ? 'hide_password'.tr() : 'show_password'.tr(),
+              tooltip: _isPasswordVisible
+                  ? 'hide_password'.tr()
+                  : 'show_password'.tr(),
               icon: Icon(
                 _isPasswordVisible
                     ? CupertinoIcons.eye_slash
