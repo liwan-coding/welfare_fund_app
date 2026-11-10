@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../design/app_icons.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import '../widgets/common/main_tab_bar.dart';
 import 'package:flutter/services.dart';
@@ -117,7 +118,7 @@ class _SettingsScreenState extends State<SettingsScreen>
             centerTitle: true,
             iconTheme: const IconThemeData(color: AppColors.surface),
             leading: IconButton(
-              icon: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface),
+              icon: const Icon(AppIcons.chevronBack, color: AppColors.surface),
               onPressed: () => Navigator.pop(context),
             ),
             title: Text(
@@ -631,7 +632,7 @@ class _SettingsScreenState extends State<SettingsScreen>
           borderRadius: BorderRadius.circular(8),
         ),
         child: const Icon(
-          CupertinoIcons.chevron_forward,
+          AppIcons.chevronForward,
           color: AppColors.textTertiary,
           size: 16,
         ),
@@ -1115,7 +1116,7 @@ class _SettingsScreenState extends State<SettingsScreen>
               ),
             ),
             const Icon(
-              CupertinoIcons.chevron_forward,
+              AppIcons.chevronForward,
               color: AppColors.textTertiary,
               size: 16,
             ),

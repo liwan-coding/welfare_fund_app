@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../design/app_icons.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import '../widgets/common/main_tab_bar.dart';
 import 'package:provider/provider.dart';
@@ -406,7 +407,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                 ),
             ],
             leading: IconButton(
-              icon: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface, size: 20),
+              icon: const Icon(AppIcons.chevronBack, color: AppColors.surface, size: 20),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../design/app_icons.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -414,7 +415,7 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
                       color: AppColors.surface.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface, size: 20),
+                    child: const Icon(AppIcons.chevronBack, color: AppColors.surface, size: 20),
                   ),
                   onPressed: () => Navigator.pop(context),
                 ),

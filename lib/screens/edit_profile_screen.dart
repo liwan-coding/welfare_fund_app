@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../design/app_icons.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -118,7 +119,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                   centerTitle: true,
                   iconTheme: const IconThemeData(color: AppColors.surface),
                   leading: IconButton(
-                    icon: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface),
+                    icon: const Icon(AppIcons.chevronBack, color: AppColors.surface),
                     onPressed: () => Navigator.pop(context),
                   ),
                   title: Text(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../design/app_icons.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
@@ -494,7 +495,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
                       color: AppColors.surface.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface, size: 20),
+                    child: const Icon(AppIcons.chevronBack, color: AppColors.surface, size: 20),
                   ),
                   onPressed: () => Navigator.pop(context),
                 ),

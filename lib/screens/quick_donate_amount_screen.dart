@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../design/app_icons.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -470,7 +471,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
         centerTitle: true,
         iconTheme: const IconThemeData(color: AppColors.surface),
         leading: IconButton(
-          icon: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface),
+          icon: const Icon(AppIcons.chevronBack, color: AppColors.surface),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(

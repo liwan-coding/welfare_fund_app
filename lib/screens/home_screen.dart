@@ -1447,7 +1447,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             const SizedBox(width: 8),
                             const Icon(
-                              CupertinoIcons.chevron_forward,
+                              AppIcons.chevronForward,
                               size: 14,
                               color: AppColors.primary,
                             ),
@@ -2093,7 +2093,7 @@ class _HomeScreenState extends State<HomeScreen> {
             style: AppType.body.copyWith(color: p.tint),
           ),
           const SizedBox(width: 2),
-          Icon(CupertinoIcons.chevron_forward, color: p.tint, size: 14),
+          Icon(AppIcons.chevronForward, color: p.tint, size: 14),
         ],
       ),
     );

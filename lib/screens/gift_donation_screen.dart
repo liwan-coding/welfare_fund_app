@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../design/app_icons.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:easy_localization/easy_localization.dart';
 import '../constants/app_colors.dart';
@@ -146,7 +147,7 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface),
+          icon: const Icon(AppIcons.chevronBack, color: AppColors.surface),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -362,7 +363,7 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(CupertinoIcons.chevron_forward, size: 20),
+                    Icon(AppIcons.chevronForward, size: 20),
                     SizedBox(width: 8),
                     Text(
                       'التالي',

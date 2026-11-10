@@ -1,4 +1,5 @@
 // Apple HIG design system entry point.
+export 'app_icons.dart';
 export 'app_theme.dart';
 export 'app_tokens.dart';
 export 'app_type.dart';

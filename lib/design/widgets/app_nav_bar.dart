@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../app_icons.dart';
 import '../app_tokens.dart';
 import '../app_type.dart';
 
@@ -37,7 +38,7 @@ class AppNavBar extends StatelessWidget {
               minimumSize: const Size(44, 44),
               onPressed: () => Navigator.of(context).maybePop(),
               // chevron_back mirrors automatically in RTL.
-              child: Icon(CupertinoIcons.chevron_back, color: p.tint),
+              child: Icon(AppIcons.chevronBack, color: p.tint),
             )
           : null,
       actions: actions,

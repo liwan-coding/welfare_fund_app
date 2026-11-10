@@ -653,5 +653,7 @@
   "otp_dev_mode": "Dev mode",
   "otp_dev_code_label": "Code from server (for testing):",
   "otp_use_this_code": "Use this code",
-  "otp_dev_check_logs": "In development the OTP is not sent. Check server logs or use a fixed code if the backend supports it."
+  "otp_dev_check_logs": "In development the OTP is not sent. Check server logs or use a fixed code if the backend supports it.",
+  "show_password": "Show password",
+  "hide_password": "Hide password"
 }

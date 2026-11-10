@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../app_icons.dart';
 import '../app_tokens.dart';
 import '../app_type.dart';
 
@@ -166,7 +167,7 @@ class _AppListTileState extends State<AppListTile> {
           if (widget.showChevron)
             Padding(
               padding: const EdgeInsetsDirectional.only(start: AppSpace.xs),
-              child: Icon(CupertinoIcons.chevron_forward,
+              child: Icon(AppIcons.chevronForward,
                   size: 16, color: p.tertiaryLabel),
             ),
         ],

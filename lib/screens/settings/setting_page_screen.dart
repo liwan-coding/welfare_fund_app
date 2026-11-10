@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../design/app_icons.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
@@ -71,7 +72,7 @@ class _SettingPageScreenState extends State<SettingPageScreen>
         iconTheme: const IconThemeData(color: AppColors.surface),
         leading: IconButton(
           icon: Icon(
-            isRTL ? CupertinoIcons.chevron_forward : CupertinoIcons.chevron_back,
+            AppIcons.chevronBack,
             color: AppColors.surface,
           ),
           onPressed: () => Navigator.pop(context),

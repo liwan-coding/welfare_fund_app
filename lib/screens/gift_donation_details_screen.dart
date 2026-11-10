@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../design/app_icons.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -167,7 +168,7 @@ class _GiftDonationDetailsScreenState extends State<GiftDonationDetailsScreen> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface),
+          icon: const Icon(AppIcons.chevronBack, color: AppColors.surface),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../design/app_icons.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:easy_localization/easy_localization.dart';
 import '../constants/app_colors.dart';
@@ -473,7 +474,7 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    const Icon(CupertinoIcons.chevron_forward, size: 16, color: AppColors.textSecondary),
+                    const Icon(AppIcons.chevronForward, size: 16, color: AppColors.textSecondary),
                     const SizedBox(width: 8),
                     Text(
                       'اضغط لعرض التفاصيل',

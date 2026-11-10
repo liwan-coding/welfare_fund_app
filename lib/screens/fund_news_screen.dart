@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../design/app_icons.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:easy_localization/easy_localization.dart';
 import '../constants/app_colors.dart';
@@ -87,7 +88,7 @@ class _FundNewsScreenState extends State<FundNewsScreen> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface, size: 20),
+          icon: const Icon(AppIcons.chevronBack, color: AppColors.surface, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
