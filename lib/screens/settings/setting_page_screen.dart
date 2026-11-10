@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter_html/flutter_html.dart';
@@ -70,7 +71,7 @@ class _SettingPageScreenState extends State<SettingPageScreen>
         iconTheme: const IconThemeData(color: AppColors.surface),
         leading: IconButton(
           icon: Icon(
-            isRTL ? Icons.arrow_forward_ios : Icons.arrow_back_ios,
+            isRTL ? CupertinoIcons.chevron_forward : CupertinoIcons.chevron_back,
             color: AppColors.surface,
           ),
           onPressed: () => Navigator.pop(context),
@@ -156,7 +157,7 @@ class _SettingPageScreenState extends State<SettingPageScreen>
                 shape: BoxShape.circle,
               ),
               child: const Icon(
-                Icons.error_outline,
+                CupertinoIcons.exclamationmark_circle,
                 size: 64,
                 color: AppColors.error,
               ),
@@ -182,7 +183,7 @@ class _SettingPageScreenState extends State<SettingPageScreen>
               onPressed: () {
                 provider.fetchPage(widget.pageKey);
               },
-              icon: const Icon(Icons.refresh),
+              icon: const Icon(CupertinoIcons.refresh),
               label: Text('retry'.tr()),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
@@ -216,7 +217,7 @@ class _SettingPageScreenState extends State<SettingPageScreen>
                 shape: BoxShape.circle,
               ),
               child: const Icon(
-                Icons.info_outline,
+                CupertinoIcons.info_circle,
                 size: 64,
                 color: AppColors.textTertiary,
               ),

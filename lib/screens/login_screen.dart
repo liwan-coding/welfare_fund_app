@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
@@ -133,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen>
         iconTheme: const IconThemeData(color: AppColors.surface),
         leading: IconButton(
           icon: Icon(
-            isRTL ? Icons.arrow_forward_ios : Icons.arrow_back_ios,
+            isRTL ? CupertinoIcons.chevron_forward : CupertinoIcons.chevron_back,
             color: AppColors.surface,
           ),
           onPressed: () => Navigator.pop(context),
@@ -219,7 +220,7 @@ class _LoginScreenState extends State<LoginScreen>
                 controller: _phoneController,
                 label: 'phone_number'.tr(),
                 hint: 'phone_number'.tr(),
-                icon: Icons.phone_outlined,
+                icon: CupertinoIcons.phone,
                 keyboardType: TextInputType.phone,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -235,7 +236,7 @@ class _LoginScreenState extends State<LoginScreen>
                 controller: _passwordController,
                 label: 'password'.tr(),
                 hint: 'password'.tr(),
-                icon: Icons.lock_outline,
+                icon: CupertinoIcons.lock,
                 isPassword: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -374,8 +375,8 @@ class _LoginScreenState extends State<LoginScreen>
                 ? IconButton(
                     icon: Icon(
                       _isPasswordVisible
-                          ? Icons.visibility_off
-                          : Icons.visibility,
+                          ? CupertinoIcons.eye_slash
+                          : CupertinoIcons.eye,
                       color: AppColors.textTertiary,
                     ),
                     onPressed: () {
@@ -507,7 +508,7 @@ class _LoginScreenState extends State<LoginScreen>
             HapticFeedback.lightImpact();
             Navigator.push(
               context,
-              MaterialPageRoute(
+              CupertinoPageRoute(
                 builder: (context) => const RegisterScreen(),
               ),
             );

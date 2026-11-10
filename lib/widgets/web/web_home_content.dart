@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:easy_localization/easy_localization.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_text_styles.dart';
@@ -263,7 +264,7 @@ class WebHomeContent extends StatelessWidget {
                   children: [
                     _HeroButton(
                       label: 'donate_now'.tr(),
-                      icon: Icons.favorite_rounded,
+                      icon: CupertinoIcons.heart_fill,
                       isPrimary: true,
                       onTap: onQuickDonate,
                     ),
@@ -373,7 +374,7 @@ class WebHomeContent extends StatelessWidget {
             children: [
               _HeroButton(
                 label: 'donate_now'.tr(),
-                icon: Icons.favorite_rounded,
+                icon: CupertinoIcons.heart_fill,
                 isPrimary: true,
                 onTap: onQuickDonate,
               ),
@@ -1057,7 +1058,7 @@ class _DonationItemState extends State<_DonationItem> {
               ),
               child: Center(
                 child: Icon(
-                  widget.donation.isAnonymous ? Icons.person_outline : Icons.person,
+                  widget.donation.isAnonymous ? CupertinoIcons.person : CupertinoIcons.person_fill,
                   color: AppColors.primary,
                   size: 24,
                 ),

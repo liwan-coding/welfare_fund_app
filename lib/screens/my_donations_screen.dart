@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
+import '../widgets/common/main_tab_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../constants/app_colors.dart';
@@ -327,7 +329,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
         Navigator.of(context).popUntil((route) => route.isFirst || route.settings.name == AppConstants.homeRoute);
       } else {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          CupertinoPageRoute(builder: (context) => const HomeScreen()),
         );
       }
       return;
@@ -337,7 +339,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
       // Navigate to Settings
       Navigator.push(
         context,
-        MaterialPageRoute(
+        CupertinoPageRoute(
           builder: (context) => const SettingsScreen(),
         ),
       );
@@ -396,7 +398,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
               if (_donations.isNotEmpty)
                 IconButton(
                   icon: const Icon(
-                    Icons.refresh,
+                    CupertinoIcons.refresh,
                     color: AppColors.surface,
                     size: 22,
                   ),
@@ -404,7 +406,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                 ),
             ],
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: AppColors.surface, size: 20),
+              icon: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface, size: 20),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
@@ -523,26 +525,9 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
               ),
             ],
           ),
-          bottomNavigationBar: BottomNavigationBar(
+          bottomNavigationBar: MainTabBar(
             currentIndex: 1,
             onTap: (index) => _onBottomNavigationTap(index, isAuthenticated),
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: AppColors.primary,
-            unselectedItemColor: AppColors.textSecondary,
-            items: [
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.home),
-                label: 'home'.tr(),
-              ),
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.history),
-                label: 'my_donations'.tr(),
-              ),
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.settings),
-                label: 'settings'.tr(),
-              ),
-            ],
           ),
         );
       },
@@ -588,7 +573,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              isLoginRequired ? Icons.login : Icons.error_outline,
+              isLoginRequired ? Icons.login : CupertinoIcons.exclamationmark_circle,
               size: 64,
               color: isLoginRequired ? AppColors.primary : AppColors.error,
             ),
@@ -616,7 +601,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(
+                    CupertinoPageRoute(
                       builder: (context) => const LoginScreen(),
                     ),
                   );
@@ -698,15 +683,15 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
     
     if (donation.isPaid || donation.isCompleted) {
       statusColor = AppColors.success;
-      statusIcon = Icons.check_circle;
+      statusIcon = CupertinoIcons.checkmark_circle_fill;
       statusText = 'completed_status'.tr();
     } else if (donation.isPending) {
       statusColor = AppColors.warning;
-      statusIcon = Icons.schedule;
+      statusIcon = CupertinoIcons.clock;
       statusText = 'pending_status'.tr();
     } else if (donation.isCancelled) {
       statusColor = AppColors.textSecondary;
-      statusIcon = Icons.cancel;
+      statusIcon = CupertinoIcons.xmark_circle_fill;
       statusText = 'cancelled'.tr();
     } else if (donation.isFailed) {
       statusColor = AppColors.error;
@@ -783,7 +768,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close, color: AppColors.textSecondary),
+                    icon: const Icon(CupertinoIcons.xmark, color: AppColors.textSecondary),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -845,7 +830,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                     const SizedBox(height: 16),
                     // Date
                     _buildDetailRow(
-                      icon: Icons.calendar_today,
+                      icon: CupertinoIcons.calendar,
                       iconColor: AppColors.textSecondary,
                       label: 'donation_date_label'.tr(),
                       value: '${donation.date.day}/${donation.date.month}/${donation.date.year}',
@@ -863,7 +848,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                     // Program/Campaign Name
                     if (donation.programName != null || donation.campaignName != null || donation.campaignNameEn != null)
                       _buildDetailRow(
-                        icon: Icons.info_outline,
+                        icon: CupertinoIcons.info_circle,
                         iconColor: AppColors.primary,
                         label: donation.programName != null ? 'program'.tr() : 'campaign'.tr(),
                         value: donation.programName ?? donation.getLocalizedCampaignName(context.locale.languageCode) ?? '',
@@ -880,7 +865,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                         child: Row(
                           children: [
                             Icon(
-                              Icons.card_giftcard,
+                              CupertinoIcons.gift,
                               color: AppColors.primary,
                               size: 20,
                             ),
@@ -899,7 +884,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                     // Donor Name
                     if (donation.donorName != null && !donation.isAnonymous)
                       _buildDetailRow(
-                        icon: Icons.person_outline,
+                        icon: CupertinoIcons.person,
                         iconColor: AppColors.textSecondary,
                         label: 'donor_name_required'.tr(),
                         value: donation.donorName!,
@@ -916,7 +901,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                         child: Row(
                           children: [
                             Icon(
-                              Icons.visibility_off,
+                              CupertinoIcons.eye_slash,
                               color: AppColors.textSecondary,
                               size: 20,
                             ),

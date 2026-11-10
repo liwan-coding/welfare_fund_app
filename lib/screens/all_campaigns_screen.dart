@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:easy_localization/easy_localization.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_text_styles.dart';
@@ -79,7 +80,7 @@ class _AllCampaignsScreenState extends State<AllCampaignsScreen> {
   void _onCampaignTap(Campaign campaign) {
     Navigator.push(
       context,
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (context) => CampaignDonationScreen(campaign: campaign),
       ),
     );
@@ -116,7 +117,7 @@ class _AllCampaignsScreenState extends State<AllCampaignsScreen> {
         actions: [
           IconButton(
             onPressed: _fetchAllCampaigns,
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(CupertinoIcons.refresh),
             color: AppColors.surface,
           ),
         ],
@@ -315,7 +316,7 @@ class _AllCampaignsScreenState extends State<AllCampaignsScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   const Icon(
-                                    Icons.check_circle,
+                                    CupertinoIcons.checkmark_circle_fill,
                                     color: Colors.white,
                                     size: 14,
                                   ),
@@ -441,7 +442,7 @@ class _AllCampaignsScreenState extends State<AllCampaignsScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
-                                  Icons.check_circle,
+                                  CupertinoIcons.checkmark_circle_fill,
                                   color: AppColors.success,
                                   size: 18,
                                 ),
@@ -648,7 +649,7 @@ class _AllCampaignsScreenState extends State<AllCampaignsScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Icon(
-                          Icons.close_rounded,
+                          CupertinoIcons.xmark,
                           color: AppColors.textSecondary,
                           size: 20,
                         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
@@ -373,9 +374,9 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       case 'under_review':
         return Icons.hourglass_empty;
       case 'accepted':
-        return Icons.check_circle;
+        return CupertinoIcons.checkmark_circle_fill;
       case 'rejected':
-        return Icons.cancel;
+        return CupertinoIcons.xmark_circle_fill;
       case 'completed':
         return Icons.verified;
       default:
@@ -522,7 +523,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.camera_alt, color: AppColors.primary),
+                leading: const Icon(CupertinoIcons.camera, color: AppColors.primary),
                 title: Text('camera'.tr()),
                 onTap: () async {
                   Navigator.pop(context);
@@ -542,7 +543,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library, color: AppColors.primary),
+                leading: const Icon(CupertinoIcons.photo, color: AppColors.primary),
                 title: Text('gallery'.tr()),
                 onTap: () async {
                   Navigator.pop(context);
@@ -767,7 +768,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                   borderRadius: BorderRadius.circular(50),
                 ),
                 child: const Icon(
-                  Icons.check_circle,
+                  CupertinoIcons.checkmark_circle_fill,
                   color: AppColors.success,
                   size: 48,
                 ),
@@ -990,7 +991,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 ),
                 IconButton(
                   onPressed: () => Navigator.of(ctx).pop(),
-                  icon: const Icon(Icons.close_rounded),
+                  icon: const Icon(CupertinoIcons.xmark),
                   color: AppColors.textSecondary,
                 ),
               ],
@@ -1394,7 +1395,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          Icons.info_outline,
+                          CupertinoIcons.info_circle,
                           color: AppColors.surface.withOpacity(0.9),
                           size: 16,
                         ),
@@ -1484,7 +1485,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: _refreshApplicationStatus,
-                icon: const Icon(Icons.refresh, size: 16),
+                icon: const Icon(CupertinoIcons.refresh, size: 16),
                 label: Text('refresh'.tr()),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
@@ -1566,7 +1567,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       children: [
         _buildSectionHeader(
           title: 'personal_information'.tr(),
-          icon: Icons.person_outline,
+          icon: CupertinoIcons.person,
           color: AppColors.primary,
         ),
         Container(
@@ -1589,7 +1590,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 controller: _fullNameController,
                 label: 'full_name'.tr(),
                 hint: 'please_enter_full_name'.tr(),
-                icon: Icons.person,
+                icon: CupertinoIcons.person_fill,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'please_enter_full_name'.tr();
@@ -1628,7 +1629,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 controller: _phoneController,
                 label: 'phone_number'.tr(),
                 hint: 'please_enter_phone'.tr(),
-                icon: Icons.phone,
+                icon: CupertinoIcons.phone_fill,
                 keyboardType: TextInputType.phone,
                 alwaysReadOnly: true,
               ),
@@ -1846,7 +1847,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 controller: _guardianNameController,
                 label: 'guardian_name'.tr(),
                 hint: 'please_enter_guardian_name'.tr(),
-                icon: Icons.person,
+                icon: CupertinoIcons.person_fill,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'please_enter_guardian_name'.tr();
@@ -1975,7 +1976,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           child: Row(
             children: [
               Icon(
-                Icons.warning_amber_rounded,
+                CupertinoIcons.exclamationmark_triangle,
                 color: AppColors.error,
                 size: 18,
               ),
@@ -2099,7 +2100,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
-                  hasFile ? Icons.check_circle : Icons.upload_file,
+                  hasFile ? CupertinoIcons.checkmark_circle_fill : Icons.upload_file,
                   color: hasFile ? AppColors.success : AppColors.info,
                   size: 22,
                 ),
@@ -2156,7 +2157,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
-                    hasFile ? Icons.close : Icons.add,
+                    hasFile ? CupertinoIcons.xmark : CupertinoIcons.add,
                     color: hasFile ? AppColors.error : AppColors.primary,
                     size: 20,
                   ),
@@ -2187,8 +2188,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           children: [
             Icon(
               _isReadOnly 
-                  ? Icons.lock_outline 
-                  : (_isRejected ? Icons.refresh : Icons.send),
+                  ? CupertinoIcons.lock 
+                  : (_isRejected ? CupertinoIcons.refresh : CupertinoIcons.paperplane),
               size: 20,
             ),
             const SizedBox(width: 8),
@@ -2310,7 +2311,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         ),
         suffixIcon: isFieldReadOnly
             ? const Icon(
-                Icons.lock_outline,
+                CupertinoIcons.lock,
                 color: AppColors.textSecondary,
                 size: 18,
               )
@@ -2358,7 +2359,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
               ),
             ),
             const Icon(
-              Icons.lock_outline,
+              CupertinoIcons.lock,
               color: AppColors.textSecondary,
               size: 18,
             ),
@@ -2411,7 +2412,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       ),
       style: AppTextStyles.bodyLarge,
       icon: const Icon(
-        Icons.keyboard_arrow_down,
+        CupertinoIcons.chevron_down,
         color: AppColors.primary,
       ),
     );
@@ -2440,7 +2441,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         child: Row(
           children: [
             Icon(
-              Icons.calendar_today,
+              CupertinoIcons.calendar,
               color: _isReadOnly ? AppColors.textSecondary : AppColors.primary,
               size: 20,
             ),
@@ -2469,7 +2470,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
             ),
             if (_isReadOnly)
               const Icon(
-                Icons.lock_outline,
+                CupertinoIcons.lock,
                 color: AppColors.textSecondary,
                 size: 18,
               )
@@ -2565,7 +2566,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           children: [
             Row(
               children: [
-                const Icon(Icons.error_outline, color: AppColors.error, size: 20),
+                const Icon(CupertinoIcons.exclamationmark_circle, color: AppColors.error, size: 20),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -2582,7 +2583,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: _loadPrograms,
-                icon: const Icon(Icons.refresh, size: 16),
+                icon: const Icon(CupertinoIcons.refresh, size: 16),
                 label: Text('reload_programs'.tr()),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
@@ -2637,7 +2638,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 ],
               ),
             ),
-            const Icon(Icons.lock_outline, color: AppColors.textSecondary, size: 18),
+            const Icon(CupertinoIcons.lock, color: AppColors.textSecondary, size: 18),
           ],
         ),
       );
@@ -2698,7 +2699,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         ),
       ),
       style: AppTextStyles.bodyLarge,
-      icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primary),
+      icon: const Icon(CupertinoIcons.chevron_down, color: AppColors.primary),
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'please_choose_program_validation'.tr();

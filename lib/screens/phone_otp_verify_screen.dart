@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
@@ -324,7 +325,7 @@ class _PhoneOtpVerifyScreenState extends State<PhoneOtpVerifyScreen>
                   iconTheme: const IconThemeData(color: AppColors.surface),
                   leading: IconButton(
                     icon: Icon(
-                      isRtl ? Icons.arrow_forward_ios : Icons.arrow_back_ios,
+                      isRtl ? CupertinoIcons.chevron_forward : CupertinoIcons.chevron_back,
                       color: AppColors.surface,
                     ),
                     onPressed: () => Navigator.pop(context),

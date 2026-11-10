@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
@@ -373,7 +374,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
   void _openCheckoutWebView(String checkoutUrl, String sessionId) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (context) => CheckoutWebView(
           checkoutUrl: checkoutUrl,
           successUrl: AppConfig.paymentsSuccessUrl,
@@ -449,7 +450,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (context) => DonationSuccessScreen(
           amount: _selectedAmount,
           campaignTitle: campaignTitle,
@@ -469,7 +470,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
         centerTitle: true,
         iconTheme: const IconThemeData(color: AppColors.surface),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.surface),
+          icon: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -663,7 +664,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                         decoration: InputDecoration(
                           hintText: 'enter_your_phone'.tr(),
                           hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
-                          prefixIcon: const Icon(Icons.phone_outlined, color: AppColors.textSecondary),
+                          prefixIcon: const Icon(CupertinoIcons.phone, color: AppColors.textSecondary),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         ),
@@ -835,7 +836,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
-                  Icons.warning_amber_rounded,
+                  CupertinoIcons.exclamationmark_triangle,
                   color: AppColors.error,
                 ),
                 const SizedBox(width: 12),
@@ -858,7 +859,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.primary,
                 ),
-                icon: const Icon(Icons.refresh),
+                icon: const Icon(CupertinoIcons.refresh),
                 label: Text('change_campaign'.tr()),
               ),
             ),

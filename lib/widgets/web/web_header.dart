@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import '../../constants/app_config.dart';
@@ -162,9 +163,9 @@ class _WebHeaderState extends State<WebHeader> {
   
   Widget _buildNavItems(BuildContext context) {
     final navItems = [
-      _NavItem(icon: Icons.home_rounded, label: 'home'.tr(), index: 0),
+      _NavItem(icon: CupertinoIcons.house_fill, label: 'home'.tr(), index: 0),
       _NavItem(icon: Icons.campaign_rounded, label: 'campaigns'.tr(), index: 1),
-      _NavItem(icon: Icons.favorite_rounded, label: 'quick_donate'.tr(), index: 2),
+      _NavItem(icon: CupertinoIcons.heart_fill, label: 'quick_donate'.tr(), index: 2),
       _NavItem(icon: Icons.newspaper_rounded, label: 'fund_news'.tr(), index: 3),
       _NavItem(icon: Icons.school_rounded, label: 'student_registration'.tr(), index: 4),
     ];
@@ -216,7 +217,7 @@ class _WebHeaderState extends State<WebHeader> {
                 children: [
                   // Settings
                   _buildIconButton(
-                    icon: Icons.settings_outlined,
+                    icon: CupertinoIcons.gear,
                     tooltip: 'settings'.tr(),
                     onTap: () => widget.onItemSelected(5),
                   ),
@@ -284,7 +285,7 @@ class _WebHeaderState extends State<WebHeader> {
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildIconButton(
-          icon: Icons.settings_outlined,
+          icon: CupertinoIcons.gear,
           tooltip: 'settings'.tr(),
           onTap: () => widget.onItemSelected(5),
         ),
@@ -694,7 +695,7 @@ class _UserMenuButtonState extends State<_UserMenuButton> {
                 turns: _isHovered ? 0.5 : 0,
                 duration: const Duration(milliseconds: 200),
                 child: Icon(
-                  Icons.keyboard_arrow_down_rounded,
+                  CupertinoIcons.chevron_down,
                   color: _isHovered ? AppColors.primary : AppColors.textSecondary,
                   size: 22,
                 ),
@@ -704,26 +705,26 @@ class _UserMenuButtonState extends State<_UserMenuButton> {
         ),
         itemBuilder: (context) => [
           _buildPopupItem(
-            icon: Icons.person_outline_rounded,
+            icon: CupertinoIcons.person,
             label: 'profile'.tr(),
             color: AppColors.primary,
             value: 'profile',
           ),
           _buildPopupItem(
-            icon: Icons.history_rounded,
+            icon: CupertinoIcons.time,
             label: 'my_donations'.tr(),
             color: AppColors.secondary,
             value: 'donations',
           ),
           _buildPopupItem(
-            icon: Icons.settings_outlined,
+            icon: CupertinoIcons.gear,
             label: 'settings'.tr(),
             color: AppColors.accent,
             value: 'settings',
           ),
           const PopupMenuDivider(),
           _buildPopupItem(
-            icon: Icons.logout_rounded,
+            icon: CupertinoIcons.square_arrow_right,
             label: 'logout'.tr(),
             color: AppColors.error,
             value: 'logout',

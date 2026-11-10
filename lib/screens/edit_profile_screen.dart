@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -117,7 +118,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                   centerTitle: true,
                   iconTheme: const IconThemeData(color: AppColors.surface),
                   leading: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: AppColors.surface),
+                    icon: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface),
                     onPressed: () => Navigator.pop(context),
                   ),
                   title: Text(
@@ -186,7 +187,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                   ),
                                 ),
                                 child: const Icon(
-                                  Icons.person,
+                                  CupertinoIcons.person_fill,
                                   size: 40,
                                   color: AppColors.surface,
                                 ),
@@ -264,7 +265,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                   controller: _nameController,
                                   label: '${'full_name'.tr()} *',
                                   hint: 'please_enter_full_name_validation'.tr(),
-                                  icon: Icons.person_outline,
+                                  icon: CupertinoIcons.person,
                                   keyboardType: TextInputType.name,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -283,7 +284,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                   controller: _phoneController,
                                   label: '${'phone_number'.tr()} *',
                                   hint: 'please_enter_phone_validation'.tr(),
-                                  icon: Icons.phone_outlined,
+                                  icon: CupertinoIcons.phone,
                                   keyboardType: TextInputType.phone,
                                   readOnly: true,
                                   enabled: false,
@@ -304,7 +305,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                   controller: _emailController,
                                   label: 'email'.tr(),
                                   hint: 'please_enter_email'.tr(),
-                                  icon: Icons.email_outlined,
+                                  icon: CupertinoIcons.mail,
                                   keyboardType: TextInputType.emailAddress,
                                   validator: (value) {
                                     if (value != null && value.isNotEmpty) {

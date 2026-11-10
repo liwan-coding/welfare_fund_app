@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:easy_localization/easy_localization.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_text_styles.dart';
@@ -309,7 +310,7 @@ class _WebCampaignCardState extends State<_WebCampaignCard>
                                       ],
                                     ),
                                     child: const Icon(
-                                      Icons.check,
+                                      CupertinoIcons.checkmark,
                                       color: Colors.white,
                                       size: 20,
                                     ),
@@ -476,8 +477,8 @@ class _WebCampaignCardState extends State<_WebCampaignCard>
                                       children: [
                                         Icon(
                                           campaign.isCompleted 
-                                              ? Icons.check_circle_outline 
-                                              : Icons.favorite_rounded,
+                                              ? CupertinoIcons.checkmark_circle 
+                                              : CupertinoIcons.heart_fill,
                                           size: 20,
                                           color: campaign.isCompleted
                                               ? AppColors.success

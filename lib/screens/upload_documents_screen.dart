@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
@@ -52,7 +53,7 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ListTile(
-                  leading: const Icon(Icons.camera_alt, color: AppColors.primary),
+                  leading: const Icon(CupertinoIcons.camera, color: AppColors.primary),
                   title: Text('take_photo_camera'.tr()),
                   onTap: () {
                     Navigator.pop(context);
@@ -60,7 +61,7 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.photo_library, color: AppColors.primary),
+                  leading: const Icon(CupertinoIcons.photo, color: AppColors.primary),
                   title: Text('choose_from_gallery'.tr()),
                   onTap: () {
                     Navigator.pop(context);
@@ -279,7 +280,7 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
               ),
               if (documentPath != null)
                 const Icon(
-                  Icons.check_circle,
+                  CupertinoIcons.checkmark_circle_fill,
                   color: AppColors.success,
                   size: 24,
                 ),
@@ -316,7 +317,7 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                       });
                     },
                   ),
-                  icon: Icon(documentPath != null ? Icons.edit : Icons.upload),
+                  icon: Icon(documentPath != null ? CupertinoIcons.pencil : Icons.upload),
                   label: Text(documentPath != null ? 'تغيير' : 'رفع'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: documentPath != null 
@@ -423,7 +424,7 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                 _buildDocumentCard(
                   title: 'صورة البطاقة الشخصية',
                   description: 'صورة واضحة من البطاقة الشخصية',
-                  icon: Icons.credit_card,
+                  icon: CupertinoIcons.creditcard,
                   documentPath: _idCardImagePath,
                   documentBytes: _idCardImageBytes,
                   onPicked: (path, bytes) {

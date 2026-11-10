@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/foundation.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -208,7 +209,7 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
           style: AppTextStyles.appBarTitleDark,
         ),
         leading: IconButton(
-          icon: const Icon(Icons.close, color: AppColors.surface),
+          icon: const Icon(CupertinoIcons.xmark, color: AppColors.surface),
           onPressed: () => Navigator.pop(context, {'status': 'cancel'}),
         ),
         flexibleSpace: Container(

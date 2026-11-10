@@ -1,73 +1,68 @@
 import 'package:flutter/material.dart';
 
+/// Legacy color constants, remapped to Apple HIG system colors.
+/// New code should use `AppPalette` (lib/design/app_tokens.dart).
 class AppColors {
-  // Primary colors - Purple theme
+  // Brand tint
   static const Color primary = Color(0xFFA0207E);
   static const Color primaryLight = Color(0xFFB84A9A);
   static const Color primaryDark = Color(0xFF8A1A6A);
-  
-  // Secondary colors - Blue theme
-  static const Color secondary = Color(0xFF2DAAE2);
-  static const Color secondaryLight = Color(0xFF4FB8E8);
-  static const Color secondaryDark = Color(0xFF1E8BC4);
-  
-  // Accent colors
-  static const Color accent = Color(0xFFF59E0B);
-  static const Color accentLight = Color(0xFFFBBF24);
-  static const Color accentDark = Color(0xFFD97706);
-  
-  // Background colors
-  static const Color background = Color(0xFFF8FAFC);
+  static const Color primaryDeep = Color(0xFF5C0F47);
+
+  // Secondary: iOS system blue (the brand blue is retired)
+  static const Color secondary = Color(0xFF007AFF);
+  static const Color secondaryLight = Color(0xFF007AFF);
+  static const Color secondaryDark = Color(0xFF0A60C8);
+
+  // Accent: iOS system orange
+  static const Color accent = Color(0xFFFF9500);
+  static const Color accentLight = Color(0xFFFF9500);
+  static const Color accentDark = Color(0xFFC93400);
+
+  // Background colors (grouped style)
+  static const Color background = Color(0xFFF2F2F7);
   static const Color surface = Color(0xFFFFFFFF);
-  static const Color surfaceVariant = Color(0xFFF1F5F9);
-  
-  // Text colors
-  static const Color textPrimary = Color(0xFF1E293B);
-  static const Color textSecondary = Color(0xFF64748B);
-  static const Color textTertiary = Color(0xFF94A3B8);
-  
+  static const Color surfaceVariant = Color(0xFFEEEEF0);
+
+  // Text colors (label hierarchy)
+  static const Color textPrimary = Color(0xFF000000);
+  static const Color textSecondary = Color(0xFF6C6C70);
+  static const Color textTertiary = Color(0xFF8E8E93);
+
   // Status colors
-  static const Color success = Color(0xFF10B981);
-  static const Color successDark = Color(0xFF047857); // Dark green for completed status
-  static const Color warning = Color(0xFFF59E0B);
-  static const Color error = Color(0xFFEF4444);
-  static const Color info = Color(0xFF3B82F6);
-  
-  // Gradient colors
+  static const Color success = Color(0xFF34C759);
+  static const Color successDark = Color(0xFF248A3D); // completed status
+  static const Color warning = Color(0xFFFF9500);
+  static const Color error = Color(0xFFFF3B30);
+  static const Color info = Color(0xFF007AFF);
+
+  // Gradients are deprecated: HIG uses flat color. Kept as solid fills so
+  // existing call sites render flat until they are migrated.
   static const LinearGradient primaryGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [primary, primaryLight],
+    colors: [primary, primary],
   );
-  
+
   static const LinearGradient secondaryGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [secondary, secondaryLight],
+    colors: [secondary, secondary],
   );
-  
+
   static const LinearGradient accentGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [accent, accentLight],
+    colors: [accent, accent],
   );
-  
-  // Modern gradient combinations - Purple to Blue
+
   static const LinearGradient modernGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [primary, secondary],
+    colors: [primary, primary],
   );
-  
+
   static const LinearGradient reverseGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [secondary, primary],
+    colors: [primary, primary],
   );
-  
+
   static const LinearGradient softGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [primaryLight, secondaryLight],
+    colors: [primary, primary],
   );
-} 
+
+  static const LinearGradient headerGradient = LinearGradient(
+    colors: [primary, primary],
+  );
+}

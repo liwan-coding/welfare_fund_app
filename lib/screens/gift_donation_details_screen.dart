@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../constants/app_colors.dart';
@@ -89,7 +90,7 @@ class _GiftDonationDetailsScreenState extends State<GiftDonationDetailsScreen> {
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
-                    Icons.check_circle_outline,
+                    CupertinoIcons.checkmark_circle,
                     size: 48,
                     color: AppColors.success,
                   ),
@@ -166,7 +167,7 @@ class _GiftDonationDetailsScreenState extends State<GiftDonationDetailsScreen> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.surface),
+          icon: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -201,7 +202,7 @@ class _GiftDonationDetailsScreenState extends State<GiftDonationDetailsScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(
-                        Icons.card_giftcard,
+                        CupertinoIcons.gift,
                         size: 32,
                         color: AppColors.primary,
                       ),
@@ -241,7 +242,7 @@ class _GiftDonationDetailsScreenState extends State<GiftDonationDetailsScreen> {
                 controller: _recipientNameController,
                 label: 'اسم المستلم',
                 hint: 'أدخل اسم المستلم',
-                icon: Icons.person_outline,
+                icon: CupertinoIcons.person,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'يرجى إدخال اسم المستلم';
@@ -254,7 +255,7 @@ class _GiftDonationDetailsScreenState extends State<GiftDonationDetailsScreen> {
                 controller: _recipientPhoneController,
                 label: 'رقم الهاتف',
                 hint: 'أدخل رقم الهاتف للمستلم',
-                icon: Icons.phone_outlined,
+                icon: CupertinoIcons.phone,
                 keyboardType: TextInputType.phone,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -333,7 +334,7 @@ class _GiftDonationDetailsScreenState extends State<GiftDonationDetailsScreen> {
                   controller: _donorNameController,
                   label: 'اسمك',
                   hint: 'أدخل اسمك',
-                  icon: Icons.person_outline,
+                  icon: CupertinoIcons.person,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'يرجى إدخال اسمك';
@@ -346,7 +347,7 @@ class _GiftDonationDetailsScreenState extends State<GiftDonationDetailsScreen> {
                   controller: _donorPhoneController,
                   label: 'رقم هاتفك',
                   hint: 'أدخل رقم هاتفك',
-                  icon: Icons.phone_outlined,
+                  icon: CupertinoIcons.phone,
                   keyboardType: TextInputType.phone,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -366,7 +367,7 @@ class _GiftDonationDetailsScreenState extends State<GiftDonationDetailsScreen> {
                   controller: _donorPhoneController,
                   label: 'رقم هاتفك',
                   hint: 'أدخل رقم هاتفك',
-                  icon: Icons.phone_outlined,
+                  icon: CupertinoIcons.phone,
                   keyboardType: TextInputType.phone,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -404,7 +405,7 @@ class _GiftDonationDetailsScreenState extends State<GiftDonationDetailsScreen> {
                       : const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.send, size: 20),
+                            Icon(CupertinoIcons.paperplane, size: 20),
                             SizedBox(width: 8),
                             Text(
                               'إرسال الإهداء',

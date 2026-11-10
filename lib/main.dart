@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'constants/app_colors.dart';
+import 'design/app_theme.dart';
 import 'constants/app_text_styles.dart';
 import 'constants/app_constants.dart';
 import 'screens/splash_screen.dart';
@@ -148,117 +149,9 @@ class StudentWelfareFundApp extends StatelessWidget {
           );
         },
 
-        // Theme configuration
-        theme: ThemeData(
-          useMaterial3: true,
-          fontFamily: 'IBMPlexSansArabic',
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: AppColors.primary,
-            brightness: Brightness.light,
-          ),
-
-          // App bar theme
-          appBarTheme: const AppBarTheme(
-            backgroundColor: AppColors.primary,
-            foregroundColor: AppColors.surface,
-            elevation: 0,
-            systemOverlayStyle: SystemUiOverlayStyle.light,
-          ),
-
-          // Card theme
-          cardTheme: CardThemeData(
-            color: AppColors.surface,
-            elevation: 4,
-            shadowColor: AppColors.textPrimary.withOpacity(0.1),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-            ),
-          ),
-
-          // Elevated button theme
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: AppColors.surface,
-              elevation: 2,
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppConstants.largePadding,
-                vertical: AppConstants.defaultPadding,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-              ),
-            ),
-          ),
-
-          // Text button theme
-          textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.primary,
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppConstants.defaultPadding,
-                vertical: AppConstants.smallPadding,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-              ),
-            ),
-          ),
-
-          // Input decoration theme
-          inputDecorationTheme: InputDecorationTheme(
-            filled: true,
-            fillColor: AppColors.surfaceVariant,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-              borderSide: const BorderSide(color: AppColors.primary, width: 2),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-              borderSide: const BorderSide(color: AppColors.error, width: 2),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppConstants.defaultPadding,
-              vertical: AppConstants.smallPadding,
-            ),
-          ),
-
-          // Text theme
-          textTheme: const TextTheme(
-            displayLarge: AppTextStyles.displayLarge,
-            displayMedium: AppTextStyles.displayMedium,
-            displaySmall: AppTextStyles.displaySmall,
-            headlineLarge: AppTextStyles.headlineLarge,
-            headlineMedium: AppTextStyles.headlineMedium,
-            headlineSmall: AppTextStyles.headlineSmall,
-            titleLarge: AppTextStyles.titleLarge,
-            titleMedium: AppTextStyles.titleMedium,
-            titleSmall: AppTextStyles.titleSmall,
-            bodyLarge: AppTextStyles.bodyLarge,
-            bodyMedium: AppTextStyles.bodyMedium,
-            bodySmall: AppTextStyles.bodySmall,
-            labelLarge: AppTextStyles.labelLarge,
-            labelMedium: AppTextStyles.labelMedium,
-            labelSmall: AppTextStyles.labelSmall,
-          ),
-
-          // Icon theme
-          iconTheme: const IconThemeData(
-            color: AppColors.textPrimary,
-            size: AppConstants.defaultIconSize,
-          ),
-
-          // Scaffold theme
-          scaffoldBackgroundColor: AppColors.background,
-        ),
+        // Theme configuration (Apple HIG). Dark theme is enabled once screens
+        // stop hard-coding light colors.
+        theme: AppTheme.light(),
 
         // Initial route - check URL first
         initialRoute: _getInitialRoute(),

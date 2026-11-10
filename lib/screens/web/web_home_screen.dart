@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../constants/app_colors.dart';
@@ -119,7 +120,7 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
       case 1: // Campaigns
         Navigator.push(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (context) => AllCampaignsScreen(initialCampaigns: _campaigns),
           ),
         );
@@ -127,7 +128,7 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
       case 2: // Quick Donate
         Navigator.push(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (context) => const QuickDonateAmountScreen(),
           ),
         );
@@ -135,7 +136,7 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
       case 3: // Fund News
         Navigator.push(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (context) => const FundNewsScreen(),
           ),
         );
@@ -146,7 +147,7 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
       case 5: // Settings
         Navigator.push(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (context) => const SettingsScreen(),
           ),
         );
@@ -154,7 +155,7 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
       case 6: // Login
         Navigator.push(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (context) => const LoginScreen(),
           ),
         );
@@ -162,7 +163,7 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
       case 7: // Register
         Navigator.push(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (context) => const RegisterScreen(),
           ),
         );
@@ -175,7 +176,7 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
     if (authProvider.isAuthenticated) {
       Navigator.push(
         context,
-        MaterialPageRoute(
+        CupertinoPageRoute(
           builder: (context) => const StudentRegistrationScreen(),
         ),
       );
@@ -201,7 +202,7 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
                 shape: BoxShape.circle,
               ),
               child: const Icon(
-                Icons.lock_outline,
+                CupertinoIcons.lock,
                 size: 48,
                 color: AppColors.primary,
               ),
@@ -233,7 +234,7 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(
+                CupertinoPageRoute(
                   builder: (context) => const LoginScreen(),
                 ),
               );
@@ -248,7 +249,7 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
   void _onCampaignTap(Campaign campaign) {
     Navigator.push(
       context,
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (context) => CampaignDonationScreen(campaign: campaign),
       ),
     );

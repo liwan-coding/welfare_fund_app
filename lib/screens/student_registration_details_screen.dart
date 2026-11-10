@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../constants/app_colors.dart';
@@ -114,7 +115,7 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
     switch (normalizedStatus) {
       case 'pending':
       case 'في الانتظار':
-        return Icons.schedule;
+        return CupertinoIcons.clock;
       case 'under_review':
       case 'قيد المراجعة':
       case 'قيد الدراسة':
@@ -123,14 +124,14 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
       case 'accepted':
       case 'مقبول':
       case 'تم القبول':
-        return Icons.check_circle;
+        return CupertinoIcons.checkmark_circle_fill;
       case 'rejected':
       case 'مرفوض':
       case 'تم الرفض':
-        return Icons.cancel;
+        return CupertinoIcons.xmark_circle_fill;
       default:
         print('Warning: Unknown status in _getStatusIcon: $status, defaulting to schedule icon');
-        return Icons.schedule;
+        return CupertinoIcons.clock;
     }
   }
 
@@ -169,7 +170,7 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(
-                        Icons.error_outline,
+                        CupertinoIcons.exclamationmark_circle,
                         size: 64,
                         color: AppColors.error,
                       ),
@@ -276,7 +277,7 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                           // Personal Information
                           _buildSection(
                             title: 'personal_information'.tr(),
-                            icon: Icons.person_outline,
+                            icon: CupertinoIcons.person,
                             color: AppColors.primary,
                             children: [
                               _buildInfoRow('full_name'.tr(), _registration!.fullName),
@@ -323,7 +324,7 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                               _registration!.documents!.idCard!.isNotEmpty) ...[
                             _buildSection(
                               title: 'id_photo'.tr(),
-                              icon: Icons.credit_card,
+                              icon: CupertinoIcons.creditcard,
                               color: AppColors.info,
                               children: [
                                 _buildIdCardImage(_registration!.documents!.idCard!),
@@ -366,7 +367,7 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                                         ),
                                       );
                                     },
-                                    icon: const Icon(Icons.edit, size: 18),
+                                    icon: const Icon(CupertinoIcons.pencil, size: 18),
                                     label: Text('edit'.tr()),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.info,
@@ -545,7 +546,7 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                                 color: Colors.black87,
                                 child: const Center(
                                   child: Icon(
-                                    Icons.error_outline,
+                                    CupertinoIcons.exclamationmark_circle,
                                     color: AppColors.error,
                                     size: 48,
                                   ),
@@ -558,7 +559,7 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                             right: 8,
                             child: IconButton(
                               icon: const Icon(
-                                Icons.close,
+                                CupertinoIcons.xmark,
                                 color: Colors.white,
                                 size: 28,
                               ),
@@ -593,7 +594,7 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Icon(
-                          Icons.error_outline,
+                          CupertinoIcons.exclamationmark_circle,
                           color: AppColors.error,
                           size: 48,
                         ),

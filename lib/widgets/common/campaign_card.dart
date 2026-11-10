@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:easy_localization/easy_localization.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_text_styles.dart';
@@ -176,7 +177,7 @@ class CampaignCard extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
-                                    Icons.check_circle_outline,
+                                    CupertinoIcons.checkmark_circle,
                                     color: AppColors.success,
                                     size: 16,
                                   ),
@@ -213,7 +214,7 @@ class CampaignCard extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   const Icon(
-                                    Icons.favorite,
+                                    CupertinoIcons.heart_fill,
                                     color: Colors.white,
                                     size: 16,
                                   ),

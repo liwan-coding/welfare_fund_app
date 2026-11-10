@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -226,7 +227,7 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
     // Navigate to My Donations screen with force refresh
     Navigator.push(
       context,
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (context) => const MyDonationsScreen(forceRefresh: true),
       ),
     );
@@ -285,7 +286,7 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
                         return Transform.scale(
                           scale: _checkmarkAnimation.value,
                           child: const Icon(
-                            Icons.check,
+                            CupertinoIcons.checkmark,
                             color: Colors.white,
                             size: 48,
                           ),
@@ -508,7 +509,7 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
                               await _refreshDonationsData();
                               _goToMyDonations();
                             },
-                            icon: const Icon(Icons.favorite, size: 20),
+                            icon: const Icon(CupertinoIcons.heart_fill, size: 20),
                             label: Text(
                               'my_donations'.tr(),
                               style: AppTextStyles.buttonLarge.copyWith(
@@ -542,7 +543,7 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
                     height: 56,
                     child: ElevatedButton.icon(
                       onPressed: _goToHome,
-                      icon: const Icon(Icons.home, size: 20),
+                      icon: const Icon(CupertinoIcons.house_fill, size: 20),
                       label: Text(
                         'home'.tr(),
                         style: AppTextStyles.buttonLarge.copyWith(
@@ -580,7 +581,7 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
                 child: Column(
                   children: [
                     const Icon(
-                      Icons.favorite,
+                      CupertinoIcons.heart_fill,
                       color: AppColors.primary,
                       size: 24,
                     ),

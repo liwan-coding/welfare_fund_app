@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
+import '../widgets/common/main_tab_bar.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -85,14 +87,14 @@ class _SettingsScreenState extends State<SettingsScreen>
       if (isAuthenticated) {
         Navigator.push(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (context) => const MyDonationsScreen(),
           ),
         );
       } else {
         Navigator.push(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (context) => const login.LoginScreen(),
           ),
         );
@@ -115,7 +117,7 @@ class _SettingsScreenState extends State<SettingsScreen>
             centerTitle: true,
             iconTheme: const IconThemeData(color: AppColors.surface),
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: AppColors.surface),
+              icon: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface),
               onPressed: () => Navigator.pop(context),
             ),
             title: Text(
@@ -160,26 +162,9 @@ class _SettingsScreenState extends State<SettingsScreen>
               ),
             ),
           ),
-          bottomNavigationBar: BottomNavigationBar(
+          bottomNavigationBar: MainTabBar(
             currentIndex: 2,
             onTap: (index) => _onBottomNavigationTap(index, isAuthenticated),
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: AppColors.primary,
-            unselectedItemColor: AppColors.textSecondary,
-            items: [
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.home),
-                label: 'home'.tr(),
-              ),
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.history),
-                label: 'my_donations'.tr(),
-              ),
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.settings),
-                label: 'settings'.tr(),
-              ),
-            ],
           ),
         );
       },
@@ -283,7 +268,7 @@ class _SettingsScreenState extends State<SettingsScreen>
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Icon(
-              Icons.favorite_outline,
+              CupertinoIcons.heart,
               size: 40,
               color: AppColors.surface,
             ),
@@ -363,7 +348,7 @@ class _SettingsScreenState extends State<SettingsScreen>
               ),
             ),
             child: const Icon(
-              Icons.person,
+              CupertinoIcons.person_fill,
               size: 40,
               color: AppColors.surface,
             ),
@@ -463,13 +448,13 @@ class _SettingsScreenState extends State<SettingsScreen>
       child: Column(
         children: [
           _buildSettingsTile(
-            icon: Icons.person_outline,
+            icon: CupertinoIcons.person,
             title: 'edit_profile'.tr(),
             subtitle: 'edit_profile'.tr(),
             onTap: () async {
               final result = await Navigator.push(
                 context,
-                MaterialPageRoute(
+                CupertinoPageRoute(
                   builder: (context) => EditProfileScreen(
                     userProfile: userProfile,
                   ),
@@ -491,7 +476,7 @@ class _SettingsScreenState extends State<SettingsScreen>
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
+                CupertinoPageRoute(
                   builder: (context) => const SettingPageScreen(
                     pageKey: 'security',
                   ),
@@ -501,13 +486,13 @@ class _SettingsScreenState extends State<SettingsScreen>
           ),
           _buildDivider(),
           _buildSettingsTile(
-            icon: Icons.history,
+            icon: CupertinoIcons.time,
             title: 'my_donations'.tr(),
             subtitle: 'my_donations'.tr(),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
+                CupertinoPageRoute(
                   builder: (context) => const MyDonationsScreen(),
                 ),
               );
@@ -542,7 +527,7 @@ class _SettingsScreenState extends State<SettingsScreen>
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
+                CupertinoPageRoute(
                   builder: (context) => const SettingPageScreen(
                     pageKey: 'contact_us',
                   ),
@@ -558,7 +543,7 @@ class _SettingsScreenState extends State<SettingsScreen>
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
+                CupertinoPageRoute(
                   builder: (context) => const FundPartnersScreen(),
                 ),
               );
@@ -566,13 +551,13 @@ class _SettingsScreenState extends State<SettingsScreen>
           ),
           _buildDivider(),
           _buildSettingsTile(
-            icon: Icons.info_outline,
+            icon: CupertinoIcons.info_circle,
             title: 'about_app'.tr(),
             subtitle: 'app_info_version'.tr(),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
+                CupertinoPageRoute(
                   builder: (context) => const SettingPageScreen(
                     pageKey: 'about_app',
                   ),
@@ -588,7 +573,7 @@ class _SettingsScreenState extends State<SettingsScreen>
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
+                CupertinoPageRoute(
                   builder: (context) => const SettingPageScreen(
                     pageKey: 'privacy_policy',
                   ),
@@ -646,7 +631,7 @@ class _SettingsScreenState extends State<SettingsScreen>
           borderRadius: BorderRadius.circular(8),
         ),
         child: const Icon(
-          Icons.arrow_forward_ios,
+          CupertinoIcons.chevron_forward,
           color: AppColors.textTertiary,
           size: 16,
         ),
@@ -781,7 +766,7 @@ class _SettingsScreenState extends State<SettingsScreen>
             HapticFeedback.lightImpact();
             Navigator.push(
               context,
-              MaterialPageRoute(
+              CupertinoPageRoute(
                 builder: (context) => const login.LoginScreen(),
               ),
             ).then((_) => _checkAuthStatus());
@@ -845,7 +830,7 @@ class _SettingsScreenState extends State<SettingsScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(
-                  Icons.logout,
+                  CupertinoIcons.square_arrow_right,
                   color: AppColors.error,
                   size: 26,
                 ),
@@ -882,7 +867,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
-                  Icons.logout,
+                  CupertinoIcons.square_arrow_right,
                   color: AppColors.error,
                   size: 28,
                 ),
@@ -1063,7 +1048,7 @@ class _SettingsScreenState extends State<SettingsScreen>
       child: Column(
         children: [
           _buildLanguageTile(
-            icon: Icons.language,
+            icon: CupertinoIcons.globe,
             title: 'choose_language'.tr(),
             subtitle: 'current_language'.tr(),
             currentLocale: context.locale,
@@ -1130,7 +1115,7 @@ class _SettingsScreenState extends State<SettingsScreen>
               ),
             ),
             const Icon(
-              Icons.arrow_forward_ios,
+              CupertinoIcons.chevron_forward,
               color: AppColors.textTertiary,
               size: 16,
             ),
@@ -1239,7 +1224,7 @@ class _SettingsScreenState extends State<SettingsScreen>
             ),
             if (isSelected)
               const Icon(
-                Icons.check_circle,
+                CupertinoIcons.checkmark_circle_fill,
                 color: AppColors.primary,
                 size: 20,
               ),

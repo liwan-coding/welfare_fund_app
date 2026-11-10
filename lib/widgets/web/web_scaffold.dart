@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import '../../constants/app_colors.dart';
 import '../responsive/responsive_layout.dart';
@@ -80,7 +81,7 @@ class _WebScaffoldState extends State<WebScaffold> {
           onPressed: () {
             _scaffoldKey.currentState?.openDrawer();
           },
-          icon: const Icon(Icons.menu_rounded),
+          icon: const Icon(CupertinoIcons.line_horizontal_3),
           color: AppColors.textPrimary,
         ),
         title: Row(

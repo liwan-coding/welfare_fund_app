@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import '../../constants/app_colors.dart';
@@ -42,7 +43,7 @@ class WebAppBar extends StatelessWidget implements PreferredSizeWidget {
               if (onMenuPressed != null)
                 IconButton(
                   onPressed: onMenuPressed,
-                  icon: const Icon(Icons.menu_rounded),
+                  icon: const Icon(CupertinoIcons.line_horizontal_3),
                   color: AppColors.textPrimary,
                   iconSize: 28,
                 ),
@@ -180,7 +181,7 @@ class WebAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             const SizedBox(width: 4),
             const Icon(
-              Icons.keyboard_arrow_down_rounded,
+              CupertinoIcons.chevron_down,
               color: AppColors.textSecondary,
             ),
           ],
@@ -191,7 +192,7 @@ class WebAppBar extends StatelessWidget implements PreferredSizeWidget {
           value: 'profile',
           child: Row(
             children: [
-              const Icon(Icons.person_outline_rounded, size: 20),
+              const Icon(CupertinoIcons.person, size: 20),
               const SizedBox(width: 12),
               Text('profile'.tr()),
             ],
@@ -201,7 +202,7 @@ class WebAppBar extends StatelessWidget implements PreferredSizeWidget {
           value: 'donations',
           child: Row(
             children: [
-              const Icon(Icons.history_rounded, size: 20),
+              const Icon(CupertinoIcons.time, size: 20),
               const SizedBox(width: 12),
               Text('my_donations'.tr()),
             ],
@@ -212,7 +213,7 @@ class WebAppBar extends StatelessWidget implements PreferredSizeWidget {
           value: 'logout',
           child: Row(
             children: [
-              Icon(Icons.logout_rounded, size: 20, color: AppColors.error),
+              Icon(CupertinoIcons.square_arrow_right, size: 20, color: AppColors.error),
               const SizedBox(width: 12),
               Text(
                 'logout'.tr(),

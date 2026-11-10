@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:easy_localization/easy_localization.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_text_styles.dart';
@@ -157,7 +158,7 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
         actions: [
           IconButton(
             onPressed: () => _loadRegistrations(refresh: true),
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(CupertinoIcons.refresh),
           ),
         ],
       ),
@@ -184,7 +185,7 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
                   onChanged: _onSearchChanged,
                   decoration: InputDecoration(
                     hintText: 'البحث بالاسم أو رقم الطالب...',
-                    prefixIcon: const Icon(Icons.search, color: AppColors.textSecondary),
+                    prefixIcon: const Icon(CupertinoIcons.search, color: AppColors.textSecondary),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(color: AppColors.textTertiary),
@@ -238,7 +239,7 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Icon(
-                              Icons.error_outline,
+                              CupertinoIcons.exclamationmark_circle,
                               size: 64,
                               color: AppColors.error,
                             ),
@@ -371,7 +372,7 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
+              CupertinoPageRoute(
                 builder: (context) => StudentRegistrationDetailsScreen(
                   registrationId: registration.id!,
                 ),
@@ -444,7 +445,7 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(Icons.phone, size: 16, color: AppColors.textSecondary),
+                    const Icon(CupertinoIcons.phone_fill, size: 16, color: AppColors.textSecondary),
                     const SizedBox(width: 8),
                     Text(
                       registration.phone,
@@ -458,7 +459,7 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today, size: 16, color: AppColors.textSecondary),
+                      const Icon(CupertinoIcons.calendar, size: 16, color: AppColors.textSecondary),
                       const SizedBox(width: 8),
                       Text(
                         'تاريخ التسجيل: ${registration.createdAt!.toString().split(' ')[0]}',
@@ -472,7 +473,7 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSecondary),
+                    const Icon(CupertinoIcons.chevron_forward, size: 16, color: AppColors.textSecondary),
                     const SizedBox(width: 8),
                     Text(
                       'اضغط لعرض التفاصيل',

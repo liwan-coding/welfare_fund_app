@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:easy_localization/easy_localization.dart';
 import '../constants/app_colors.dart';
 
@@ -9,7 +10,7 @@ class LanguageSwitcher extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopupMenuButton<Locale>(
       icon: const Icon(
-        Icons.language,
+        CupertinoIcons.globe,
         color: AppColors.surface,
       ),
       tooltip: 'language'.tr(),
@@ -38,7 +39,7 @@ class LanguageSwitcher extends StatelessWidget {
               if (context.locale.languageCode == 'ar')
                 const Spacer(),
               if (context.locale.languageCode == 'ar')
-                const Icon(Icons.check, color: AppColors.primary),
+                const Icon(CupertinoIcons.checkmark, color: AppColors.primary),
             ],
           ),
         ),
@@ -52,7 +53,7 @@ class LanguageSwitcher extends StatelessWidget {
               if (context.locale.languageCode == 'en')
                 const Spacer(),
               if (context.locale.languageCode == 'en')
-                const Icon(Icons.check, color: AppColors.primary),
+                const Icon(CupertinoIcons.checkmark, color: AppColors.primary),
             ],
           ),
         ),
@@ -80,7 +81,7 @@ class LanguageSwitcherButton extends StatelessWidget {
                     leading: const Text('🇴🇲', style: TextStyle(fontSize: 24)),
                     title: Text('arabic'.tr()),
                     trailing: context.locale.languageCode == 'ar'
-                        ? const Icon(Icons.check, color: AppColors.primary)
+                        ? const Icon(CupertinoIcons.checkmark, color: AppColors.primary)
                         : null,
                     onTap: () {
                       context.setLocale(const Locale('ar'));
@@ -102,7 +103,7 @@ class LanguageSwitcherButton extends StatelessWidget {
                     leading: const Text('🇺🇸', style: TextStyle(fontSize: 24)),
                     title: Text('english'.tr()),
                     trailing: context.locale.languageCode == 'en'
-                        ? const Icon(Icons.check, color: AppColors.primary)
+                        ? const Icon(CupertinoIcons.checkmark, color: AppColors.primary)
                         : null,
                     onTap: () {
                       context.setLocale(const Locale('en'));
@@ -126,7 +127,7 @@ class LanguageSwitcherButton extends StatelessWidget {
           },
         );
       },
-      icon: const Icon(Icons.language),
+      icon: const Icon(CupertinoIcons.globe),
       label: Text('language'.tr()),
     );
   }

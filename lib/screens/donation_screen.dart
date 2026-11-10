@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
@@ -225,7 +226,7 @@ class _DonationScreenState extends State<DonationScreen> {
   void _openCheckoutWebView(String checkoutUrl, String sessionId) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (context) => CheckoutWebView(
           checkoutUrl: checkoutUrl,
           successUrl: AppConfig.paymentsSuccessUrl,
@@ -292,7 +293,7 @@ class _DonationScreenState extends State<DonationScreen> {
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            const Icon(Icons.check_circle, color: Colors.green),
+            const Icon(CupertinoIcons.checkmark_circle_fill, color: Colors.green),
             const SizedBox(width: 8),
             Text('donation_successful'.tr()),
           ],
@@ -397,7 +398,7 @@ class _DonationScreenState extends State<DonationScreen> {
                       decoration: InputDecoration(
                         labelText: 'full_name'.tr(),
                         hintText: 'full_name'.tr(),
-                        prefixIcon: const Icon(Icons.person),
+                        prefixIcon: const Icon(CupertinoIcons.person_fill),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -420,7 +421,7 @@ class _DonationScreenState extends State<DonationScreen> {
                               decoration: InputDecoration(
                                 labelText: 'donor_phone_label'.tr(),
                                 hintText: 'enter_your_phone'.tr(),
-                                prefixIcon: const Icon(Icons.phone),
+                                prefixIcon: const Icon(CupertinoIcons.phone_fill),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),

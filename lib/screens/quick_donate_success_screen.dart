@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import '../constants/app_colors.dart';
 import '../constants/app_text_styles.dart';
 import '../constants/app_constants.dart';
@@ -81,7 +82,7 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
   void _onBackToHome() {
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => const HomeScreen()),
+      CupertinoPageRoute(builder: (context) => const HomeScreen()),
       (route) => false,
     );
   }
@@ -89,7 +90,7 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
   void _goToMyDonations() {
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (context) => const MyDonationsScreen(forceRefresh: true),
       ),
       (route) => false,
@@ -143,7 +144,7 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
                         return Transform.scale(
                           scale: _checkmarkAnimation.value,
                           child: const Icon(
-                            Icons.check,
+                            CupertinoIcons.checkmark,
                             color: AppColors.surface,
                             size: 48,
                           ),
@@ -346,7 +347,7 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
                         await _refreshDonationsData();
                         _goToMyDonations();
                       },
-                      icon: const Icon(Icons.favorite, size: 20),
+                      icon: const Icon(CupertinoIcons.heart_fill, size: 20),
                       label: Text(
                         'عرض تبرعاتي',
                         style: AppTextStyles.buttonLarge.copyWith(
@@ -374,7 +375,7 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
                     height: 56,
                     child: ElevatedButton.icon(
                       onPressed: _onBackToHome,
-                      icon: const Icon(Icons.home, size: 20),
+                      icon: const Icon(CupertinoIcons.house_fill, size: 20),
                       label: Text(
                         'العودة للرئيسية',
                         style: AppTextStyles.buttonLarge.copyWith(
@@ -412,7 +413,7 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
                 child: Column(
                   children: [
                     const Icon(
-                      Icons.favorite,
+                      CupertinoIcons.heart_fill,
                       color: AppColors.primary,
                       size: 24,
                     ),

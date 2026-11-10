@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:easy_localization/easy_localization.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_text_styles.dart';
@@ -86,12 +87,12 @@ class _FundNewsScreenState extends State<FundNewsScreen> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.surface, size: 20),
+          icon: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: AppColors.surface, size: 22),
+            icon: const Icon(CupertinoIcons.refresh, color: AppColors.surface, size: 22),
             onPressed: _isLoading ? null : _load,
           ),
         ],
@@ -141,7 +142,7 @@ class _FundNewsScreenState extends State<FundNewsScreen> {
         child: Center(
           child: Column(
             children: [
-              Icon(Icons.error_outline_rounded, size: 56, color: AppColors.error),
+              Icon(CupertinoIcons.exclamationmark_circle, size: 56, color: AppColors.error),
               const SizedBox(height: AppConstants.defaultPadding),
               Text(
                 _errorMessage!,
@@ -151,7 +152,7 @@ class _FundNewsScreenState extends State<FundNewsScreen> {
               const SizedBox(height: AppConstants.defaultPadding),
               TextButton.icon(
                 onPressed: _load,
-                icon: const Icon(Icons.refresh_rounded, color: AppColors.primary),
+                icon: const Icon(CupertinoIcons.refresh, color: AppColors.primary),
                 label: Text('retry'.tr(), style: const TextStyle(color: AppColors.primary)),
               ),
             ],
@@ -238,7 +239,7 @@ class _FundNewsScreenState extends State<FundNewsScreen> {
   void _openDetail(FundNews item) {
     Navigator.push(
       context,
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (context) => FundNewsDetailScreen(news: item),
       ),
     );
@@ -339,7 +340,7 @@ class _NewsCard extends StatelessWidget {
                           const SizedBox(height: 6),
                           Row(
                             children: [
-                              Icon(Icons.schedule_rounded, size: 14, color: AppColors.textTertiary),
+                              Icon(CupertinoIcons.clock, size: 14, color: AppColors.textTertiary),
                               const SizedBox(width: 4),
                               Text(
                                 _formatDate(news.publishedAt!),
@@ -402,7 +403,7 @@ class _NewsCard extends StatelessWidget {
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              Icon(Icons.schedule_rounded, size: 14, color: AppColors.textTertiary),
+                              Icon(CupertinoIcons.clock, size: 14, color: AppColors.textTertiary),
                               const SizedBox(width: 4),
                               Text(
                                 _formatDate(news.publishedAt!),

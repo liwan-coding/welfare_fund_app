@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -241,7 +242,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
 
       final result = await Navigator.push(
         context,
-        MaterialPageRoute(
+        CupertinoPageRoute(
           builder: (_) => PaymentWebView(
             paymentUrl: provider.paymentUrl!,
             sessionId: provider.currentSessionId!,
@@ -257,7 +258,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (_) => DonationSuccessScreen(
               amount: _selectedAmount,
               campaignTitle: paymentResult.campaignTitle ?? widget.campaign.getLocalizedTitle(context.locale.languageCode),
@@ -274,7 +275,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (_) => PaymentFailedScreen(
               errorMessage: provider.displayErrorMessage,
               campaignTitle: widget.campaign.getLocalizedTitle(context.locale.languageCode),
@@ -290,7 +291,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
           if (!mounted) return;
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
+            CupertinoPageRoute(
             builder: (_) => DonationSuccessScreen(
               amount: _selectedAmount,
               campaignTitle: widget.campaign.getLocalizedTitle(context.locale.languageCode),
@@ -302,7 +303,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
           if (!mounted) return;
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
+            CupertinoPageRoute(
               builder: (_) => PaymentFailedScreen(
                 errorMessage: provider.displayErrorMessage,
                 campaignTitle: widget.campaign.title,
@@ -325,7 +326,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
+        CupertinoPageRoute(
           builder: (_) => PaymentFailedScreen(
             errorMessage: provider.displayErrorMessage,
             campaignTitle: widget.campaign.title,
@@ -459,7 +460,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
                                       children: [
                                         if (widget.campaign.isCompleted)
                                           const Icon(
-                                            Icons.check_circle,
+                                            CupertinoIcons.checkmark_circle_fill,
                                             color: Colors.white,
                                             size: 14,
                                           ),
@@ -493,7 +494,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
                       color: AppColors.surface.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(Icons.arrow_back_ios, color: AppColors.surface, size: 20),
+                    child: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface, size: 20),
                   ),
                   onPressed: () => Navigator.pop(context),
                 ),
@@ -509,7 +510,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
                       // تفاصيل البرنامج
                       _buildSection(
                         title: 'program'.tr(),
-                        icon: Icons.info_outline,
+                        icon: CupertinoIcons.info_circle,
                         child: Text(
                           widget.campaign.getLocalizedDescription(context.locale.languageCode),
                           style: AppTextStyles.bodyMedium.copyWith(
@@ -552,7 +553,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
                       if (!widget.campaign.isCompleted)
                         _buildSection(
                           title: 'select_amount'.tr(),
-                          icon: Icons.favorite_outline,
+                          icon: CupertinoIcons.heart,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -672,7 +673,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
                                   decoration: InputDecoration(
                                     hintText: 'enter_your_phone'.tr(),
                                     hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textTertiary),
-                                    prefixIcon: const Icon(Icons.phone_outlined, color: AppColors.textSecondary),
+                                    prefixIcon: const Icon(CupertinoIcons.phone, color: AppColors.textSecondary),
                                     border: InputBorder.none,
                                     contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                                   ),
@@ -711,7 +712,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
-                                  Icons.check_circle,
+                                  CupertinoIcons.checkmark_circle_fill,
                                   color: Colors.white,
                                   size: 32,
                                 ),
@@ -801,7 +802,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
                                 : Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Icon(Icons.favorite, size: 24),
+                                      const Icon(CupertinoIcons.heart_fill, size: 24),
                                       const SizedBox(width: 12),
                                       Text(
                                         'donate_now'.tr(),

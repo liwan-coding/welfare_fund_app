@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import '../constants/app_colors.dart';
@@ -106,7 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         iconTheme: const IconThemeData(color: AppColors.surface),
         leading: IconButton(
           icon: Icon(
-            isRTL ? Icons.arrow_forward_ios : Icons.arrow_back_ios,
+            isRTL ? CupertinoIcons.chevron_forward : CupertinoIcons.chevron_back,
             color: AppColors.surface,
           ),
           onPressed: () => Navigator.pop(context),
@@ -181,7 +182,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                                    controller: _nameController,
                                    label: 'full_name'.tr(),
                                    hint: 'full_name'.tr(),
-                                   icon: Icons.person_outline,
+                                   icon: CupertinoIcons.person,
                                    keyboardType: TextInputType.name,
                                    validator: (value) {
                                      if (value == null || value.isEmpty) {
@@ -200,7 +201,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                                   controller: _phoneController,
                                   label: 'phone_number'.tr(),
                                   hint: 'phone_number'.tr(),
-                                  icon: Icons.phone_outlined,
+                                  icon: CupertinoIcons.phone,
                                   keyboardType: TextInputType.phone,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -220,7 +221,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                                   controller: _emailController,
                                   label: 'email'.tr(),
                                   hint: 'email'.tr(),
-                                  icon: Icons.email_outlined,
+                                  icon: CupertinoIcons.mail,
                                   keyboardType: TextInputType.emailAddress,
                                   isOptional: true,
                                   validator: (value) {
@@ -240,7 +241,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                                   controller: _passwordController,
                                   label: 'password'.tr(),
                                   hint: 'password'.tr(),
-                                  icon: Icons.lock_outline,
+                                  icon: CupertinoIcons.lock,
                                   isPassword: true,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -259,7 +260,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                                   controller: _confirmPasswordController,
                                   label: 'confirm_password'.tr(),
                                   hint: 'confirm_password'.tr(),
-                                  icon: Icons.lock_outline,
+                                  icon: CupertinoIcons.lock,
                                   isPassword: true,
                                   isConfirmPassword: true,
                                   validator: (value) {
@@ -417,8 +418,8 @@ class _RegisterScreenState extends State<RegisterScreen>
                 ? IconButton(
                     icon: Icon(
                       (isConfirmPassword ? _isConfirmPasswordVisible : _isPasswordVisible)
-                          ? Icons.visibility_off
-                          : Icons.visibility,
+                          ? CupertinoIcons.eye_slash
+                          : CupertinoIcons.eye,
                       color: AppColors.textTertiary,
                     ),
                     onPressed: () {
@@ -508,7 +509,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   )
                 else
                   const Icon(
-                    Icons.person_add,
+                    CupertinoIcons.person_add,
                     color: AppColors.surface,
                     size: 24,
                   ),
@@ -554,7 +555,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             HapticFeedback.lightImpact();
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
+              CupertinoPageRoute(
                 builder: (context) => const LoginScreen(),
               ),
             );
@@ -649,7 +650,7 @@ class _RegisterScreenState extends State<RegisterScreen>
           final devOtp = result['devOtp'] as String?;
           Navigator.push(
             context,
-            MaterialPageRoute(
+            CupertinoPageRoute(
               builder: (context) => PhoneOtpVerifyScreen(
                 verifyId: verifyId,
                 phone: phone,

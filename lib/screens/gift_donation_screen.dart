@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:easy_localization/easy_localization.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_text_styles.dart';
@@ -62,7 +63,7 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
       case 'school':
         return Icons.school;
       case 'home':
-        return Icons.home;
+        return CupertinoIcons.house_fill;
       case 'computer':
         return Icons.computer;
       case 'assignment':
@@ -110,7 +111,7 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (context) => GiftDonationDetailsScreen(
           categoryId: _selectedCategory!,
           categoryTitle: _categories.firstWhere((cat) => cat['id'] == _selectedCategory)['title'],
@@ -145,7 +146,7 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.surface),
+          icon: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -178,7 +179,7 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
-                      Icons.card_giftcard,
+                      CupertinoIcons.gift,
                       size: 32,
                       color: AppColors.primary,
                     ),
@@ -327,7 +328,7 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
                       ),
                       trailing: isSelected
                           ? const Icon(
-                              Icons.check_circle,
+                              CupertinoIcons.checkmark_circle_fill,
                               color: AppColors.primary,
                               size: 24,
                             )
@@ -361,7 +362,7 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.arrow_forward_ios, size: 20),
+                    Icon(CupertinoIcons.chevron_forward, size: 20),
                     SizedBox(width: 8),
                     Text(
                       'التالي',

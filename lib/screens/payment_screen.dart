@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -222,7 +223,7 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
 
         final result = await Navigator.push(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (_) => PaymentWebView(
               paymentUrl: provider.paymentUrl!,
               sessionId: provider.currentSessionId!, // للاحتفاظ به محليًا
@@ -277,7 +278,7 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
           
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
+            CupertinoPageRoute(
               builder: (_) => DonationSuccessScreen(
                 amount: finalAmount,
                 campaignTitle: finalCampaignTitle,
@@ -293,7 +294,7 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
           if (!mounted) return;
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
+            CupertinoPageRoute(
               builder: (_) => PaymentFailedScreen(
                 errorMessage: provider.displayErrorMessage,
                 campaignTitle: widget.campaignTitle ?? 'charity_donation'.tr(),
@@ -308,7 +309,7 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
             if (!mounted) return;
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
+              CupertinoPageRoute(
                 builder: (_) => DonationSuccessScreen(
                   amount: _selectedAmount,
                   campaignTitle: widget.campaignTitle ?? 'charity_donation'.tr(),
@@ -320,7 +321,7 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
             if (!mounted) return;
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
+              CupertinoPageRoute(
                 builder: (_) => PaymentFailedScreen(
                   errorMessage: provider.displayErrorMessage,
                   campaignTitle: widget.campaignTitle ?? 'charity_donation'.tr(),
@@ -337,7 +338,7 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (_) => PaymentFailedScreen(
               errorMessage: provider.displayErrorMessage,
               campaignTitle: widget.campaignTitle ?? 'charity_donation'.tr(),
@@ -413,7 +414,7 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
                       color: AppColors.surface.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(Icons.arrow_back_ios, color: AppColors.surface, size: 20),
+                    child: const Icon(CupertinoIcons.chevron_back, color: AppColors.surface, size: 20),
                   ),
                   onPressed: () => Navigator.pop(context),
                 ),
@@ -427,7 +428,7 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
                     children: [
                       _buildSection(
                         title: 'choose_donation_amount_title'.tr(),
-                        icon: Icons.favorite_outline,
+                        icon: CupertinoIcons.heart,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -528,7 +529,7 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
 
                       _buildSection(
                         title: 'donor_information_title'.tr(),
-                        icon: Icons.person_outline,
+                        icon: CupertinoIcons.person,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

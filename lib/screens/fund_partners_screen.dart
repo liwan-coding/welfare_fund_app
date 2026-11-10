@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:url_launcher/url_launcher_string.dart';
@@ -142,7 +143,7 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
           iconTheme: const IconThemeData(color: AppColors.surface),
           leading: IconButton(
             icon: Icon(
-              isRTL ? Icons.arrow_forward_ios : Icons.arrow_back_ios,
+              isRTL ? CupertinoIcons.chevron_forward : CupertinoIcons.chevron_back,
               color: AppColors.surface,
               size: 20,
             ),
@@ -163,7 +164,7 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.refresh_rounded, color: AppColors.surface, size: 22),
+              icon: const Icon(CupertinoIcons.refresh, color: AppColors.surface, size: 22),
               onPressed: _isLoading ? null : _load,
             ),
           ],
@@ -213,7 +214,7 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  Icons.error_outline_rounded,
+                  CupertinoIcons.exclamationmark_circle,
                   size: 56,
                   color: AppColors.error,
                 ),
@@ -235,7 +236,7 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
                     borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
                   ),
                 ),
-                icon: const Icon(Icons.refresh_rounded, size: 20),
+                icon: const Icon(CupertinoIcons.refresh, size: 20),
                 label: Text('retry'.tr(), style: AppTextStyles.buttonMedium),
               ),
             ],

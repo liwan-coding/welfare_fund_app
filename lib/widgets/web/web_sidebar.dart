@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import '../../constants/app_config.dart';
@@ -47,7 +48,7 @@ class WebSidebar extends StatelessWidget {
                 children: [
                   _buildNavItem(
                     context: context,
-                    icon: Icons.home_rounded,
+                    icon: CupertinoIcons.house_fill,
                     label: 'home'.tr(),
                     index: 0,
                   ),
@@ -59,7 +60,7 @@ class WebSidebar extends StatelessWidget {
                   ),
                   _buildNavItem(
                     context: context,
-                    icon: Icons.favorite_rounded,
+                    icon: CupertinoIcons.heart_fill,
                     label: 'quick_donate'.tr(),
                     index: 2,
                   ),
@@ -304,7 +305,7 @@ class WebSidebar extends StatelessWidget {
           onPressed: () {
             context.read<AuthProvider>().logout();
           },
-          icon: const Icon(Icons.logout_rounded),
+          icon: const Icon(CupertinoIcons.square_arrow_right),
           color: AppColors.textSecondary,
           tooltip: 'logout'.tr(),
         ),
