@@ -8,6 +8,7 @@ export 'widgets/app_chip_bar.dart';
 export 'widgets/app_empty_state.dart';
 export 'widgets/app_feedback.dart';
 export 'widgets/app_list.dart';
+export 'widgets/app_motion_widgets.dart';
 export 'widgets/app_nav_bar.dart';
 export 'widgets/app_search_field.dart';
 export 'widgets/app_tab_bar.dart';

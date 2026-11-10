@@ -97,8 +97,13 @@ class _TabButton extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(selected ? item.selectedIcon : item.icon,
-                color: color, size: 25),
+            AnimatedScale(
+              scale: selected ? 1.1 : 1,
+              duration: const Duration(milliseconds: 280),
+              curve: Curves.easeOutBack,
+              child: Icon(selected ? item.selectedIcon : item.icon,
+                  color: color, size: 25),
+            ),
             const SizedBox(height: 2),
             Text(
               item.label,

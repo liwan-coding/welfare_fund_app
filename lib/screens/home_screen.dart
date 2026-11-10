@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart' show CupertinoButton, CupertinoIcons, CupertinoPageRoute;
+import 'package:flutter/cupertino.dart'
+    show
+        CupertinoButton,
+        CupertinoIcons,
+        CupertinoPageRoute,
+        CupertinoSliverRefreshControl;
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -10,6 +15,7 @@ import 'package:flutter/services.dart';
 import '../widgets/common/campaign_card.dart';
 import '../widgets/common/main_tab_bar.dart';
 import '../design/design.dart';
+import '../widgets/home/hero_banner.dart';
 import '../widgets/home/home_header.dart';
 import '../widgets/home/home_quick_actions.dart';
 import '../models/campaign.dart';
@@ -43,12 +49,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final StudentRegistrationService _studentService = StudentRegistrationService();
+  final StudentRegistrationService _studentService =
+      StudentRegistrationService();
   final CampaignService _campaignService = CampaignService();
   final DonationService _donationService = DonationService();
   final BannerService _bannerService = BannerService();
-  final PageController _bannerPageController = PageController(viewportFraction: 0.92);
-  final StudentRegistrationCardService _registrationCardService = StudentRegistrationCardService();
+  final PageController _bannerPageController =
+      PageController(viewportFraction: 0.92);
+  final StudentRegistrationCardService _registrationCardService =
+      StudentRegistrationCardService();
   List<Campaign> _campaigns = [];
   List<Campaign> _allCampaigns = []; // جميع الحملات الأصلية
   List<Donation> _recentDonations = []; // التبرعات الأخيرة
@@ -58,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Map<String, List<String>> _categoryMatchers = {};
   bool _isLoadingCategories = false;
   String _selectedCategoryId = 'all';
-  
+
   // Application status variables
   Map<String, dynamic>? _applicationData;
   bool _isCheckingApplication = false;
@@ -79,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadBanners();
     _checkApplicationStatus();
     _loadRegistrationCard();
-    
+
     // Check application status again after a delay to ensure fresh data
     // This is important after returning from registration screen
     Future.delayed(const Duration(seconds: 1), () {
@@ -88,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _checkApplicationStatus();
       }
     });
-    
+
     // Listen to auth changes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -133,7 +142,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return fallbackKey.tr();
   }
 
-  List<Color> _getRegistrationCardOverlayColors(StudentRegistrationCardData? cardData) {
+  List<Color> _getRegistrationCardOverlayColors(
+      StudentRegistrationCardData? cardData) {
     final background = cardData?.background;
     final List<Color> overlayColors = [];
 
@@ -176,12 +186,15 @@ class _HomeScreenState extends State<HomeScreen> {
       final bool hasApiCategories = categoriesFromApi.isNotEmpty;
       final normalizedCategories = hasApiCategories
           ? _normalizeCategories(categoriesFromApi)
-          : _normalizeCategories(CategoryUtils.getLocalizedFallbackCategories());
+          : _normalizeCategories(
+              CategoryUtils.getLocalizedFallbackCategories());
 
       if (!hasApiCategories) {
-        print('HomeScreen: Categories API returned empty list, using localized fallback categories.');
+        print(
+            'HomeScreen: Categories API returned empty list, using localized fallback categories.');
       } else {
-        print('HomeScreen: Loaded ${normalizedCategories.length} categories from API.');
+        print(
+            'HomeScreen: Loaded ${normalizedCategories.length} categories from API.');
       }
 
       setState(() {
@@ -216,22 +229,24 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _isLoadingCampaigns = true;
       });
-      
+
       List<Campaign> allCampaigns = [];
-      
+
       // Load only charity campaigns for the home page (for general users)
       try {
         final charityCampaigns = await _campaignService.getCharityCampaigns();
         allCampaigns.addAll(charityCampaigns);
-        print('HomeScreen: Successfully loaded ${charityCampaigns.length} charity campaigns from API');
-        print('HomeScreen: Charity campaigns are for general users to donate directly');
+        print(
+            'HomeScreen: Successfully loaded ${charityCampaigns.length} charity campaigns from API');
+        print(
+            'HomeScreen: Charity campaigns are for general users to donate directly');
       } catch (error) {
         print('HomeScreen: Failed to load charity campaigns: $error');
       }
-      
+
       // Note: Student programs are loaded separately in student registration screens
       // They are for students who want to register for support, not for general donation
-      
+
       // Only use data from API - no fallback
       if (allCampaigns.isNotEmpty) {
         setState(() {
@@ -240,10 +255,13 @@ class _HomeScreenState extends State<HomeScreen> {
         });
 
         _applyCategoryFilter(_selectedCategoryId);
-        
-        print('HomeScreen: Successfully loaded ${allCampaigns.length} total campaigns from API');
-        print('HomeScreen: Campaign IDs: ${allCampaigns.map((c) => c.id).toList()}');
-        print('HomeScreen: Campaign titles: ${allCampaigns.map((c) => c.title).toList()}');
+
+        print(
+            'HomeScreen: Successfully loaded ${allCampaigns.length} total campaigns from API');
+        print(
+            'HomeScreen: Campaign IDs: ${allCampaigns.map((c) => c.id).toList()}');
+        print(
+            'HomeScreen: Campaign titles: ${allCampaigns.map((c) => c.title).toList()}');
       } else {
         // No data from API - show empty state
         print('HomeScreen: No data from API, showing empty state');
@@ -253,25 +271,6 @@ class _HomeScreenState extends State<HomeScreen> {
           _isLoadingCampaigns = false;
           _selectedCategoryId = 'all';
         });
-        
-        // Show message to user
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'no_campaigns_available'.tr(),
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.surface,
-                ),
-              ),
-              backgroundColor: AppColors.warning,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          );
-        }
       }
     } catch (error) {
       print('HomeScreen: Error loading campaigns from API: $error');
@@ -281,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _isLoadingCampaigns = false;
         _selectedCategoryId = 'all';
       });
-      
+
       // Show error message to user
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -309,10 +308,12 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _isLoadingRecentDonations = true;
       });
-      
-      final recentDonations = await _donationService.getRecentDonations(limit: 5);
-      print('HomeScreen: Successfully loaded ${recentDonations.length} recent donations from API');
-      
+
+      final recentDonations =
+          await _donationService.getRecentDonations(limit: 5);
+      print(
+          'HomeScreen: Successfully loaded ${recentDonations.length} recent donations from API');
+
       setState(() {
         _recentDonations = recentDonations;
         _isLoadingRecentDonations = false;
@@ -387,7 +388,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       // Ignore if provider is not available
     }
-    
+
     _searchController.dispose();
     _bannerPageController.dispose();
     super.dispose();
@@ -412,321 +413,80 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showLoginBottomSheet() {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.75,
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(28),
-            topRight: Radius.circular(28),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 20,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        child: SingleChildScrollView(
+      showDragHandle: true,
+      builder: (sheetContext) {
+        final p = AppPalette.of(sheetContext);
+
+        void go(Widget screen) {
+          Navigator.pop(sheetContext);
+          Navigator.push(
+            context,
+            CupertinoPageRoute(builder: (_) => screen),
+          );
+        }
+
+        return SafeArea(
           child: Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
+            padding: const EdgeInsets.fromLTRB(
+              AppSpace.screen,
+              0,
+              AppSpace.screen,
+              AppSpace.md,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Enhanced Handle bar
-                Container(
-                  margin: const EdgeInsets.only(top: 16),
-                  width: 50,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        AppColors.primary.withOpacity(0.3),
-                        AppColors.secondary.withOpacity(0.3),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
-                
-                const SizedBox(height: 24),
-                
-                // Enhanced Icon with animation
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        AppColors.primary.withOpacity(0.15),
-                        AppColors.secondary.withOpacity(0.15),
-                        AppColors.accent.withOpacity(0.1),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: AppColors.primary.withOpacity(0.2),
-                      width: 1,
-                    ),
-                  ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // Background circle
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.1),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      // Main icon
-                      const Icon(
-                        CupertinoIcons.lock,
-                        size: 36,
-                        color: AppColors.primary,
-                      ),
-                    ],
-                  ),
-                ),
-                
-                const SizedBox(height: 24),
-                
-                // Enhanced Title with gradient
-                ShaderMask(
-                  shaderCallback: (bounds) => const LinearGradient(
-                    colors: [
-                      AppColors.primary,
-                      AppColors.secondary,
-                    ],
-                  ).createShader(bounds),
-                  child: Text(
-                    'login_required'.tr(),
-                    style: AppTextStyles.headlineSmall.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                
-                const SizedBox(height: 12),
-                
-                // Enhanced Description with better styling
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                  decoration: BoxDecoration(
-                    color: AppColors.background,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: AppColors.surfaceVariant,
-                      width: 1,
-                    ),
-                  ),
-                  child: Text(
-                    'login_to_view_donations'.tr(),
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
-                      height: 1.5,
-                      fontSize: 15,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                
-                const SizedBox(height: 28),
-                
-                // Enhanced Login Button with better effects
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                Center(
                   child: Container(
-                    width: double.infinity,
-                    height: 56,
+                    width: 64,
+                    height: 64,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          AppColors.primary,
-                          AppColors.secondary,
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(18),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withOpacity(0.4),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
+                      shape: BoxShape.circle,
+                      color: p.tint.withValues(alpha: 0.14),
                     ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(18),
-                        onTap: () {
-                          Navigator.pop(context);
-                          Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                              builder: (context) => const LoginScreen(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Icon(
-                                  Icons.login,
-                                  color: AppColors.surface,
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                'login'.tr(),
-                                style: AppTextStyles.buttonLarge.copyWith(
-                                  color: AppColors.surface,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    child: Icon(
+                      CupertinoIcons.lock_fill,
+                      color: p.tint,
+                      size: 28,
                     ),
                   ),
                 ),
-                
-                const SizedBox(height: 16),
-                
-                // Enhanced Register Button
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Container(
-                    width: double.infinity,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(
-                        color: AppColors.primary.withOpacity(0.4),
-                        width: 2,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(18),
-                        onTap: () {
-                          Navigator.pop(context);
-                          Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                              builder: (context) => const RegisterScreen(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Icon(
-                                  CupertinoIcons.person_add,
-                                  color: AppColors.primary,
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                'create_new_account'.tr(),
-                                style: AppTextStyles.buttonLarge.copyWith(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                const SizedBox(height: AppSpace.md),
+                Text(
+                  'login_required'.tr(),
+                  textAlign: TextAlign.center,
+                  style: AppType.title2.copyWith(color: p.label),
                 ),
-                
-                const SizedBox(height: 20),
-                
-                // Enhanced Skip button
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.textTertiary.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          CupertinoIcons.xmark,
-                          size: 16,
-                          color: AppColors.textSecondary.withOpacity(0.7),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'skip'.tr(),
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                const SizedBox(height: AppSpace.xxs),
+                Text(
+                  'login_to_view_donations'.tr(),
+                  textAlign: TextAlign.center,
+                  style: AppType.subheadline.copyWith(color: p.secondaryLabel),
                 ),
-                
-                const SizedBox(height: 20),
+                const SizedBox(height: AppSpace.xl),
+                AppButton(
+                  label: 'login'.tr(),
+                  onPressed: () => go(const LoginScreen()),
+                ),
+                const SizedBox(height: AppSpace.xs),
+                AppButton(
+                  label: 'create_new_account'.tr(),
+                  style: AppButtonStyle.tinted,
+                  onPressed: () => go(const RegisterScreen()),
+                ),
+                AppButton(
+                  label: 'skip'.tr(),
+                  style: AppButtonStyle.plain,
+                  onPressed: () => Navigator.pop(sheetContext),
+                ),
               ],
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -734,14 +494,15 @@ class _HomeScreenState extends State<HomeScreen> {
     print('═══════════════════════════════════════════════════════════');
     print('🔄 [_checkApplicationStatus] Called');
     print('═══════════════════════════════════════════════════════════');
-    
+
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final isAuthenticated = authProvider.isAuthenticated;
       print('🔐 [_checkApplicationStatus] isAuthenticated: $isAuthenticated');
-      
+
       if (!isAuthenticated) {
-        print('❌ [_checkApplicationStatus] User not authenticated, clearing application data');
+        print(
+            '❌ [_checkApplicationStatus] User not authenticated, clearing application data');
         setState(() {
           _applicationData = null;
           _isCheckingApplication = false;
@@ -749,52 +510,61 @@ class _HomeScreenState extends State<HomeScreen> {
         print('📝 [_checkApplicationStatus] _applicationData set to null');
         return;
       }
-      
-      print('⏳ [_checkApplicationStatus] Setting _isCheckingApplication = true');
+
+      print(
+          '⏳ [_checkApplicationStatus] Setting _isCheckingApplication = true');
       setState(() {
         _isCheckingApplication = true;
       });
-      
-      print('🌐 [_checkApplicationStatus] Fetching latest application data from server...');
-      print('📍 [_checkApplicationStatus] Using endpoint: GET /api/v1/students/registration/my-registration');
-      
+
+      print(
+          '🌐 [_checkApplicationStatus] Fetching latest application data from server...');
+      print(
+          '📍 [_checkApplicationStatus] Using endpoint: GET /api/v1/students/registration/my-registration');
+
       // Add a small delay to ensure backend has processed the registration
       await Future.delayed(const Duration(milliseconds: 500));
-      
-      print('📡 [_checkApplicationStatus] Calling getCurrentUserRegistration()...');
+
+      print(
+          '📡 [_checkApplicationStatus] Calling getCurrentUserRegistration()...');
       final application = await _studentService.getCurrentUserRegistration();
-      
+
       // Debug: Print application data
       print('═══════════════════════════════════════════════════════════');
       print('📦 [_checkApplicationStatus] API Response Received');
       print('═══════════════════════════════════════════════════════════');
       print('📋 [_checkApplicationStatus] Raw application data: $application');
-      print('📋 [_checkApplicationStatus] Application is null: ${application == null}');
-      
+      print(
+          '📋 [_checkApplicationStatus] Application is null: ${application == null}');
+
       Map<String, dynamic>? normalizedApplication;
-      
+
       if (application != null) {
         print('✅ [_checkApplicationStatus] Application data is NOT null');
         // Create a copy to avoid modifying the original
         normalizedApplication = Map<String, dynamic>.from(application);
-        
-        print('📊 [_checkApplicationStatus] Application keys: ${normalizedApplication.keys.toList()}');
-        print('📊 [_checkApplicationStatus] Status before normalization: ${normalizedApplication['status']}');
-        print('📊 [_checkApplicationStatus] Status type: ${normalizedApplication['status'].runtimeType}');
+
+        print(
+            '📊 [_checkApplicationStatus] Application keys: ${normalizedApplication.keys.toList()}');
+        print(
+            '📊 [_checkApplicationStatus] Status before normalization: ${normalizedApplication['status']}');
+        print(
+            '📊 [_checkApplicationStatus] Status type: ${normalizedApplication['status'].runtimeType}');
         print('📊 [_checkApplicationStatus] Full application data:');
         normalizedApplication.forEach((key, value) {
           print('   - $key: $value (${value.runtimeType})');
         });
-        
+
         // Normalize status format - ensure it matches expected values
         // Backend status values: under_review, accepted, rejected, completed
-        String rawStatus = normalizedApplication['status']?.toString() ?? 'under_review';
+        String rawStatus =
+            normalizedApplication['status']?.toString() ?? 'under_review';
         String normalizedStatus = rawStatus.toLowerCase().trim();
-        
+
         print('🔄 [_checkApplicationStatus] Normalizing status...');
         print('   - Raw status: "$rawStatus"');
         print('   - Normalized status: "$normalizedStatus"');
-        
+
         // Normalize status values to match backend response: under_review, accepted, rejected, completed
         String finalStatus;
         switch (normalizedStatus) {
@@ -819,50 +589,58 @@ class _HomeScreenState extends State<HomeScreen> {
             print('   ✅ Matched: completed');
             break;
           default:
-            print('   ⚠️ Warning: Unknown status: "$rawStatus", defaulting to under_review');
+            print(
+                '   ⚠️ Warning: Unknown status: "$rawStatus", defaulting to under_review');
             finalStatus = 'under_review';
         }
-        
+
         // Ensure the normalized status is set in the application data
         normalizedApplication['status'] = finalStatus;
-        
+
         print('✅ [_checkApplicationStatus] Normalized status: "$finalStatus"');
-        print('✅ [_checkApplicationStatus] Status after normalization: ${normalizedApplication['status']}');
+        print(
+            '✅ [_checkApplicationStatus] Status after normalization: ${normalizedApplication['status']}');
       } else {
         print('❌ [_checkApplicationStatus] Application data is NULL');
-        print('❌ [_checkApplicationStatus] This means user may not have registered yet OR API returned null');
+        print(
+            '❌ [_checkApplicationStatus] This means user may not have registered yet OR API returned null');
       }
-      
+
       print('═══════════════════════════════════════════════════════════');
-      
+
       if (!mounted) {
-        print('⚠️ [_checkApplicationStatus] Widget not mounted, skipping setState');
+        print(
+            '⚠️ [_checkApplicationStatus] Widget not mounted, skipping setState');
         return;
       }
-      
+
       print('🔄 [_checkApplicationStatus] Updating state...');
       print('   - Old _applicationData: $_applicationData');
       print('   - New _applicationData: $normalizedApplication');
-      
+
       setState(() {
         _applicationData = normalizedApplication;
         _isCheckingApplication = false;
       });
-      
+
       print('✅ [_checkApplicationStatus] State updated successfully');
-      print('📋 [_checkApplicationStatus] Current _applicationData: $_applicationData');
+      print(
+          '📋 [_checkApplicationStatus] Current _applicationData: $_applicationData');
       if (normalizedApplication != null) {
-        print('📋 [_checkApplicationStatus] Status in _applicationData: ${normalizedApplication['status']}');
+        print(
+            '📋 [_checkApplicationStatus] Status in _applicationData: ${normalizedApplication['status']}');
       } else {
-        print('📋 [_checkApplicationStatus] _applicationData is NULL (will show "سجل الآن")');
+        print(
+            '📋 [_checkApplicationStatus] _applicationData is NULL (will show "سجل الآن")');
       }
       print('═══════════════════════════════════════════════════════════');
     } catch (error) {
       print('❌ [_checkApplicationStatus] Error occurred: $error');
       print('❌ [_checkApplicationStatus] Error type: ${error.runtimeType}');
-      print('❌ [_checkApplicationStatus] This error will be caught - _applicationData will remain null');
+      print(
+          '❌ [_checkApplicationStatus] This error will be caught - _applicationData will remain null');
       print('═══════════════════════════════════════════════════════════');
-      
+
       // Even if there's an error, set _isCheckingApplication to false
       if (!mounted) return;
       setState(() {
@@ -870,7 +648,7 @@ class _HomeScreenState extends State<HomeScreen> {
         // Keep _applicationData as null on error
         // This means button will show "سجل الآن"
       });
-      
+
       // Log the full error for debugging
       print('Full error details:');
       print(error.toString());
@@ -882,13 +660,13 @@ class _HomeScreenState extends State<HomeScreen> {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final isAuthenticated = authProvider.isAuthenticated;
       print('Auth check result for student registration: $isAuthenticated');
-      
+
       if (!isAuthenticated) {
         print('User not authenticated, showing bottom sheet');
         _showLoginBottomSheet();
         return;
       }
-      
+
       // If user has a registration, show it in read-only mode
       if (_applicationData != null) {
         // Debug: Print data being passed to registration screen
@@ -896,7 +674,7 @@ class _HomeScreenState extends State<HomeScreen> {
         print('Passing data to registration screen: $_applicationData');
         print('Status: ${_applicationData!['status']}');
         print('========================');
-        
+
         Navigator.push(
           context,
           CupertinoPageRoute(
@@ -907,7 +685,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ).then((_) {
           // Refresh application status when returning from registration screen
-          print('HomeScreen: Returned from registration screen, refreshing application status...');
+          print(
+              'HomeScreen: Returned from registration screen, refreshing application status...');
           _checkApplicationStatus();
         });
       } else {
@@ -919,7 +698,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ).then((_) {
           // Refresh application status when returning from registration screen
-          print('HomeScreen: Returned from registration screen, refreshing application status...');
+          print(
+              'HomeScreen: Returned from registration screen, refreshing application status...');
           _checkApplicationStatus();
         });
       }
@@ -933,35 +713,39 @@ class _HomeScreenState extends State<HomeScreen> {
     print('═══════════════════════════════════════════════════════════');
     print('🔘 [_getButtonText] Called');
     print('═══════════════════════════════════════════════════════════');
-    print('📋 [_getButtonText] _isCheckingApplication: $_isCheckingApplication');
+    print(
+        '📋 [_getButtonText] _isCheckingApplication: $_isCheckingApplication');
     print('📋 [_getButtonText] _applicationData: $_applicationData');
-    print('📋 [_getButtonText] _applicationData is null: ${_applicationData == null}');
-    
+    print(
+        '📋 [_getButtonText] _applicationData is null: ${_applicationData == null}');
+
     if (_isCheckingApplication) {
       print('⏳ [_getButtonText] Currently checking, returning: checking');
       print('═══════════════════════════════════════════════════════════');
       return 'checking'.tr();
     }
-    
+
     if (_applicationData == null) {
-      print('❌ [_getButtonText] _applicationData is NULL, returning: register_now');
+      print(
+          '❌ [_getButtonText] _applicationData is NULL, returning: register_now');
       print('❌ [_getButtonText] This is why you see "سجل الآن" button');
       print('═══════════════════════════════════════════════════════════');
       return 'register_now'.tr();
     }
-    
+
     print('✅ [_getButtonText] _applicationData is NOT null');
-    print('📋 [_getButtonText] _applicationData keys: ${_applicationData!.keys.toList()}');
-    
+    print(
+        '📋 [_getButtonText] _applicationData keys: ${_applicationData!.keys.toList()}');
+
     final status = _applicationData!['status'] ?? 'unknown';
-    
+
     print('📊 [_getButtonText] Status from _applicationData: "$status"');
     print('📊 [_getButtonText] Status type: ${status.runtimeType}');
-    
+
     // Normalize status
     String normalizedStatus = status.toString().toLowerCase().trim();
     print('📊 [_getButtonText] Normalized status: "$normalizedStatus"');
-    
+
     String buttonText;
     switch (normalizedStatus) {
       // Backend status values: under_review, accepted, rejected, completed
@@ -987,9 +771,10 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
       default:
         buttonText = 'view_application'.tr();
-        print('⚠️ [_getButtonText] Unknown status, using default: view_application');
+        print(
+            '⚠️ [_getButtonText] Unknown status, using default: view_application');
     }
-    
+
     print('✅ [_getButtonText] Returning button text: "$buttonText"');
     print('═══════════════════════════════════════════════════════════');
     return buttonText;
@@ -1000,12 +785,12 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_applicationData == null) {
       return AppColors.primary;
     }
-    
+
     final status = _applicationData!['status'] ?? 'unknown';
-    
+
     // Normalize status
     String normalizedStatus = status.toLowerCase();
-    
+
     switch (normalizedStatus) {
       case 'under_review':
       case 'قيد المراجعة':
@@ -1078,15 +863,18 @@ class _HomeScreenState extends State<HomeScreen> {
       heroCards.addAll(_banners.map(_buildBannerCard));
     }
 
+    if (heroCards.length == 1) return heroCards.first;
+
     final showIndicators = heroCards.length > 1;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: 200,
+          height: HeroBanner.height,
           child: PageView.builder(
             controller: _bannerPageController,
+            padEnds: false,
             itemCount: heroCards.length,
             onPageChanged: (index) {
               setState(() {
@@ -1094,7 +882,7 @@ class _HomeScreenState extends State<HomeScreen> {
               });
             },
             itemBuilder: (context, index) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
+              padding: const EdgeInsetsDirectional.only(end: AppSpace.xs),
               child: heroCards[index],
             ),
           ),
@@ -1108,18 +896,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildStudentRegistrationCard() {
-    print('═══════════════════════════════════════════════════════════');
-    print('🎨 [_buildStudentRegistrationCard] Building registration card');
-    print('═══════════════════════════════════════════════════════════');
-    print('📋 [_buildStudentRegistrationCard] _applicationData: $_applicationData');
-    print('📋 [_buildStudentRegistrationCard] _applicationData is null: ${_applicationData == null}');
-    print('📋 [_buildStudentRegistrationCard] _isCheckingApplication: $_isCheckingApplication');
-    
-    if (_applicationData != null) {
-      print('📋 [_buildStudentRegistrationCard] _applicationData keys: ${_applicationData!.keys.toList()}');
-      print('📋 [_buildStudentRegistrationCard] _applicationData status: ${_applicationData!['status']}');
-    }
-    
     final cardData = _registrationCardData;
     final String imageUrl = (cardData?.backgroundImageUrl?.isNotEmpty ?? false)
         ? cardData!.backgroundImageUrl!
@@ -1139,328 +915,31 @@ class _HomeScreenState extends State<HomeScreen> {
       englishValue: cardData?.subtitleEn,
     );
 
-    final List<Color> overlayColors = _getRegistrationCardOverlayColors(cardData);
-
-    return Container(
-      height: 200,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withOpacity(0.25),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          AppColors.primary.withOpacity(0.6),
-                          AppColors.primary.withOpacity(0.4),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              height: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: overlayColors,
-                ),
-              ),
-            ),
-            SizedBox(
-              width: double.infinity,
-              height: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    headlineText,
-                    style: AppTextStyles.titleLarge.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      height: 1.2,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    subtitleText,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: Colors.white.withOpacity(0.95),
-                      shadows: [
-                        Shadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 6,
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 18),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: Container(
-                      width: double.infinity,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: _onRegister,
-                          borderRadius: BorderRadius.circular(12),
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.edit_note,
-                                  color: AppColors.primary,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 8),
-                                 Builder(
-                                   builder: (context) {
-                                     final buttonText = _getButtonText();
-                                     final buttonColor = _getButtonColor();
-                                     print('🎨 [_buildStudentRegistrationCard] Rendering button');
-                                     print('   - Button text: "$buttonText"');
-                                     print('   - Button color: $buttonColor');
-                                     print('   - _applicationData: $_applicationData');
-                                     return Text(
-                                       buttonText,
-                                       style: AppTextStyles.buttonMedium.copyWith(
-                                         color: buttonColor,
-                                         fontWeight: FontWeight.w600,
-                                         fontSize: 15,
-                                         shadows: [
-                                           Shadow(
-                                             color: Colors.black.withOpacity(0.08),
-                                             blurRadius: 2,
-                                           ),
-                                         ],
-                                       ),
-                                     );
-                                   },
-                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+    return HeroBanner(
+      title: headlineText,
+      description: subtitleText,
+      imageUrl: imageUrl,
+      actionLabel: _getButtonText(),
+      actionColor: _getButtonColor(),
+      onTap: _onRegister,
     );
   }
 
   Widget _buildBannerLoadingCard() {
-    return Container(
-      height: 200,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: LinearGradient(
-          colors: [
-            AppColors.surface.withOpacity(0.9),
-            AppColors.surfaceVariant.withOpacity(0.9),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        border: Border.all(
-          color: AppColors.surfaceVariant,
-          width: 1,
-        ),
-      ),
-      child: const Center(
-        child: CircularProgressIndicator(
-          color: AppColors.primary,
-        ),
-      ),
-    );
+    return const AppSkeleton(
+        height: HeroBanner.height, radius: AppRadius.lg + 4);
   }
 
   Widget _buildBannerCard(AppBanner banner) {
-    final title = _getBannerTitle(banner);
-    final subtitle = _getBannerSubtitle(banner);
-    final description = _getBannerDescription(banner);
-    final imageUrl = banner.mobileImageUrl ?? banner.imageUrl;
     final hasAction = (banner.actionUrl ?? '').isNotEmpty;
-    final actionLabel = banner.actionLabel ?? 'donate_now'.tr();
 
-    return GestureDetector(
+    return HeroBanner(
+      title: _getBannerTitle(banner),
+      eyebrow: _getBannerSubtitle(banner),
+      description: _getBannerDescription(banner),
+      imageUrl: banner.mobileImageUrl ?? banner.imageUrl,
+      actionLabel: hasAction ? (banner.actionLabel ?? 'donate_now'.tr()) : null,
       onTap: hasAction ? () => _handleBannerTap(banner) : null,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: Container(
-          height: 200,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            color: AppColors.primary,
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withOpacity(0.2),
-                blurRadius: 18,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              if (imageUrl != null && imageUrl.isNotEmpty)
-                Positioned.fill(
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          gradient: AppColors.modernGradient,
-                        ),
-                      );
-                    },
-                  ),
-                )
-              else
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: AppColors.modernGradient,
-                  ),
-                ),
-              Padding(
-                padding: const EdgeInsets.all(22),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (subtitle.isNotEmpty)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.4),
-                          ),
-                        ),
-                        child: Text(
-                          subtitle,
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    if (subtitle.isNotEmpty) const SizedBox(height: 12),
-                    Text(
-                      title,
-                      style: AppTextStyles.headlineSmall.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        height: 1.1,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-                    if (description.isNotEmpty)
-                      Text(
-                        description,
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: Colors.white.withOpacity(0.92),
-                          height: 1.4,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    const Spacer(),
-                    if (hasAction)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
-                          borderRadius: BorderRadius.circular(24),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.18),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              actionLabel,
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            const Icon(
-                              AppIcons.chevronForward,
-                              size: 14,
-                              color: AppColors.primary,
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -1612,7 +1091,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return 'all';
   }
 
-  Map<String, List<String>> _createCategoryMatchers(List<Map<String, dynamic>> categories) {
+  Map<String, List<String>> _createCategoryMatchers(
+      List<Map<String, dynamic>> categories) {
     final matchers = <String, List<String>>{};
 
     for (final category in categories) {
@@ -1644,14 +1124,18 @@ class _HomeScreenState extends State<HomeScreen> {
     return matchers;
   }
 
-  List<Map<String, dynamic>> _normalizeCategories(List<Map<String, dynamic>> categories) {
+  List<Map<String, dynamic>> _normalizeCategories(
+      List<Map<String, dynamic>> categories) {
     return categories.map((category) {
       final normalized = Map<String, dynamic>.from(category);
       normalized['id'] = (normalized['id'] ?? '').toString();
-      final fallbackName = (normalized['name'] ?? normalized['title'] ?? '').toString();
+      final fallbackName =
+          (normalized['name'] ?? normalized['title'] ?? '').toString();
       normalized['name'] = fallbackName;
-      normalized['name_ar'] = (normalized['name_ar'] ?? fallbackName).toString();
-      normalized['name_en'] = (normalized['name_en'] ?? fallbackName).toString();
+      normalized['name_ar'] =
+          (normalized['name_ar'] ?? fallbackName).toString();
+      normalized['name_en'] =
+          (normalized['name_en'] ?? fallbackName).toString();
       normalized['status'] = (normalized['status'] ?? 'active').toString();
       return normalized;
     }).toList();
@@ -1681,7 +1165,8 @@ class _HomeScreenState extends State<HomeScreen> {
       } else {
         filteredCampaigns = _allCampaigns.where((campaign) {
           final locale = context.locale.languageCode;
-          final campaignCategory = campaign.getLocalizedCategory(locale).trim().toLowerCase();
+          final campaignCategory =
+              campaign.getLocalizedCategory(locale).trim().toLowerCase();
           return matcherValues.contains(campaignCategory);
         }).toList();
       }
@@ -1693,9 +1178,10 @@ class _HomeScreenState extends State<HomeScreen> {
       final locale = context.locale.languageCode;
       filteredCampaigns = filteredCampaigns.where((campaign) {
         final title = campaign.getLocalizedTitle(locale).toLowerCase();
-        final description = campaign.getLocalizedDescription(locale).toLowerCase();
+        final description =
+            campaign.getLocalizedDescription(locale).toLowerCase();
         final category = campaign.getLocalizedCategory(locale).toLowerCase();
-        
+
         // Also search in all language versions for better search results
         final titleAr = campaign.titleAr.toLowerCase();
         final titleEn = campaign.titleEn.toLowerCase();
@@ -1703,7 +1189,7 @@ class _HomeScreenState extends State<HomeScreen> {
         final descriptionEn = campaign.descriptionEn.toLowerCase();
         final categoryAr = campaign.categoryAr.toLowerCase();
         final categoryEn = campaign.categoryEn.toLowerCase();
-        
+
         return title.contains(searchQuery) ||
             titleAr.contains(searchQuery) ||
             titleEn.contains(searchQuery) ||
@@ -1780,36 +1266,74 @@ class _HomeScreenState extends State<HomeScreen> {
     required bool isAuthenticated,
     required Map<String, dynamic>? userProfile,
   }) {
+    final p = AppPalette.of(context);
     final media = MediaQuery.of(context);
     final userName = userProfile?['name'] ?? userProfile?['user']?['name'];
 
     return CustomScrollView(
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
       slivers: [
+        CupertinoSliverRefreshControl(onRefresh: _refreshHomeData),
         SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.only(top: media.padding.top),
-            child: HomeHeader(
-              displayName: isAuthenticated ? userName?.toString() : null,
-              onAvatarTap: isAuthenticated
-                  ? () => Navigator.push(
-                        context,
-                        CupertinoPageRoute(
-                          builder: (context) => const SettingsScreen(),
-                        ),
-                      )
-                  : _showLoginBottomSheet,
-            ),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(
-              AppSpace.screen,
-              0,
-              AppSpace.screen,
-              AppTabBar.barHeight + media.padding.bottom + AppSpace.xl,
-            ),
-            child: _buildSheetContent(),
+          child: Stack(
+            children: [
+              // Soft brand wash behind the header; scrolls away with it.
+              PositionedDirectional(
+                top: 0,
+                start: 0,
+                end: 0,
+                height: 360 + media.padding.top,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        p.tint.withValues(alpha: 0.16),
+                        p.secondary.withValues(alpha: 0.07),
+                        p.background.withValues(alpha: 0),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: media.padding.top),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppReveal(
+                      child: HomeHeader(
+                        displayName:
+                            isAuthenticated ? userName?.toString() : null,
+                        onAvatarTap: isAuthenticated
+                            ? () => Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) =>
+                                        const SettingsScreen(),
+                                  ),
+                                )
+                            : _showLoginBottomSheet,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(
+                        AppSpace.screen,
+                        0,
+                        AppSpace.screen,
+                        AppTabBar.barHeight +
+                            media.padding.bottom +
+                            AppSpace.xl,
+                      ),
+                      child: _buildSheetContent(),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -1823,61 +1347,52 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        HomeQuickActions(
-          onQuickDonate: _onQuickDonate,
-          onCampaigns: _onViewAllCampaigns,
-          onNews: _onFundNews,
+        AppReveal.staggered(
+          index: 1,
+          child: HomeQuickActions(
+            onQuickDonate: _onQuickDonate,
+            onCampaigns: _onViewAllCampaigns,
+            onNews: _onFundNews,
+          ),
         ),
         const SizedBox(height: AppSpace.lg),
-        _buildSearchField(),
+        AppReveal.staggered(index: 2, child: _buildSearchField()),
         const SizedBox(height: AppSpace.lg),
-        _buildStudentBannerCarousel(),
+        AppReveal.staggered(index: 3, child: _buildStudentBannerCarousel()),
         const SizedBox(height: AppSpace.xl),
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                'be_hope'.tr(),
-                style: AppType.title2.copyWith(color: p.label),
+        AppReveal.staggered(
+          index: 4,
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'be_hope'.tr(),
+                  style: AppType.title2.copyWith(color: p.label),
+                ),
               ),
-            ),
-            if (_campaigns.isNotEmpty) _buildViewAllButton(),
-          ],
+              if (_campaigns.isNotEmpty) _buildViewAllButton(),
+            ],
+          ),
         ),
         const SizedBox(height: AppSpace.sm),
-        _buildCategoryFilterSection(),
+        AppReveal.staggered(index: 5, child: _buildCategoryFilterSection()),
         const SizedBox(height: AppSpace.md),
-        if (_isLoadingCampaigns && displayedCampaigns.isEmpty)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: AppSpace.xxl),
-            child: Center(child: AppActivityIndicator()),
-          )
-        else if (_campaigns.isEmpty)
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpace.xxl),
-              child: Column(
-                children: [
-                  Icon(
-                    CupertinoIcons.heart,
-                    size: 44,
-                    color: p.tertiaryLabel,
-                  ),
-                  const SizedBox(height: AppSpace.md),
-                  Text(
-                    'no_active_campaigns'.tr(),
-                    style: AppType.subheadline.copyWith(color: p.secondaryLabel),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
+        if (_isLoadingCampaigns && displayedCampaigns.isEmpty) ...const [
+          CampaignCardSkeleton(),
+          CampaignCardSkeleton(),
+        ] else if (_campaigns.isEmpty)
+          AppEmptyState(
+            icon: CupertinoIcons.heart,
+            message: 'no_active_campaigns'.tr(),
           )
         else
-          ...displayedCampaigns.map(
-            (campaign) => CampaignCard(
-              campaign: campaign,
-              onTap: () => _onCampaignTap(campaign),
+          ...displayedCampaigns.indexed.map(
+            (entry) => AppReveal.staggered(
+              index: 6 + entry.$1,
+              child: CampaignCard(
+                campaign: entry.$2,
+                onTap: () => _onCampaignTap(entry.$2),
+              ),
             ),
           ),
         const SizedBox(height: AppSpace.xl),
@@ -1931,7 +1446,8 @@ class _HomeScreenState extends State<HomeScreen> {
           _refreshHomeData();
           setState(() => _currentIndex = index);
         } else if (index == 1) {
-          final authProvider = Provider.of<AuthProvider>(context, listen: false);
+          final authProvider =
+              Provider.of<AuthProvider>(context, listen: false);
           if (!authProvider.isAuthenticated) {
             _showLoginBottomSheet();
             return;
@@ -1974,7 +1490,9 @@ class _HomeScreenState extends State<HomeScreen> {
               color: p.tint.withValues(alpha: 0.14),
             ),
             child: Icon(
-              isAnonymous ? CupertinoIcons.shield_fill : CupertinoIcons.heart_fill,
+              isAnonymous
+                  ? CupertinoIcons.shield_fill
+                  : CupertinoIcons.heart_fill,
               color: p.tint,
               size: 18,
             ),
@@ -2101,10 +1619,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String _formatTimeAgo(DateTime? dateTime) {
     if (dateTime == null) return 'recently'.tr();
-    
+
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inDays > 0) {
       return '${difference.inDays} ${difference.inDays == 1 ? 'day_ago'.tr() : 'days_ago'.tr()}';
     } else if (difference.inHours > 0) {

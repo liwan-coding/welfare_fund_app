@@ -37,6 +37,7 @@ class AppMotion {
 @immutable
 class AppPalette {
   final Color tint; // brand accent (interactive elements)
+  final Color secondary; // brand teal (logo), for supporting accents
   final Color background; // systemGroupedBackground
   final Color surface; // secondarySystemGroupedBackground
   final Color fill; // tertiarySystemFill (inputs, chips)
@@ -50,6 +51,7 @@ class AppPalette {
 
   const AppPalette({
     required this.tint,
+    required this.secondary,
     required this.background,
     required this.surface,
     required this.fill,
@@ -66,6 +68,7 @@ class AppPalette {
 
   static const light = AppPalette(
     tint: brand,
+    secondary: Color(0xFF2DAAE2),
     background: Color(0xFFF2F2F7),
     surface: Color(0xFFFFFFFF),
     fill: Color(0xFFEEEEF0),
@@ -80,6 +83,7 @@ class AppPalette {
 
   static const dark = AppPalette(
     tint: Color(0xFFD65BB5), // lifted for contrast on black
+    secondary: Color(0xFF5AC8F5),
     background: Color(0xFF000000),
     surface: Color(0xFF1C1C1E),
     fill: Color(0xFF2C2C2E),

@@ -9,10 +9,10 @@ class AppColors {
   static const Color primaryDark = Color(0xFF8A1A6A);
   static const Color primaryDeep = Color(0xFF5C0F47);
 
-  // Secondary: iOS system blue (the brand blue is retired)
-  static const Color secondary = Color(0xFF007AFF);
-  static const Color secondaryLight = Color(0xFF007AFF);
-  static const Color secondaryDark = Color(0xFF0A60C8);
+  // Secondary: brand teal (from the logo)
+  static const Color secondary = Color(0xFF2DAAE2);
+  static const Color secondaryLight = Color(0xFF4FB8E8);
+  static const Color secondaryDark = Color(0xFF1E8BC4);
 
   // Accent: iOS system orange
   static const Color accent = Color(0xFFFF9500);

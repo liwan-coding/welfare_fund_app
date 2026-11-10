@@ -331,7 +331,10 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
             ),
             flexibleSpace: FlexibleSpaceBar(
               collapseMode: CollapseMode.parallax,
-              background: _buildCampaignImage(260),
+              background: Hero(
+                tag: 'campaign-${campaign.id}',
+                child: _buildCampaignImage(260),
+              ),
             ),
           ),
           SliverToBoxAdapter(

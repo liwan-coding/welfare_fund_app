@@ -6,7 +6,7 @@ import '../../models/campaign.dart';
 
 /// Campaign summary card: image on top, details below on a flat surface.
 /// Text never sits on the photo, so contrast does not depend on the image.
-class CampaignCard extends StatefulWidget {
+class CampaignCard extends StatelessWidget {
   final Campaign campaign;
   final VoidCallback onTap;
 
@@ -16,18 +16,11 @@ class CampaignCard extends StatefulWidget {
     required this.onTap,
   });
 
-  @override
-  State<CampaignCard> createState() => _CampaignCardState();
-}
-
-class _CampaignCardState extends State<CampaignCard> {
   static const double _imageHeight = 168;
-  bool _pressed = false;
 
   @override
   Widget build(BuildContext context) {
     final p = AppPalette.of(context);
-    final campaign = widget.campaign;
     final lang = context.locale.languageCode;
     final done = campaign.isCompleted;
     final accent = done ? p.success : p.tint;
@@ -35,93 +28,86 @@ class _CampaignCardState extends State<CampaignCard> {
     final title = campaign.getLocalizedTitle(lang);
     final riyal = 'riyal'.tr();
 
-    return Semantics(
-      button: true,
-      label: title,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTapDown: (_) => setState(() => _pressed = true),
-        onTapCancel: () => setState(() => _pressed = false),
-        onTapUp: (_) => setState(() => _pressed = false),
-        onTap: widget.onTap,
-        child: AnimatedOpacity(
-          opacity: _pressed ? 0.7 : 1,
-          duration: AppMotion.fast,
-          child: Container(
-            margin: const EdgeInsets.only(bottom: AppSpace.md),
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              color: p.surface,
-              borderRadius: BorderRadius.circular(AppRadius.lg),
+    return AppPressable(
+      semanticLabel: title,
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: AppSpace.md),
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: p.surface,
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Hero(
+              tag: 'campaign-${campaign.id}',
+              child: _CampaignImage(
+                  url: campaign.imageUrl.trim(), height: _imageHeight),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _CampaignImage(url: campaign.imageUrl.trim(), height: _imageHeight),
-                Padding(
-                  padding: const EdgeInsets.all(AppSpace.md),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            Padding(
+              padding: const EdgeInsets.all(AppSpace.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    (category.isNotEmpty ? category : 'campaign'.tr()),
+                    style: AppType.footnote.copyWith(
+                      color: accent,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpace.xxs),
+                  Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppType.headline.copyWith(color: p.label),
+                  ),
+                  const SizedBox(height: AppSpace.sm),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(2),
+                    child: LinearProgressIndicator(
+                      value: campaign.progressPercentage.clamp(0.0, 1.0),
+                      minHeight: 4,
+                      backgroundColor: p.fill,
+                      valueColor: AlwaysStoppedAnimation(accent),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpace.sm),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        (category.isNotEmpty ? category : 'campaign'.tr()),
-                        style: AppType.footnote.copyWith(
-                          color: accent,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpace.xxs),
-                      Text(
-                        title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppType.headline.copyWith(color: p.label),
-                      ),
-                      const SizedBox(height: AppSpace.sm),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(2),
-                        child: LinearProgressIndicator(
-                          value: campaign.progressPercentage.clamp(0.0, 1.0),
-                          minHeight: 4,
-                          backgroundColor: p.fill,
-                          valueColor: AlwaysStoppedAnimation(accent),
-                        ),
-                      ),
-                      const SizedBox(height: AppSpace.sm),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${campaign.currentAmount.toStringAsFixed(0)} $riyal',
-                                  style: AppType.subheadline.copyWith(
-                                    color: p.label,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Text(
-                                  done
-                                      ? 'campaign_goal_achieved'.tr()
-                                      : '/ ${campaign.targetAmount.toStringAsFixed(0)} $riyal',
-                                  style: AppType.footnote
-                                      .copyWith(color: p.secondaryLabel),
-                                ),
-                              ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${campaign.currentAmount.toStringAsFixed(0)} $riyal',
+                              style: AppType.subheadline.copyWith(
+                                color: p.label,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: AppSpace.sm),
-                          _StatusPill(done: done),
-                        ],
+                            Text(
+                              done
+                                  ? 'campaign_goal_achieved'.tr()
+                                  : '/ ${campaign.targetAmount.toStringAsFixed(0)} $riyal',
+                              style: AppType.footnote
+                                  .copyWith(color: p.secondaryLabel),
+                            ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(width: AppSpace.sm),
+                      _StatusPill(done: done),
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -147,7 +133,9 @@ class _StatusPill extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            done ? CupertinoIcons.checkmark_circle_fill : CupertinoIcons.heart_fill,
+            done
+                ? CupertinoIcons.checkmark_circle_fill
+                : CupertinoIcons.heart_fill,
             color: color,
             size: 14,
           ),
