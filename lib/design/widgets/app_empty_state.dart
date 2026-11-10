@@ -7,6 +7,7 @@ import 'app_button.dart';
 /// action (e.g. Retry).
 class AppEmptyState extends StatelessWidget {
   final IconData icon;
+  final String? title;
   final String message;
   final String? actionLabel;
   final VoidCallback? onAction;
@@ -14,6 +15,7 @@ class AppEmptyState extends StatelessWidget {
   const AppEmptyState({
     super.key,
     required this.icon,
+    this.title,
     required this.message,
     this.actionLabel,
     this.onAction,
@@ -30,6 +32,14 @@ class AppEmptyState extends StatelessWidget {
           children: [
             Icon(icon, size: 44, color: p.tertiaryLabel),
             const SizedBox(height: AppSpace.md),
+            if (title != null) ...[
+              Text(
+                title!,
+                textAlign: TextAlign.center,
+                style: AppType.title3.copyWith(color: p.label),
+              ),
+              const SizedBox(height: AppSpace.xxs),
+            ],
             Text(
               message,
               textAlign: TextAlign.center,

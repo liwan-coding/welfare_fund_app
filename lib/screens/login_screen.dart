@@ -7,6 +7,7 @@ import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import '../design/design.dart';
 import '../services/auth_service.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/common/brand_emblem.dart';
 import '../widgets/responsive/responsive_layout.dart';
 import '../widgets/web/web_page_wrapper.dart';
 import 'register_screen.dart';
@@ -128,6 +129,8 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          const Center(child: BrandEmblem(size: 72)),
+          const SizedBox(height: AppSpace.lg),
           const SizedBox(height: AppSpace.sm),
           AppTextField(
             controller: _phoneController,
