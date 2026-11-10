@@ -80,7 +80,11 @@ class _LoginScreenState extends State<LoginScreen> {
       if (success) {
         AppToast.show(context, 'login_successful'.tr(),
             kind: AppToastKind.success);
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/home',
+          (route) => false,
+        );
       } else {
         AppToast.show(context, 'login_failed'.tr(), kind: AppToastKind.error);
       }

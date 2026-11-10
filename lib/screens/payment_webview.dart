@@ -42,17 +42,17 @@ class _PaymentWebViewState extends State<PaymentWebView> {
   bool _isSuccessUrl(String url) {
     try {
       final uri = Uri.parse(url);
-      
+
       // ✅ إصلاح: منع deep link URLs (custom schemes) على الموبايل
       // هذه URLs تفتح التطبيق من جديد وتسبب فتح صفحة مكررة
       if (!kIsWeb && uri.scheme != 'http' && uri.scheme != 'https') {
         print('PaymentWebView: Blocking deep link URL (custom scheme): $url');
         return false;
       }
-      
+
       final host = uri.host.toLowerCase();
       final path = uri.path.toLowerCase();
-      
+
       // Whitelist للـ hosts المسموحة
       final allowedHosts = [
         'sfund.app',
@@ -60,15 +60,19 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         'api.thawani.om',
         'localhost',
       ];
-      
+
       // ✅ إصلاح: السماح بـ IP addresses المحلية (للاختبار)
       // التحقق من أن الـ host مسموح أو IP address محلي
-      final isLocalIp = RegExp(r'^192\.168\.\d+\.\d+|^10\.\d+\.\d+\.\d+|^172\.(1[6-9]|2\d|3[01])\.\d+\.\d+|^127\.0\.0\.1').hasMatch(host);
-      final isAllowedHost = isLocalIp || allowedHosts.any((allowed) => host.contains(allowed) || host.endsWith(allowed));
+      final isLocalIp = RegExp(
+              r'^192\.168\.\d+\.\d+|^10\.\d+\.\d+\.\d+|^172\.(1[6-9]|2\d|3[01])\.\d+\.\d+|^127\.0\.0\.1')
+          .hasMatch(host);
+      final isAllowedHost = isLocalIp ||
+          allowedHosts.any(
+              (allowed) => host.contains(allowed) || host.endsWith(allowed));
       if (!isAllowedHost) {
         return false;
       }
-      
+
       // Whitelist للـ paths المسموحة
       final successPaths = [
         '/payment/bridge/success',
@@ -77,41 +81,44 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         '/pay/success',
         '/mobile/success',
       ];
-      
+
       // التحقق من أن الـ path يطابق أحد المسارات المسموحة
-      final isSuccessPath = successPaths.any((pathPattern) => path.contains(pathPattern));
-      
+      final isSuccessPath =
+          successPaths.any((pathPattern) => path.contains(pathPattern));
+
       // للـ thawani.om، نتحقق من وجود 'success' في query parameters
       final hasSuccessParam = uri.queryParameters.containsKey('success') ||
-                             uri.queryParameters.containsKey('status') && 
-                             uri.queryParameters['status']?.toLowerCase() == 'success';
-      
-      return isSuccessPath || (host.contains('thawani.om') && hasSuccessParam) ||
-             (path.contains('payment_success') && isAllowedHost) ||
-             (path.contains('/mobile/success') && uri.queryParameters.containsKey('donation_id'));
+          uri.queryParameters.containsKey('status') &&
+              uri.queryParameters['status']?.toLowerCase() == 'success';
+
+      return isSuccessPath ||
+          (host.contains('thawani.om') && hasSuccessParam) ||
+          (path.contains('payment_success') && isAllowedHost) ||
+          (path.contains('/mobile/success') &&
+              uri.queryParameters.containsKey('donation_id'));
     } catch (e) {
       // في حالة خطأ في parsing، نرفض URL
       return false;
     }
   }
-  
+
   /// التحقق من URL الإلغاء بشكل آمن
   /// ⚠️ مهم: نستخدم whitelist دقيق لمنع URL manipulation
   /// ✅ إصلاح: منع deep link URLs على الموبايل (مثل sfund.app://) لأن PaymentWebView يتعامل مع النتيجة مباشرة
   bool _isCancelUrl(String url) {
     try {
       final uri = Uri.parse(url);
-      
+
       // ✅ إصلاح: منع deep link URLs (custom schemes) على الموبايل
       // هذه URLs تفتح التطبيق من جديد وتسبب فتح صفحة مكررة
       if (!kIsWeb && uri.scheme != 'http' && uri.scheme != 'https') {
         print('PaymentWebView: Blocking deep link URL (custom scheme): $url');
         return false;
       }
-      
+
       final host = uri.host.toLowerCase();
       final path = uri.path.toLowerCase();
-      
+
       // Whitelist للـ hosts المسموحة
       final allowedHosts = [
         'sfund.app',
@@ -119,32 +126,38 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         'api.thawani.om',
         'localhost',
       ];
-      
+
       // ✅ إصلاح: السماح بـ IP addresses المحلية (للاختبار)
       // التحقق من أن الـ host مسموح أو IP address محلي
-      final isLocalIp = RegExp(r'^192\.168\.\d+\.\d+|^10\.\d+\.\d+\.\d+|^172\.(1[6-9]|2\d|3[01])\.\d+\.\d+|^127\.0\.0\.1').hasMatch(host);
-      final isAllowedHost = isLocalIp || allowedHosts.any((allowed) => host.contains(allowed) || host.endsWith(allowed));
+      final isLocalIp = RegExp(
+              r'^192\.168\.\d+\.\d+|^10\.\d+\.\d+\.\d+|^172\.(1[6-9]|2\d|3[01])\.\d+\.\d+|^127\.0\.0\.1')
+          .hasMatch(host);
+      final isAllowedHost = isLocalIp ||
+          allowedHosts.any(
+              (allowed) => host.contains(allowed) || host.endsWith(allowed));
       if (!isAllowedHost) {
         return false;
       }
-      
+
       // Whitelist للـ paths المسموحة
       final cancelPaths = [
         '/payment/bridge/cancel',
         '/payments/cancel',
         '/pay/cancel',
       ];
-      
+
       // التحقق من أن الـ path يطابق أحد المسارات المسموحة
-      final isCancelPath = cancelPaths.any((pathPattern) => path.contains(pathPattern));
-      
+      final isCancelPath =
+          cancelPaths.any((pathPattern) => path.contains(pathPattern));
+
       // للـ thawani.om، نتحقق من وجود 'cancel' في query parameters
       final hasCancelParam = uri.queryParameters.containsKey('cancel') ||
-                             uri.queryParameters.containsKey('status') && 
-                             uri.queryParameters['status']?.toLowerCase() == 'cancel';
-      
-      return isCancelPath || (host.contains('thawani.om') && hasCancelParam) ||
-             (path.contains('payment_cancel') && isAllowedHost);
+          uri.queryParameters.containsKey('status') &&
+              uri.queryParameters['status']?.toLowerCase() == 'cancel';
+
+      return isCancelPath ||
+          (host.contains('thawani.om') && hasCancelParam) ||
+          (path.contains('payment_cancel') && isAllowedHost);
     } catch (e) {
       // في حالة خطأ في parsing، نرفض URL
       return false;
@@ -192,20 +205,22 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     try {
       print('PaymentWebView: Fetching mobile success data...');
       // إضافة timeout لمدة 10 ثواني
-      final response = await _donationService.fetchMobilePaymentSuccessData(successUrl: url)
+      final response = await _donationService
+          .fetchMobilePaymentSuccessData(successUrl: url)
           .timeout(
-            const Duration(seconds: 10),
-            onTimeout: () {
-              print('PaymentWebView: Timeout fetching mobile success data');
-              throw TimeoutException('Timeout fetching mobile success data');
-            },
-          );
+        const Duration(seconds: 10),
+        onTimeout: () {
+          print('PaymentWebView: Timeout fetching mobile success data');
+          throw TimeoutException('Timeout fetching mobile success data');
+        },
+      );
       if (!mounted) return;
 
       // التحقق من حالة التبرع الفعلية قبل عرض النجاح
       final isActuallyCompleted = _verifyDonationStatus(response);
       if (!isActuallyCompleted) {
-        print('PaymentWebView: Donation is still pending, continuing to poll instead of showing success');
+        print(
+            'PaymentWebView: Donation is still pending, continuing to poll instead of showing success');
         // إعادة تعيين الحالة للسماح بالانتقال عبر polling
         _isHandlingSuccess = false;
         _successHandlingStartTime = null;
@@ -256,20 +271,30 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       }
 
       // التحقق من donation_status
-      final donationStatus = (data['donation_status'] ?? 
-                              donationData['donation_status'] ?? 
-                              donationData['status'] ?? 
-                              data['status'])?.toString().toLowerCase().trim();
-      
-      // التحقق من payment_status_fromThawani
-      final paymentStatusFromThawani = (data['payment_status_fromThawani'] ?? 
-                                        donationData['payment_status_fromThawani'])?.toString().toLowerCase().trim();
+      final donationStatus = (data['donation_status'] ??
+              donationData['donation_status'] ??
+              donationData['status'] ??
+              data['status'])
+          ?.toString()
+          .toLowerCase()
+          .trim();
 
-      print('PaymentWebView: Verifying donation status - donation_status: $donationStatus, payment_status_fromThawani: $paymentStatusFromThawani');
+      // التحقق من payment_status_fromThawani
+      final paymentStatusFromThawani = (data['payment_status_fromThawani'] ??
+              donationData['payment_status_fromThawani'])
+          ?.toString()
+          .toLowerCase()
+          .trim();
+
+      print(
+          'PaymentWebView: Verifying donation status - donation_status: $donationStatus, payment_status_fromThawani: $paymentStatusFromThawani');
 
       // إذا كان donation_status = pending أو unpaid أو payment_status_fromThawani = unpaid، التبرع قيد الانتظار
-      if (donationStatus == 'pending' || donationStatus == 'unpaid' || paymentStatusFromThawani == 'unpaid') {
-        print('PaymentWebView: Donation is pending/unpaid, cannot show success');
+      if (donationStatus == 'pending' ||
+          donationStatus == 'unpaid' ||
+          paymentStatusFromThawani == 'unpaid') {
+        print(
+            'PaymentWebView: Donation is pending/unpaid, cannot show success');
         return false;
       }
 
@@ -286,7 +311,8 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       }
 
       // في حالة عدم التأكد، نتحقق من sessionId عبر API
-      print('PaymentWebView: Status unclear, will verify via payment status API');
+      print(
+          'PaymentWebView: Status unclear, will verify via payment status API');
       return false; // سنتحقق عبر polling
     } catch (e) {
       print('PaymentWebView: Error verifying donation status: $e');
@@ -294,7 +320,8 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     }
   }
 
-  Map<String, dynamic> _buildSuccessResult(Map<String, dynamic> response, String successUrl) {
+  Map<String, dynamic> _buildSuccessResult(
+      Map<String, dynamic> response, String successUrl) {
     final dynamic rawData = response['data'];
     final Map<String, dynamic> data;
     if (rawData is Map<String, dynamic>) {
@@ -318,35 +345,37 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     if (campaignObj is Map<String, dynamic>) {
       campaignTitle = (campaignObj['title'] ?? campaignObj['name'])?.toString();
     }
-    campaignTitle ??= (data['campaign_title'] ?? 
-                       donationData['campaign_title'] ?? 
-                       data['campaign'] ?? 
-                       data['campaign_name'])?.toString();
+    campaignTitle ??= (data['campaign_title'] ??
+            donationData['campaign_title'] ??
+            data['campaign'] ??
+            data['campaign_name'])
+        ?.toString();
 
     // استخراج donation_id
-    final donationId = (donationData['donation_id'] ?? 
-                       donationData['donationId'] ?? 
-                       donationData['id'] ?? 
-                       data['donation_id'] ?? 
-                       data['donationId'])?.toString();
+    final donationId = (donationData['donation_id'] ??
+            donationData['donationId'] ??
+            donationData['id'] ??
+            data['donation_id'] ??
+            data['donationId'])
+        ?.toString();
 
     // استخراج session_id
-    final sessionId = (data['session_id'] ?? 
-                       data['sessionId'] ?? 
-                       data['payment_session_id'] ?? 
-                       donationData['payment_session_id'] ?? 
-                       widget.sessionId)?.toString();
+    final sessionId = (data['session_id'] ??
+            data['sessionId'] ??
+            data['payment_session_id'] ??
+            donationData['payment_session_id'] ??
+            widget.sessionId)
+        ?.toString();
 
     // استخراج المبلغ (paid_amount أولاً، ثم amount)
-    final amount = _tryParseAmount(
-      donationData['paid_amount'] ?? 
-      donationData['amount'] ?? 
-      data['paid_amount'] ?? 
-      data['amount'] ?? 
-      data['donation_amount']
-    );
+    final amount = _tryParseAmount(donationData['paid_amount'] ??
+        donationData['amount'] ??
+        data['paid_amount'] ??
+        data['amount'] ??
+        data['donation_amount']);
 
-    print('PaymentWebView: Built success result - donationId: $donationId, amount: $amount, campaignTitle: $campaignTitle');
+    print(
+        'PaymentWebView: Built success result - donationId: $donationId, amount: $amount, campaignTitle: $campaignTitle');
 
     return {
       'state': PaymentState.paymentSuccess.name,
@@ -377,13 +406,15 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     }
 
     try {
-      final status = await _donationService.checkPaymentStatus(widget.sessionId);
-      
+      final status =
+          await _donationService.checkPaymentStatus(widget.sessionId);
+
       if (!mounted || _hasPopped || _isHandlingSuccess) {
         return;
       }
 
-      print('PaymentWebView: Immediate payment status check result: ${status.status}');
+      print(
+          'PaymentWebView: Immediate payment status check result: ${status.status}');
       print('PaymentWebView: Is completed: ${status.isCompleted}');
       print('PaymentWebView: Is pending: ${status.isPending}');
 
@@ -421,17 +452,20 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     // حماية من race conditions: التحقق من الحالة قبل وبعد الاستدعاء
     if (!mounted || _hasPopped || _pollingDisabled || _isHandlingSuccess) {
       if (_pollingDisabled || _isHandlingSuccess) {
-        print('PaymentWebView: Polling disabled or handling success, skipping status check');
+        print(
+            'PaymentWebView: Polling disabled or handling success, skipping status check');
       }
       return;
     }
 
     try {
-      final status = await _donationService.checkPaymentStatus(widget.sessionId);
-      
+      final status =
+          await _donationService.checkPaymentStatus(widget.sessionId);
+
       // التحقق مرة أخرى بعد الاستدعاء لتجنب race conditions
       if (!mounted || _hasPopped || _pollingDisabled || _isHandlingSuccess) {
-        print('PaymentWebView: Polling was disabled or handling success, ignoring status check result');
+        print(
+            'PaymentWebView: Polling was disabled or handling success, ignoring status check result');
         return;
       }
 
@@ -455,30 +489,40 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       // التحقق من الحالة الفعلية للتأكد من عدم عرض النجاح عند pending
       // نتحقق من raw response للحصول على donation_status و payment_status_fromThawani
       bool isActuallyCompleted = status.isCompleted && !status.isPending;
-      
+
       if (status.raw != null) {
         final raw = status.raw as Map<String, dynamic>;
-        
+
         // البحث في raw_response أيضاً إذا كان موجوداً
         final Map<String, dynamic>? rawResponse = raw['raw_response'] is Map
             ? Map<String, dynamic>.from(raw['raw_response'] as Map)
             : null;
-        
+
         // البحث في جميع المصادر المحتملة
-        final donationStatus = (raw['donation_status'] ?? 
-                               rawResponse?['donation_status'] ?? 
-                               rawResponse?['data']?['donation']?['donation_status'] ??
-                               rawResponse?['data']?['donation_status'])?.toString().toLowerCase().trim();
-        
-        final paymentStatusFromThawani = (raw['payment_status_fromThawani'] ?? 
-                                         rawResponse?['payment_status_fromThawani'] ??
-                                         rawResponse?['data']?['payment_status_fromThawani'])?.toString().toLowerCase().trim();
-        
-        print('PaymentWebView: Raw status check - donation_status: $donationStatus, payment_status_fromThawani: $paymentStatusFromThawani');
-        
+        final donationStatus = (raw['donation_status'] ??
+                rawResponse?['donation_status'] ??
+                rawResponse?['data']?['donation']?['donation_status'] ??
+                rawResponse?['data']?['donation_status'])
+            ?.toString()
+            .toLowerCase()
+            .trim();
+
+        final paymentStatusFromThawani = (raw['payment_status_fromThawani'] ??
+                rawResponse?['payment_status_fromThawani'] ??
+                rawResponse?['data']?['payment_status_fromThawani'])
+            ?.toString()
+            .toLowerCase()
+            .trim();
+
+        print(
+            'PaymentWebView: Raw status check - donation_status: $donationStatus, payment_status_fromThawani: $paymentStatusFromThawani');
+
         // إذا كان donation_status = pending أو payment_status_fromThawani = unpaid، لا نعرض النجاح
-        if (donationStatus == 'pending' || paymentStatusFromThawani == 'unpaid' || donationStatus == 'unpaid') {
-          print('PaymentWebView: Donation is pending according to raw data, continuing to poll');
+        if (donationStatus == 'pending' ||
+            paymentStatusFromThawani == 'unpaid' ||
+            donationStatus == 'unpaid') {
+          print(
+              'PaymentWebView: Donation is pending according to raw data, continuing to poll');
           isActuallyCompleted = false;
         }
       }
@@ -489,15 +533,18 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         if (_isHandlingSuccess && _successHandlingStartTime != null) {
           final elapsed = DateTime.now().difference(_successHandlingStartTime!);
           if (elapsed.inSeconds < 12) {
-            print('PaymentWebView: Success is being handled via mobile API, waiting... (${elapsed.inSeconds}s)');
+            print(
+                'PaymentWebView: Success is being handled via mobile API, waiting... (${elapsed.inSeconds}s)');
             return;
           } else {
-            print('PaymentWebView: Mobile API handling took too long (${elapsed.inSeconds}s), using polling result instead');
+            print(
+                'PaymentWebView: Mobile API handling took too long (${elapsed.inSeconds}s), using polling result instead');
             _isHandlingSuccess = false;
             _successHandlingStartTime = null;
           }
         } else if (_isHandlingSuccess) {
-          print('PaymentWebView: Success is being handled via mobile API, ignoring polling result');
+          print(
+              'PaymentWebView: Success is being handled via mobile API, ignoring polling result');
           return;
         }
         _hasCheckedStatus = true;
@@ -534,7 +581,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       // معالجة الأخطاء بشكل آمن دون تسريب معلومات حساسة
       print('PaymentWebView: Error checking payment status');
       if (!mounted || _hasPopped || _isHandlingSuccess) return;
-      
+
       // لا نطبع تفاصيل الخطأ في رسالة المستخدم لأسباب أمنية
       await _safePop({
         'state': PaymentState.paymentFailed.name,
@@ -546,14 +593,18 @@ class _PaymentWebViewState extends State<PaymentWebView> {
   @override
   void initState() {
     super.initState();
-    
+
     // Start periodic status checking after 10 seconds
     _statusCheckTimer = Timer(const Duration(seconds: 10), () {
-      if (mounted && !_hasCheckedStatus && !_hasPopped && !_pollingDisabled && !_isHandlingSuccess) {
+      if (mounted &&
+          !_hasCheckedStatus &&
+          !_hasPopped &&
+          !_pollingDisabled &&
+          !_isHandlingSuccess) {
         _checkPaymentStatusPeriodically();
       }
     });
-    
+
     if (kIsWeb) {
       // For web platform, open payment in browser
       _openPaymentInBrowser();
@@ -561,7 +612,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       // For mobile platforms, use WebView
       _controller = WebViewController();
       _controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-      
+
       _controller.setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (url) {
@@ -571,8 +622,12 @@ class _PaymentWebViewState extends State<PaymentWebView> {
               try {
                 final uri = Uri.parse(url);
                 if (uri.scheme == 'http') {
-                  if (_isSuccessUrl(url) || url.contains('success') || url.contains('payment/success') || url.contains('/payments/mobile/success')) {
-                    print('PaymentWebView: Detected HTTP success URL at page start, checking status directly...');
+                  if (_isSuccessUrl(url) ||
+                      url.contains('success') ||
+                      url.contains('payment/success') ||
+                      url.contains('/payments/mobile/success')) {
+                    print(
+                        'PaymentWebView: Detected HTTP success URL at page start, checking status directly...');
                     // ✅ إصلاح: إغلاق WebView فوراً والتحقق من الحالة في الخلفية
                     _hasCheckedStatus = true;
                     _pollingDisabled = true;
@@ -580,9 +635,13 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                       await _checkPaymentStatusImmediately();
                     });
                     return;
-                  } else if (_isCancelUrl(url) || url.contains('cancel') || url.contains('payment/cancel')) {
-                    print('PaymentWebView: Detected HTTP cancel URL at page start, returning cancelled...');
-                    Future.microtask(() => _safePop({'state': PaymentState.paymentCancelled.name}));
+                  } else if (_isCancelUrl(url) ||
+                      url.contains('cancel') ||
+                      url.contains('payment/cancel')) {
+                    print(
+                        'PaymentWebView: Detected HTTP cancel URL at page start, returning cancelled...');
+                    Future.microtask(() => _safePop(
+                        {'state': PaymentState.paymentCancelled.name}));
                     return;
                   }
                 }
@@ -594,59 +653,76 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           onPageFinished: (url) async {
             setState(() => _isLoading = false);
             print('PaymentWebView: Page finished loading: $url');
-            
+
             // ✅ إصلاح: التحقق من HTTP URLs قبل محاولة التعامل معها
             // إذا كان HTTP URL، نتعامل معه مباشرة دون انتظار تحميل الصفحة
             if (!kIsWeb) {
               try {
                 final uri = Uri.parse(url);
                 if (uri.scheme == 'http') {
-                  if (_isSuccessUrl(url) || url.contains('success') || url.contains('payment/success') || url.contains('/payments/mobile/success')) {
-                    print('PaymentWebView: Detected HTTP success URL, checking payment status directly...');
+                  if (_isSuccessUrl(url) ||
+                      url.contains('success') ||
+                      url.contains('payment/success') ||
+                      url.contains('/payments/mobile/success')) {
+                    print(
+                        'PaymentWebView: Detected HTTP success URL, checking payment status directly...');
                     // ✅ إصلاح: إغلاق WebView فوراً والتحقق من الحالة في الخلفية
                     _hasCheckedStatus = true;
                     _pollingDisabled = true;
                     await _checkPaymentStatusImmediately();
                     return;
-                  } else if (_isCancelUrl(url) || url.contains('cancel') || url.contains('payment/cancel')) {
-                    print('PaymentWebView: Detected HTTP cancel URL, returning cancelled...');
+                  } else if (_isCancelUrl(url) ||
+                      url.contains('cancel') ||
+                      url.contains('payment/cancel')) {
+                    print(
+                        'PaymentWebView: Detected HTTP cancel URL, returning cancelled...');
                     _safePop({'state': PaymentState.paymentCancelled.name});
                     return;
                   }
                 }
               } catch (e) {
-                print('PaymentWebView: Error parsing URL in onPageFinished: $e');
+                print(
+                    'PaymentWebView: Error parsing URL in onPageFinished: $e');
               }
             }
-            
+
             if (_isSuccessUrl(url)) {
-              print('PaymentWebView: Detected success URL, checking payment status...');
+              print(
+                  'PaymentWebView: Detected success URL, checking payment status...');
               await _handleSuccessNavigation(url);
             } else if (_isCancelUrl(url)) {
-              print('PaymentWebView: Detected cancel URL, returning cancelled...');
+              print(
+                  'PaymentWebView: Detected cancel URL, returning cancelled...');
               _safePop({'state': PaymentState.paymentCancelled.name});
             }
           },
           onNavigationRequest: (request) {
             print('PaymentWebView: Navigation request to: ${request.url}');
-            
+
             // ✅ إصلاح: منع deep link URLs (custom schemes) على الموبايل
             // هذه URLs تفتح التطبيق من جديد وتسبب فتح صفحة مكررة
             if (!kIsWeb) {
               try {
                 final uri = Uri.parse(request.url);
-                
+
                 // ✅ إصلاح: منع HTTP URLs على الموبايل (cleartext not permitted)
                 // Android يمنع تحميل HTTP URLs في WebView، لذلك نتعامل معها مباشرة
                 if (uri.scheme == 'http') {
-                  print('PaymentWebView: Blocking HTTP URL (cleartext not permitted): ${request.url}');
+                  print(
+                      'PaymentWebView: Blocking HTTP URL (cleartext not permitted): ${request.url}');
                   // إذا كان HTTP URL لصفحة success/cancel، نتعامل معها مباشرة
-                  if (_isSuccessUrl(request.url) || request.url.contains('success') || request.url.contains('payment/success') || request.url.contains('/payments/mobile/success')) {
-                    print('PaymentWebView: Handling success HTTP URL directly, checking status...');
+                  if (_isSuccessUrl(request.url) ||
+                      request.url.contains('success') ||
+                      request.url.contains('payment/success') ||
+                      request.url.contains('/payments/mobile/success')) {
+                    print(
+                        'PaymentWebView: Handling success HTTP URL directly, checking status...');
                     // استخراج donation_id أو session_id من URL
                     final donationId = uri.queryParameters['donation_id'];
-                    final sessionId = uri.queryParameters['session_id'] ?? widget.sessionId;
-                    print('PaymentWebView: Success URL params - donationId: $donationId, sessionId: $sessionId');
+                    final sessionId =
+                        uri.queryParameters['session_id'] ?? widget.sessionId;
+                    print(
+                        'PaymentWebView: Success URL params - donationId: $donationId, sessionId: $sessionId');
                     // ✅ إصلاح: إغلاق WebView فوراً والتحقق من الحالة في الخلفية
                     // هذا يمنع التطبيق من البقاء معلق على صفحة الدفع
                     _hasCheckedStatus = true;
@@ -656,7 +732,9 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                       await _checkPaymentStatusImmediately();
                     });
                     return NavigationDecision.prevent;
-                  } else if (_isCancelUrl(request.url) || request.url.contains('cancel') || request.url.contains('payment/cancel')) {
+                  } else if (_isCancelUrl(request.url) ||
+                      request.url.contains('cancel') ||
+                      request.url.contains('payment/cancel')) {
                     print('PaymentWebView: Handling cancel HTTP URL directly');
                     _safePop({'state': PaymentState.paymentCancelled.name});
                     return NavigationDecision.prevent;
@@ -664,14 +742,18 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                   // منع تحميل أي HTTP URL آخر في WebView
                   return NavigationDecision.prevent;
                 }
-                
+
                 if (uri.scheme != 'http' && uri.scheme != 'https') {
-                  print('PaymentWebView: Blocking deep link navigation (custom scheme): ${request.url}');
+                  print(
+                      'PaymentWebView: Blocking deep link navigation (custom scheme): ${request.url}');
                   // إذا كان deep link لصفحة success/cancel، نتعامل معها مباشرة دون فتح التطبيق
-                  if (request.url.contains('success') || request.url.contains('payment/success')) {
+                  if (request.url.contains('success') ||
+                      request.url.contains('payment/success')) {
                     // استخراج session_id أو donation_id من URL إذا كان موجوداً
-                    final sessionId = uri.queryParameters['session_id'] ?? widget.sessionId;
-                    print('PaymentWebView: Handling success via deep link, checking status with sessionId: $sessionId');
+                    final sessionId =
+                        uri.queryParameters['session_id'] ?? widget.sessionId;
+                    print(
+                        'PaymentWebView: Handling success via deep link, checking status with sessionId: $sessionId');
                     // ✅ إصلاح: إغلاق WebView فوراً والتحقق من الحالة في الخلفية
                     _hasCheckedStatus = true;
                     _pollingDisabled = true;
@@ -679,7 +761,8 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                       await _checkPaymentStatusImmediately();
                     });
                     return NavigationDecision.prevent;
-                  } else if (request.url.contains('cancel') || request.url.contains('payment/cancel')) {
+                  } else if (request.url.contains('cancel') ||
+                      request.url.contains('payment/cancel')) {
                     print('PaymentWebView: Handling cancel via deep link');
                     _safePop({'state': PaymentState.paymentCancelled.name});
                     return NavigationDecision.prevent;
@@ -688,10 +771,11 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                   return NavigationDecision.prevent;
                 }
               } catch (e) {
-                print('PaymentWebView: Error parsing URL in navigation request: $e');
+                print(
+                    'PaymentWebView: Error parsing URL in navigation request: $e');
               }
             }
-            
+
             if (_isSuccessUrl(request.url)) {
               print('PaymentWebView: Intercepting success URL');
               // ✅ إصلاح: إغلاق WebView فوراً والتحقق من الحالة في الخلفية
@@ -710,11 +794,11 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           },
         ),
       );
-      
+
       _controller.loadRequest(Uri.parse(widget.paymentUrl));
     }
   }
-  
+
   Future<void> _openPaymentInBrowser() async {
     try {
       // For web platform, open in same tab using webOnlyWindowName: '_self'
@@ -722,7 +806,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         widget.paymentUrl,
         webOnlyWindowName: '_self',
       );
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -731,7 +815,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
             duration: const Duration(seconds: 3),
           ),
         );
-        
+
         // Wait for user to complete payment, then auto-check
         await Future.delayed(const Duration(seconds: 5));
         await _checkPaymentStatusAndComplete();
@@ -753,8 +837,12 @@ class _PaymentWebViewState extends State<PaymentWebView> {
   }
 
   void _checkPaymentStatusPeriodically() {
-    if (!mounted || _hasCheckedStatus || _hasPopped || _pollingDisabled || _isHandlingSuccess) return;
-    
+    if (!mounted ||
+        _hasCheckedStatus ||
+        _hasPopped ||
+        _pollingDisabled ||
+        _isHandlingSuccess) return;
+
     print('PaymentWebView: Starting periodic payment status check...');
     _checkPaymentStatusAndComplete();
   }
@@ -811,7 +899,8 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: AppColors.surface,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 16),
                   ),
                   child: Text('checking_payment_status'.tr()),
                 ),
@@ -827,63 +916,79 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       canPop: false,
       onPopInvokedWithResult: (bool didPop, dynamic result) async {
         if (didPop) return;
-        
+
         // إذا تم pop بالفعل، لا نفعل شيء
         if (_hasPopped) return;
-        
+
         // التحقق من حالة الدفع قبل السماح بالعودة
-        print('PaymentWebView: Back button/swipe detected, checking payment status...');
-        
+        print(
+            'PaymentWebView: Back button/swipe detected, checking payment status...');
+
         try {
-          final status = await _donationService.checkPaymentStatus(widget.sessionId);
-          
+          final status =
+              await _donationService.checkPaymentStatus(widget.sessionId);
+
           print('PaymentWebView: Payment status on back: ${status.status}');
           print('PaymentWebView: Is pending: ${status.isPending}');
           print('PaymentWebView: Is completed: ${status.isCompleted}');
-          
+
           // إذا كانت الحالة pending، نمنع العودة ونستمر في polling
           if (status.isPending) {
-            print('PaymentWebView: Payment is pending, preventing back navigation');
+            print(
+                'PaymentWebView: Payment is pending, preventing back navigation');
             // نستمر في polling بدلاً من العودة
             if (!_hasPopped && !_pollingDisabled && !_isHandlingSuccess) {
               await _checkPaymentStatusAndComplete();
             }
             return;
           }
-          
+
           // إذا كانت الحالة completed، نتحقق مرة أخرى من donation_status و payment_status_fromThawani
           if (status.isCompleted) {
             bool isActuallyCompleted = true;
-            
+
             if (status.raw != null) {
               final raw = status.raw as Map<String, dynamic>;
-              
+
               // البحث في raw_response أيضاً إذا كان موجوداً
-              final Map<String, dynamic>? rawResponse = raw['raw_response'] is Map
-                  ? Map<String, dynamic>.from(raw['raw_response'] as Map)
-                  : null;
-              
+              final Map<String, dynamic>? rawResponse =
+                  raw['raw_response'] is Map
+                      ? Map<String, dynamic>.from(raw['raw_response'] as Map)
+                      : null;
+
               // البحث في جميع المصادر المحتملة
-              final donationStatus = (raw['donation_status'] ?? 
-                                     rawResponse?['donation_status'] ?? 
-                                     rawResponse?['data']?['donation']?['donation_status'] ??
-                                     rawResponse?['data']?['donation_status'])?.toString().toLowerCase().trim();
-              
-              final paymentStatusFromThawani = (raw['payment_status_fromThawani'] ?? 
-                                               rawResponse?['payment_status_fromThawani'] ??
-                                               rawResponse?['data']?['payment_status_fromThawani'])?.toString().toLowerCase().trim();
-              
-              print('PaymentWebView: Raw status on back - donation_status: $donationStatus, payment_status_fromThawani: $paymentStatusFromThawani');
-              
+              final donationStatus = (raw['donation_status'] ??
+                      rawResponse?['donation_status'] ??
+                      rawResponse?['data']?['donation']?['donation_status'] ??
+                      rawResponse?['data']?['donation_status'])
+                  ?.toString()
+                  .toLowerCase()
+                  .trim();
+
+              final paymentStatusFromThawani =
+                  (raw['payment_status_fromThawani'] ??
+                          rawResponse?['payment_status_fromThawani'] ??
+                          rawResponse?['data']?['payment_status_fromThawani'])
+                      ?.toString()
+                      .toLowerCase()
+                      .trim();
+
+              print(
+                  'PaymentWebView: Raw status on back - donation_status: $donationStatus, payment_status_fromThawani: $paymentStatusFromThawani');
+
               // إذا كان donation_status = pending أو payment_status_fromThawani = unpaid، لا نعرض النجاح
-              if (donationStatus == 'pending' || paymentStatusFromThawani == 'unpaid' || donationStatus == 'unpaid') {
-                print('PaymentWebView: Donation is pending according to raw data, preventing back navigation');
+              if (donationStatus == 'pending' ||
+                  paymentStatusFromThawani == 'unpaid' ||
+                  donationStatus == 'unpaid') {
+                print(
+                    'PaymentWebView: Donation is pending according to raw data, preventing back navigation');
                 isActuallyCompleted = false;
               }
             }
-            
+
             if (isActuallyCompleted && !status.isPending) {
-              print('PaymentWebView: Payment is completed, allowing back navigation with success');
+              print(
+                  'PaymentWebView: Payment is completed, allowing back navigation with success');
               if (!_hasPopped) {
                 await _safePop({
                   'state': PaymentState.paymentSuccess.name,
@@ -895,9 +1000,10 @@ class _PaymentWebViewState extends State<PaymentWebView> {
               return;
             }
           }
-          
+
           // في حالات أخرى (failed, cancelled, expired)، نسمح بالعودة
-          print('PaymentWebView: Payment is not pending, allowing back navigation');
+          print(
+              'PaymentWebView: Payment is not pending, allowing back navigation');
           if (!_hasPopped) {
             if (status.isCancelled) {
               await _safePop({'state': PaymentState.paymentCancelled.name});
@@ -934,10 +1040,12 @@ class _PaymentWebViewState extends State<PaymentWebView> {
             icon: const Icon(CupertinoIcons.xmark),
             onPressed: () async {
               // التحقق من حالة الدفع قبل الإغلاق
-              print('PaymentWebView: Close button pressed, checking payment status...');
+              print(
+                  'PaymentWebView: Close button pressed, checking payment status...');
               try {
-                final status = await _donationService.checkPaymentStatus(widget.sessionId);
-                
+                final status =
+                    await _donationService.checkPaymentStatus(widget.sessionId);
+
                 // إذا كانت الحالة pending، نمنع الإغلاق
                 if (status.isPending) {
                   print('PaymentWebView: Payment is pending, preventing close');
@@ -947,34 +1055,47 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                   }
                   return;
                 }
-                
+
                 // التحقق من donation_status و payment_status_fromThawani
                 if (status.isCompleted) {
                   bool isActuallyCompleted = true;
-                  
+
                   if (status.raw != null) {
                     final raw = status.raw as Map<String, dynamic>;
-                    
+
                     // البحث في raw_response أيضاً إذا كان موجوداً
-                    final Map<String, dynamic>? rawResponse = raw['raw_response'] is Map
-                        ? Map<String, dynamic>.from(raw['raw_response'] as Map)
-                        : null;
-                    
+                    final Map<String, dynamic>? rawResponse =
+                        raw['raw_response'] is Map
+                            ? Map<String, dynamic>.from(
+                                raw['raw_response'] as Map)
+                            : null;
+
                     // البحث في جميع المصادر المحتملة
-                    final donationStatus = (raw['donation_status'] ?? 
-                                           rawResponse?['donation_status'] ?? 
-                                           rawResponse?['data']?['donation']?['donation_status'] ??
-                                           rawResponse?['data']?['donation_status'])?.toString().toLowerCase().trim();
-                    
-                    final paymentStatusFromThawani = (raw['payment_status_fromThawani'] ?? 
-                                                     rawResponse?['payment_status_fromThawani'] ??
-                                                     rawResponse?['data']?['payment_status_fromThawani'])?.toString().toLowerCase().trim();
-                    
-                    if (donationStatus == 'pending' || paymentStatusFromThawani == 'unpaid' || donationStatus == 'unpaid') {
+                    final donationStatus = (raw['donation_status'] ??
+                            rawResponse?['donation_status'] ??
+                            rawResponse?['data']?['donation']
+                                ?['donation_status'] ??
+                            rawResponse?['data']?['donation_status'])
+                        ?.toString()
+                        .toLowerCase()
+                        .trim();
+
+                    final paymentStatusFromThawani =
+                        (raw['payment_status_fromThawani'] ??
+                                rawResponse?['payment_status_fromThawani'] ??
+                                rawResponse?['data']
+                                    ?['payment_status_fromThawani'])
+                            ?.toString()
+                            .toLowerCase()
+                            .trim();
+
+                    if (donationStatus == 'pending' ||
+                        paymentStatusFromThawani == 'unpaid' ||
+                        donationStatus == 'unpaid') {
                       isActuallyCompleted = false;
                     }
                   }
-                  
+
                   if (isActuallyCompleted && !status.isPending) {
                     await _safePop({
                       'state': PaymentState.paymentSuccess.name,
@@ -985,11 +1106,12 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                     return;
                   }
                 }
-                
+
                 // في حالات أخرى، نعتبرها إلغاء
                 await _safePop({'state': PaymentState.paymentCancelled.name});
               } catch (e) {
-                print('PaymentWebView: Error checking payment status on close: $e');
+                print(
+                    'PaymentWebView: Error checking payment status on close: $e');
                 await _safePop({'state': PaymentState.paymentCancelled.name});
               }
             },
@@ -999,7 +1121,8 @@ class _PaymentWebViewState extends State<PaymentWebView> {
               const Padding(
                 padding: EdgeInsets.all(16),
                 child: SizedBox(
-                  width: 20, height: 20,
+                  width: 20,
+                  height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation(AppColors.surface),

@@ -12,25 +12,28 @@ class StudentRegistrationsListScreen extends StatefulWidget {
   const StudentRegistrationsListScreen({super.key});
 
   @override
-  State<StudentRegistrationsListScreen> createState() => _StudentRegistrationsListScreenState();
+  State<StudentRegistrationsListScreen> createState() =>
+      _StudentRegistrationsListScreenState();
 }
 
-class _StudentRegistrationsListScreenState extends State<StudentRegistrationsListScreen> {
-  final StudentRegistrationService _studentService = StudentRegistrationService();
-  
+class _StudentRegistrationsListScreenState
+    extends State<StudentRegistrationsListScreen> {
+  final StudentRegistrationService _studentService =
+      StudentRegistrationService();
+
   List<StudentRegistration> _registrations = [];
   bool _isLoading = true;
   String? _error;
-  
+
   // Pagination
   int _currentPage = 1;
   bool _hasMoreData = true;
   bool _isLoadingMore = false;
-  
+
   // Filters
   String _selectedStatus = 'all';
   String _searchQuery = '';
-  
+
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -63,7 +66,8 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
         search: _searchQuery.isEmpty ? null : _searchQuery,
       );
 
-      final newRegistrations = data.map((json) => StudentRegistration.fromJson(json)).toList();
+      final newRegistrations =
+          data.map((json) => StudentRegistration.fromJson(json)).toList();
 
       setState(() {
         if (refresh) {
@@ -73,7 +77,8 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
         }
         _isLoading = false;
         _isLoadingMore = false;
-        _hasMoreData = newRegistrations.length == 20; // Assuming 20 is the page size
+        _hasMoreData =
+            newRegistrations.length == 20; // Assuming 20 is the page size
       });
     } catch (e) {
       setState(() {
@@ -186,14 +191,17 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
                   onChanged: _onSearchChanged,
                   decoration: InputDecoration(
                     hintText: 'البحث بالاسم أو رقم الطالب...',
-                    prefixIcon: const Icon(CupertinoIcons.search, color: AppColors.textSecondary),
+                    prefixIcon: const Icon(CupertinoIcons.search,
+                        color: AppColors.textSecondary),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.textTertiary),
+                      borderSide:
+                          const BorderSide(color: AppColors.textTertiary),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.textTertiary),
+                      borderSide:
+                          const BorderSide(color: AppColors.textTertiary),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -204,7 +212,7 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
                   ),
                 ),
                 const SizedBox(height: 12),
-                
+
                 // Status Filter
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -212,13 +220,17 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
                     children: [
                       _buildFilterChip('الكل', 'all', _selectedStatus == 'all'),
                       const SizedBox(width: 8),
-                      _buildFilterChip('قيد المراجعة', 'pending', _selectedStatus == 'pending'),
+                      _buildFilterChip('قيد المراجعة', 'pending',
+                          _selectedStatus == 'pending'),
                       const SizedBox(width: 8),
-                      _buildFilterChip('مقبول', 'approved', _selectedStatus == 'approved'),
+                      _buildFilterChip(
+                          'مقبول', 'approved', _selectedStatus == 'approved'),
                       const SizedBox(width: 8),
-                      _buildFilterChip('مرفوض', 'rejected', _selectedStatus == 'rejected'),
+                      _buildFilterChip(
+                          'مرفوض', 'rejected', _selectedStatus == 'rejected'),
                       const SizedBox(width: 8),
-                      _buildFilterChip('قيد الدراسة', 'under_review', _selectedStatus == 'under_review'),
+                      _buildFilterChip('قيد الدراسة', 'under_review',
+                          _selectedStatus == 'under_review'),
                     ],
                   ),
                 ),
@@ -231,7 +243,8 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
             child: _isLoading
                 ? const Center(
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(AppColors.primary),
                     ),
                   )
                 : _error != null
@@ -261,7 +274,8 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
                             ),
                             const SizedBox(height: 16),
                             ElevatedButton(
-                              onPressed: () => _loadRegistrations(refresh: true),
+                              onPressed: () =>
+                                  _loadRegistrations(refresh: true),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primary,
                                 foregroundColor: AppColors.surface,
@@ -306,7 +320,8 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
                             onRefresh: () => _loadRegistrations(refresh: true),
                             child: ListView.builder(
                               padding: const EdgeInsets.all(16),
-                              itemCount: _registrations.length + (_hasMoreData ? 1 : 0),
+                              itemCount: _registrations.length +
+                                  (_hasMoreData ? 1 : 0),
                               itemBuilder: (context, index) {
                                 if (index == _registrations.length) {
                                   // Load more indicator
@@ -316,7 +331,9 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
                                       padding: EdgeInsets.all(16),
                                       child: Center(
                                         child: CircularProgressIndicator(
-                                          valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                  AppColors.primary),
                                         ),
                                       ),
                                     );
@@ -410,12 +427,15 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(registration.status).withOpacity(0.1),
+                        color: _getStatusColor(registration.status)
+                            .withOpacity(0.1),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: _getStatusColor(registration.status).withOpacity(0.3),
+                          color: _getStatusColor(registration.status)
+                              .withOpacity(0.3),
                         ),
                       ),
                       child: Text(
@@ -431,7 +451,8 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    const Icon(Icons.school, size: 16, color: AppColors.textSecondary),
+                    const Icon(Icons.school,
+                        size: 16, color: AppColors.textSecondary),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -446,7 +467,8 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(CupertinoIcons.phone_fill, size: 16, color: AppColors.textSecondary),
+                    const Icon(CupertinoIcons.phone_fill,
+                        size: 16, color: AppColors.textSecondary),
                     const SizedBox(width: 8),
                     Text(
                       registration.phone,
@@ -460,7 +482,8 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(CupertinoIcons.calendar, size: 16, color: AppColors.textSecondary),
+                      const Icon(CupertinoIcons.calendar,
+                          size: 16, color: AppColors.textSecondary),
                       const SizedBox(width: 8),
                       Text(
                         'تاريخ التسجيل: ${registration.createdAt!.toString().split(' ')[0]}',
@@ -474,7 +497,8 @@ class _StudentRegistrationsListScreenState extends State<StudentRegistrationsLis
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    const Icon(AppIcons.chevronForward, size: 16, color: AppColors.textSecondary),
+                    const Icon(AppIcons.chevronForward,
+                        size: 16, color: AppColors.textSecondary),
                     const SizedBox(width: 8),
                     Text(
                       'اضغط لعرض التفاصيل',

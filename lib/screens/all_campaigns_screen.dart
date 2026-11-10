@@ -162,7 +162,8 @@ class _AllCampaignsScreenState extends State<AllCampaignsScreen> {
         categorySet.add(category);
       }
     }
-    final sortedCategories = categorySet.toList()..sort((a, b) => a.compareTo(b));
+    final sortedCategories = categorySet.toList()
+      ..sort((a, b) => a.compareTo(b));
 
     _categories = [_allCategoryKey, ...sortedCategories];
 

@@ -9,7 +9,6 @@ import '../providers/auth_provider.dart';
 import 'donation_success_screen.dart';
 import 'payment_failed_screen.dart';
 
-
 class PaymentLoadingScreen extends StatefulWidget {
   const PaymentLoadingScreen({super.key});
 
@@ -27,17 +26,17 @@ class _PaymentLoadingScreenState extends State<PaymentLoadingScreen>
   @override
   void initState() {
     super.initState();
-    
+
     _rotationController = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
     );
-    
+
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    
+
     _rotationAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -45,7 +44,7 @@ class _PaymentLoadingScreenState extends State<PaymentLoadingScreen>
       parent: _rotationController,
       curve: Curves.linear,
     ));
-    
+
     _pulseAnimation = Tween<double>(
       begin: 0.8,
       end: 1.2,
@@ -53,7 +52,7 @@ class _PaymentLoadingScreenState extends State<PaymentLoadingScreen>
       parent: _pulseController,
       curve: Curves.easeInOut,
     ));
-    
+
     _startAnimations();
     _checkPaymentStatus();
   }
@@ -72,7 +71,7 @@ class _PaymentLoadingScreenState extends State<PaymentLoadingScreen>
     } catch (e) {
       print('PaymentLoadingScreen: Error initializing AuthProvider: $e');
     }
-    
+
     if (kIsWeb) {
       try {
         String currentPath = '/';
@@ -88,15 +87,15 @@ class _PaymentLoadingScreenState extends State<PaymentLoadingScreen>
           currentPath = '/';
         }
         final queryParams = Uri.base.queryParameters;
-        
+
         print('PaymentLoadingScreen: Checking payment status');
         print('PaymentLoadingScreen: Query params: $queryParams');
-        
+
         // محاكاة loading لمدة 2-3 ثواني
         await Future.delayed(const Duration(seconds: 2));
-        
+
         if (!mounted) return;
-        
+
         if (currentPath.contains('/payment/success')) {
           print('PaymentLoadingScreen: Redirecting to payment success screen');
           _navigateToPaymentSuccess(queryParams);
@@ -127,12 +126,14 @@ class _PaymentLoadingScreenState extends State<PaymentLoadingScreen>
     final sessionId = queryParams['session_id'];
     final amount = double.tryParse(queryParams['amount'] ?? '0');
     final campaignTitle = queryParams['campaign_title'];
-    
-    print('PaymentLoadingScreen: Payment success params - donationId: $donationId, amount: $amount');
-    
+
+    print(
+        'PaymentLoadingScreen: Payment success params - donationId: $donationId, amount: $amount');
+
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => DonationSuccessScreen(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            DonationSuccessScreen(
           donationId: donationId,
           sessionId: sessionId,
           amount: amount,
@@ -152,12 +153,14 @@ class _PaymentLoadingScreenState extends State<PaymentLoadingScreen>
     final amount = double.tryParse(queryParams['amount'] ?? '0');
     final campaignTitle = queryParams['campaign_title'];
     final errorMessage = queryParams['error_message'];
-    
-    print('PaymentLoadingScreen: Payment cancel params - donationId: $donationId, amount: $amount');
-    
+
+    print(
+        'PaymentLoadingScreen: Payment cancel params - donationId: $donationId, amount: $amount');
+
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => PaymentFailedScreen(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            PaymentFailedScreen(
           donationId: donationId,
           sessionId: sessionId,
           amount: amount,
@@ -223,7 +226,9 @@ class _PaymentLoadingScreenState extends State<PaymentLoadingScreen>
                                   animation: _rotationAnimation,
                                   builder: (context, child) {
                                     return Transform.rotate(
-                                      angle: _rotationAnimation.value * 2 * 3.14159,
+                                      angle: _rotationAnimation.value *
+                                          2 *
+                                          3.14159,
                                       child: const Icon(
                                         Icons.payment,
                                         size: 50,
@@ -237,9 +242,9 @@ class _PaymentLoadingScreenState extends State<PaymentLoadingScreen>
                           );
                         },
                       ),
-                      
+
                       const SizedBox(height: 32),
-                      
+
                       // Loading Text
                       Text(
                         'processing_payment'.tr(),
@@ -251,9 +256,9 @@ class _PaymentLoadingScreenState extends State<PaymentLoadingScreen>
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       Text(
                         'please_wait'.tr(),
                         style: TextStyle(
@@ -263,9 +268,9 @@ class _PaymentLoadingScreenState extends State<PaymentLoadingScreen>
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      
+
                       const SizedBox(height: 48),
-                      
+
                       // Progress Indicator
                       Container(
                         width: 200,

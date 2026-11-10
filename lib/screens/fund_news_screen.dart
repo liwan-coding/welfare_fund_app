@@ -88,12 +88,14 @@ class _FundNewsScreenState extends State<FundNewsScreen> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(AppIcons.chevronBack, color: AppColors.surface, size: 20),
+          icon: const Icon(AppIcons.chevronBack,
+              color: AppColors.surface, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
           IconButton(
-            icon: const Icon(CupertinoIcons.refresh, color: AppColors.surface, size: 22),
+            icon: const Icon(CupertinoIcons.refresh,
+                color: AppColors.surface, size: 22),
             onPressed: _isLoading ? null : _load,
           ),
         ],
@@ -111,7 +113,8 @@ class _FundNewsScreenState extends State<FundNewsScreen> {
                 child: _buildBody(locale),
               ),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: AppConstants.extraLargePadding)),
+            const SliverToBoxAdapter(
+                child: SizedBox(height: AppConstants.extraLargePadding)),
           ],
         ),
       ),
@@ -121,7 +124,8 @@ class _FundNewsScreenState extends State<FundNewsScreen> {
   Widget _buildBody(String locale) {
     if (_isLoading) {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppConstants.extraLargePadding),
+        padding: const EdgeInsets.symmetric(
+            vertical: AppConstants.extraLargePadding),
         child: Center(
           child: Column(
             children: [
@@ -129,7 +133,8 @@ class _FundNewsScreenState extends State<FundNewsScreen> {
               const SizedBox(height: AppConstants.defaultPadding),
               Text(
                 'loading'.tr(),
-                style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                style: AppTextStyles.bodyMedium
+                    .copyWith(color: AppColors.textSecondary),
               ),
             ],
           ),
@@ -139,22 +144,27 @@ class _FundNewsScreenState extends State<FundNewsScreen> {
 
     if (_errorMessage != null) {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppConstants.extraLargePadding),
+        padding: const EdgeInsets.symmetric(
+            vertical: AppConstants.extraLargePadding),
         child: Center(
           child: Column(
             children: [
-              Icon(CupertinoIcons.exclamationmark_circle, size: 56, color: AppColors.error),
+              Icon(CupertinoIcons.exclamationmark_circle,
+                  size: 56, color: AppColors.error),
               const SizedBox(height: AppConstants.defaultPadding),
               Text(
                 _errorMessage!,
                 textAlign: TextAlign.center,
-                style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                style: AppTextStyles.bodyMedium
+                    .copyWith(color: AppColors.textSecondary),
               ),
               const SizedBox(height: AppConstants.defaultPadding),
               TextButton.icon(
                 onPressed: _load,
-                icon: const Icon(CupertinoIcons.refresh, color: AppColors.primary),
-                label: Text('retry'.tr(), style: const TextStyle(color: AppColors.primary)),
+                icon: const Icon(CupertinoIcons.refresh,
+                    color: AppColors.primary),
+                label: Text('retry'.tr(),
+                    style: const TextStyle(color: AppColors.primary)),
               ),
             ],
           ),
@@ -164,16 +174,19 @@ class _FundNewsScreenState extends State<FundNewsScreen> {
 
     if (_news.isEmpty && _featured.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppConstants.extraLargePadding),
+        padding: const EdgeInsets.symmetric(
+            vertical: AppConstants.extraLargePadding),
         child: Center(
           child: Column(
             children: [
-              Icon(Icons.newspaper_rounded, size: 64, color: AppColors.textTertiary),
+              Icon(Icons.newspaper_rounded,
+                  size: 64, color: AppColors.textTertiary),
               const SizedBox(height: AppConstants.defaultPadding),
               Text(
                 'fund_news_empty'.tr(),
                 textAlign: TextAlign.center,
-                style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textSecondary),
+                style: AppTextStyles.bodyLarge
+                    .copyWith(color: AppColors.textSecondary),
               ),
             ],
           ),
@@ -220,19 +233,21 @@ class _FundNewsScreenState extends State<FundNewsScreen> {
           style: AppTextStyles.headlineMedium,
         ),
         const SizedBox(height: AppConstants.defaultPadding),
-        ..._news.where((item) => !_featured.any((f) => f.id == item.id)).map((item) => Padding(
-              padding: const EdgeInsets.only(
-                top: AppConstants.smallPadding,
-                bottom: AppConstants.defaultPadding,
-              ),
-              child: _NewsCard(
-                news: item,
-                locale: locale,
-                resolveImage: _resolveImageUrl,
-                onTap: () => _openDetail(item),
-                isFeatured: item.isFeatured,
-              ),
-            )),
+        ..._news
+            .where((item) => !_featured.any((f) => f.id == item.id))
+            .map((item) => Padding(
+                  padding: const EdgeInsets.only(
+                    top: AppConstants.smallPadding,
+                    bottom: AppConstants.defaultPadding,
+                  ),
+                  child: _NewsCard(
+                    news: item,
+                    locale: locale,
+                    resolveImage: _resolveImageUrl,
+                    onTap: () => _openDetail(item),
+                    isFeatured: item.isFeatured,
+                  ),
+                )),
       ],
     );
   }
@@ -267,7 +282,8 @@ class _NewsCard extends StatelessWidget {
     final imageUrl = resolveImage(news.image);
     final title = news.getLocalizedTitle(locale);
     final content = news.getLocalizedContent(locale);
-    final excerpt = content.length > 100 ? '${content.substring(0, 100)}...' : content;
+    final excerpt =
+        content.length > 100 ? '${content.substring(0, 100)}...' : content;
 
     return GestureDetector(
       onTap: onTap,
@@ -298,7 +314,8 @@ class _NewsCard extends StatelessWidget {
                         fit: BoxFit.cover,
                         errorBuilder: (_, __, ___) => Container(
                           color: AppColors.surfaceVariant,
-                          child: Icon(Icons.image_not_supported_rounded, color: AppColors.textTertiary, size: 40),
+                          child: Icon(Icons.image_not_supported_rounded,
+                              color: AppColors.textTertiary, size: 40),
                         ),
                       ),
                     )
@@ -307,7 +324,8 @@ class _NewsCard extends StatelessWidget {
                       height: 140,
                       color: AppColors.surfaceVariant,
                       child: const Center(
-                        child: Icon(Icons.article_rounded, size: 48, color: AppColors.textTertiary),
+                        child: Icon(Icons.article_rounded,
+                            size: 48, color: AppColors.textTertiary),
                       ),
                     ),
                   Padding(
@@ -317,7 +335,8 @@ class _NewsCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: AppColors.accent.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(8),
@@ -333,7 +352,8 @@ class _NewsCard extends StatelessWidget {
                         const SizedBox(height: 6),
                         Text(
                           title,
-                          style: AppTextStyles.titleLarge.copyWith(fontWeight: FontWeight.w600),
+                          style: AppTextStyles.titleLarge
+                              .copyWith(fontWeight: FontWeight.w600),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -341,11 +361,13 @@ class _NewsCard extends StatelessWidget {
                           const SizedBox(height: 6),
                           Row(
                             children: [
-                              Icon(CupertinoIcons.clock, size: 14, color: AppColors.textTertiary),
+                              Icon(CupertinoIcons.clock,
+                                  size: 14, color: AppColors.textTertiary),
                               const SizedBox(width: 4),
                               Text(
                                 _formatDate(news.publishedAt!),
-                                style: AppTextStyles.labelSmall.copyWith(color: AppColors.textTertiary),
+                                style: AppTextStyles.labelSmall
+                                    .copyWith(color: AppColors.textTertiary),
                               ),
                             ],
                           ),
@@ -367,7 +389,8 @@ class _NewsCard extends StatelessWidget {
                         fit: BoxFit.cover,
                         errorBuilder: (_, __, ___) => Container(
                           color: AppColors.surfaceVariant,
-                          child: Icon(Icons.image_not_supported_rounded, color: AppColors.textTertiary, size: 40),
+                          child: Icon(Icons.image_not_supported_rounded,
+                              color: AppColors.textTertiary, size: 40),
                         ),
                       ),
                     )
@@ -376,7 +399,8 @@ class _NewsCard extends StatelessWidget {
                       height: 140,
                       color: AppColors.surfaceVariant,
                       child: const Center(
-                        child: Icon(Icons.article_rounded, size: 48, color: AppColors.textTertiary),
+                        child: Icon(Icons.article_rounded,
+                            size: 48, color: AppColors.textTertiary),
                       ),
                     ),
                   Padding(
@@ -387,7 +411,8 @@ class _NewsCard extends StatelessWidget {
                       children: [
                         Text(
                           title,
-                          style: AppTextStyles.titleLarge.copyWith(fontWeight: FontWeight.w600),
+                          style: AppTextStyles.titleLarge
+                              .copyWith(fontWeight: FontWeight.w600),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -395,7 +420,8 @@ class _NewsCard extends StatelessWidget {
                           const SizedBox(height: 6),
                           Text(
                             excerpt,
-                            style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                            style: AppTextStyles.bodySmall
+                                .copyWith(color: AppColors.textSecondary),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -404,11 +430,13 @@ class _NewsCard extends StatelessWidget {
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              Icon(CupertinoIcons.clock, size: 14, color: AppColors.textTertiary),
+                              Icon(CupertinoIcons.clock,
+                                  size: 14, color: AppColors.textTertiary),
                               const SizedBox(width: 4),
                               Text(
                                 _formatDate(news.publishedAt!),
-                                style: AppTextStyles.labelSmall.copyWith(color: AppColors.textTertiary),
+                                style: AppTextStyles.labelSmall
+                                    .copyWith(color: AppColors.textTertiary),
                               ),
                             ],
                           ),

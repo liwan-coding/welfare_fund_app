@@ -10,12 +10,12 @@ import '../constants/app_config.dart';
 import '../constants/app_constants.dart';
 import '../providers/auth_provider.dart';
 import '../services/api_client.dart';
-import 'home_screen.dart';
+import 'main_shell.dart';
 import 'donation_success_screen.dart';
 import 'payment_failed_screen.dart';
 import '../services/payment_service.dart';
 import '../services/browser_url_service_stub.dart'
-  if (dart.library.html) '../services/browser_url_service_web.dart';
+    if (dart.library.html) '../services/browser_url_service_web.dart';
 import '../utils/redirect_utils.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -39,22 +39,22 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-    
+
     _fadeController = AnimationController(
       duration: AppConstants.splashFadeDuration,
       vsync: this,
     );
-    
+
     _slideController = AnimationController(
       duration: AppConstants.splashSlideDuration,
       vsync: this,
     );
-    
+
     _scaleController = AnimationController(
       duration: AppConstants.splashScaleDuration,
       vsync: this,
     );
-    
+
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -62,7 +62,7 @@ class _SplashScreenState extends State<SplashScreen>
       parent: _fadeController,
       curve: Curves.easeInOut,
     ));
-    
+
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.5),
       end: Offset.zero,
@@ -70,7 +70,7 @@ class _SplashScreenState extends State<SplashScreen>
       parent: _slideController,
       curve: Curves.easeOutCubic,
     ));
-    
+
     _scaleAnimation = Tween<double>(
       begin: 0.8,
       end: 1.0,
@@ -78,7 +78,7 @@ class _SplashScreenState extends State<SplashScreen>
       parent: _scaleController,
       curve: Curves.elasticOut,
     ));
-    
+
     _initializeFirebaseMessaging();
     _startAnimations();
   }
@@ -113,7 +113,7 @@ class _SplashScreenState extends State<SplashScreen>
       // Check if user is authenticated
       final apiClient = ApiClient();
       final isAuthenticated = await apiClient.isAuthenticated();
-      
+
       if (!isAuthenticated) {
         print('⚠️ User not authenticated, skipping FCM token registration');
         return;
@@ -123,7 +123,7 @@ class _SplashScreenState extends State<SplashScreen>
       final deviceInfo = DeviceInfoPlugin();
       String deviceId;
       String platform;
-      
+
       if (kIsWeb) {
         // Web platform
         final webInfo = await deviceInfo.webBrowserInfo;
@@ -148,7 +148,7 @@ class _SplashScreenState extends State<SplashScreen>
         fcmToken: fcmToken,
         platform: platform,
       );
-      
+
       print('✅ FCM token sent to API successfully');
     } catch (e) {
       print('❌ Error sending FCM token to API: $e');
@@ -176,7 +176,7 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
     _checkForPaymentRedirect();
   }
-  
+
   void _checkForPaymentRedirect() {
     if (kIsWeb) {
       try {
@@ -201,7 +201,7 @@ class _SplashScreenState extends State<SplashScreen>
         debugPrint('$stackTrace');
       }
     }
-    
+
     // Navigate to home after animations complete
     Future.delayed(AppConstants.splashToHomeDelay, () {
       if (mounted && !_navigated) {
@@ -209,34 +209,41 @@ class _SplashScreenState extends State<SplashScreen>
       }
     });
   }
-  
-  Future<void> _navigateToPaymentSuccess(Map<String, String> queryParams) async {
+
+  Future<void> _navigateToPaymentSuccess(
+      Map<String, String> queryParams) async {
     if (!mounted) return;
 
     final donationId = queryParams['donation_id'];
     final sessionId = queryParams['session_id'];
     final amount = double.tryParse(queryParams['amount'] ?? '');
     final campaignTitle = queryParams['campaign_title'];
-    
+
     // Basic validation
-    if (sessionId == null || sessionId.isEmpty || amount == null || !amount.isFinite || amount <= 0) {
+    if (sessionId == null ||
+        sessionId.isEmpty ||
+        amount == null ||
+        !amount.isFinite ||
+        amount <= 0) {
       return _navigateToPaymentCancel({
         ...queryParams,
         'error_message': 'payment.invalidData'.tr(),
       });
     }
-    
+
     // Optional server verification if sessionId is present (guaranteed non-null above)
     final verifiedSessionId = sessionId;
     if (verifiedSessionId.isNotEmpty) {
       try {
-        final status = await PaymentService().checkPaymentStatus(verifiedSessionId);
+        final status =
+            await PaymentService().checkPaymentStatus(verifiedSessionId);
         if (!mounted) return;
         if (!(status.isCompleted)) {
           // If not completed, fallback to failure route with friendly message
           return _navigateToPaymentCancel({
             ...queryParams,
-            'error_message': status.message ?? status.error ?? 'payment.notCompleted'.tr(),
+            'error_message':
+                status.message ?? status.error ?? 'payment.notCompleted'.tr(),
           });
         }
       } catch (e) {
@@ -248,10 +255,11 @@ class _SplashScreenState extends State<SplashScreen>
         });
       }
     }
-    
+
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => DonationSuccessScreen(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            DonationSuccessScreen(
           donationId: donationId,
           sessionId: sessionId,
           amount: amount,
@@ -264,7 +272,7 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
   }
-  
+
   Future<void> _navigateToPaymentCancel(Map<String, String> queryParams) async {
     if (!mounted) return;
 
@@ -273,10 +281,11 @@ class _SplashScreenState extends State<SplashScreen>
     final amount = double.tryParse(queryParams['amount'] ?? '');
     final campaignTitle = queryParams['campaign_title'];
     final errorMessage = queryParams['error_message'];
-    
+
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => PaymentFailedScreen(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            PaymentFailedScreen(
           donationId: donationId,
           sessionId: sessionId,
           amount: amount,
@@ -305,7 +314,7 @@ class _SplashScreenState extends State<SplashScreen>
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            const HomeScreen(),
+            const MainShell(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
@@ -349,7 +358,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                 ),
               ),
-              
+
               // Main content
               Padding(
                 padding: const EdgeInsets.all(AppConstants.extraLargePadding),
@@ -378,7 +387,8 @@ class _SplashScreenState extends State<SplashScreen>
                                         borderRadius: BorderRadius.circular(20),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: AppColors.primary.withOpacity(0.3),
+                                            color: AppColors.primary
+                                                .withOpacity(0.3),
                                             blurRadius: 30,
                                             offset: const Offset(0, 15),
                                           ),
@@ -408,7 +418,8 @@ class _SplashScreenState extends State<SplashScreen>
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'splash.subtitle'.tr(), // 'تصنع الفرق، تبرعاً تلو الآخر'
+                                    'splash.subtitle'
+                                        .tr(), // 'تصنع الفرق، تبرعاً تلو الآخر'
                                     style: TextStyle(
                                       fontFamily: 'Calibri',
                                       fontSize: 16,
@@ -424,7 +435,7 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                       ),
                     ),
-                    
+
                     // Welcome message and button
                     SlideTransition(
                       position: _slideAnimation,
@@ -433,10 +444,12 @@ class _SplashScreenState extends State<SplashScreen>
                         child: Column(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(AppConstants.largePadding),
+                              padding: const EdgeInsets.all(
+                                  AppConstants.largePadding),
                               decoration: BoxDecoration(
                                 color: AppColors.surface.withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(AppConstants.largeRadius),
+                                borderRadius: BorderRadius.circular(
+                                    AppConstants.largeRadius),
                                 border: Border.all(
                                   color: AppColors.surface.withOpacity(0.2),
                                   width: 1,
@@ -445,7 +458,8 @@ class _SplashScreenState extends State<SplashScreen>
                               child: Column(
                                 children: [
                                   Text(
-                                    'splash.welcome'.tr(), // 'مرحباً بك في منصة التبرعات'
+                                    'splash.welcome'
+                                        .tr(), // 'مرحباً بك في منصة التبرعات'
                                     style: const TextStyle(
                                       fontFamily: 'Calibri',
                                       fontSize: 18,
@@ -457,7 +471,8 @@ class _SplashScreenState extends State<SplashScreen>
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'splash.description'.tr(), // 'نساعد المحتاجين من خلال تبرعات المجتمع'
+                                    'splash.description'
+                                        .tr(), // 'نساعد المحتاجين من خلال تبرعات المجتمع'
                                     style: TextStyle(
                                       fontFamily: 'Calibri',
                                       fontSize: 14,
@@ -470,15 +485,17 @@ class _SplashScreenState extends State<SplashScreen>
                                 ],
                               ),
                             ),
-                            const SizedBox(height: AppConstants.extraLargePadding),
-                            
+                            const SizedBox(
+                                height: AppConstants.extraLargePadding),
+
                             // Modern button with glass effect
                             Container(
                               width: double.infinity,
                               height: 60,
                               decoration: BoxDecoration(
                                 color: AppColors.surface,
-                                borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                                borderRadius: BorderRadius.circular(
+                                    AppConstants.defaultRadius),
                                 boxShadow: [
                                   BoxShadow(
                                     color: AppColors.primary.withOpacity(0.2),
@@ -490,21 +507,26 @@ class _SplashScreenState extends State<SplashScreen>
                               child: Material(
                                 color: Colors.transparent,
                                 child: InkWell(
-                                  onTap: _navigated ? null : () {
-                                    _navigated = true;
-                                    _navigateToHome();
-                                  },
-                                  borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                                  onTap: _navigated
+                                      ? null
+                                      : () {
+                                          _navigated = true;
+                                          _navigateToHome();
+                                        },
+                                  borderRadius: BorderRadius.circular(
+                                      AppConstants.defaultRadius),
                                   child: Semantics(
                                     button: true,
                                     enabled: !_navigated,
                                     label: 'splash.startNow'.tr(),
                                     child: Center(
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            'splash.startNow'.tr(), // 'ابدأ الآن'
+                                            'splash.startNow'
+                                                .tr(), // 'ابدأ الآن'
                                             style: const TextStyle(
                                               fontFamily: 'Calibri',
                                               fontSize: 18,
@@ -538,4 +560,4 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
   }
-} 
+}

@@ -21,7 +21,8 @@ class UploadDocumentsScreen extends StatefulWidget {
 }
 
 class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
-  final StudentRegistrationService _studentService = StudentRegistrationService();
+  final StudentRegistrationService _studentService =
+      StudentRegistrationService();
   final ImagePicker _picker = ImagePicker();
 
   // Document paths and bytes
@@ -53,7 +54,8 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ListTile(
-                  leading: const Icon(CupertinoIcons.camera, color: AppColors.primary),
+                  leading: const Icon(CupertinoIcons.camera,
+                      color: AppColors.primary),
                   title: Text('take_photo_camera'.tr()),
                   onTap: () {
                     Navigator.pop(context);
@@ -61,7 +63,8 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(CupertinoIcons.photo, color: AppColors.primary),
+                  leading: const Icon(CupertinoIcons.photo,
+                      color: AppColors.primary),
                   title: Text('choose_from_gallery'.tr()),
                   onTap: () {
                     Navigator.pop(context);
@@ -84,7 +87,8 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
     }
   }
 
-  Future<void> _pickDocumentFromCamera(String documentType, Function(String, Uint8List?) onPicked) async {
+  Future<void> _pickDocumentFromCamera(
+      String documentType, Function(String, Uint8List?) onPicked) async {
     try {
       final XFile? image = await _picker.pickImage(
         source: ImageSource.camera,
@@ -92,13 +96,14 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
         maxHeight: 1024,
         imageQuality: 85,
       );
-      
+
       if (image != null) {
         final bytes = await image.readAsBytes();
         onPicked(image.path, bytes);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${'document_captured_successfully'.tr()} $documentType'),
+            content:
+                Text('${'document_captured_successfully'.tr()} $documentType'),
             backgroundColor: AppColors.success,
             duration: const Duration(seconds: 2),
           ),
@@ -115,7 +120,8 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
     }
   }
 
-  Future<void> _pickDocumentFromGallery(String documentType, Function(String, Uint8List?) onPicked) async {
+  Future<void> _pickDocumentFromGallery(
+      String documentType, Function(String, Uint8List?) onPicked) async {
     try {
       final XFile? image = await _picker.pickImage(
         source: ImageSource.gallery,
@@ -123,13 +129,14 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
         maxHeight: 1024,
         imageQuality: 85,
       );
-      
+
       if (image != null) {
         final bytes = await image.readAsBytes();
         onPicked(image.path, bytes);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${'document_selected_successfully'.tr()} $documentType'),
+            content:
+                Text('${'document_selected_successfully'.tr()} $documentType'),
             backgroundColor: AppColors.success,
             duration: const Duration(seconds: 2),
           ),
@@ -168,11 +175,16 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
 
     try {
       final Map<String, Uint8List> documentFiles = {};
-      if (_idCardImageBytes != null) documentFiles['id_card'] = _idCardImageBytes!;
-      if (_transcriptBytes != null) documentFiles['enrollment_letter'] = _transcriptBytes!;
-      if (_incomeCertificateBytes != null) documentFiles['income_proof'] = _incomeCertificateBytes!;
-      if (_familyCardBytes != null) documentFiles['bank_statements'] = _familyCardBytes!;
-      if (_otherDocumentsBytes != null) documentFiles['supporting_documents'] = _otherDocumentsBytes!;
+      if (_idCardImageBytes != null)
+        documentFiles['id_card'] = _idCardImageBytes!;
+      if (_transcriptBytes != null)
+        documentFiles['enrollment_letter'] = _transcriptBytes!;
+      if (_incomeCertificateBytes != null)
+        documentFiles['income_proof'] = _incomeCertificateBytes!;
+      if (_familyCardBytes != null)
+        documentFiles['bank_statements'] = _familyCardBytes!;
+      if (_otherDocumentsBytes != null)
+        documentFiles['supporting_documents'] = _otherDocumentsBytes!;
 
       await _studentService.uploadStudentDocuments(
         registrationId: widget.registrationId,
@@ -193,7 +205,8 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${'error_uploading_documents'.tr()}: ${e.toString()}'),
+            content:
+                Text('${'error_uploading_documents'.tr()}: ${e.toString()}'),
             backgroundColor: AppColors.error,
             duration: const Duration(seconds: 3),
           ),
@@ -223,7 +236,7 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: documentPath != null 
+          color: documentPath != null
               ? AppColors.success.withOpacity(0.3)
               : AppColors.textTertiary.withOpacity(0.3),
         ),
@@ -243,14 +256,14 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: documentPath != null 
+                  color: documentPath != null
                       ? AppColors.success.withOpacity(0.1)
                       : AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   icon,
-                  color: documentPath != null 
+                  color: documentPath != null
                       ? AppColors.success
                       : AppColors.primary,
                   size: 24,
@@ -317,10 +330,12 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                       });
                     },
                   ),
-                  icon: Icon(documentPath != null ? CupertinoIcons.pencil : Icons.upload),
+                  icon: Icon(documentPath != null
+                      ? CupertinoIcons.pencil
+                      : Icons.upload),
                   label: Text(documentPath != null ? 'تغيير' : 'رفع'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: documentPath != null 
+                    backgroundColor: documentPath != null
                         ? AppColors.info
                         : AppColors.primary,
                     foregroundColor: AppColors.surface,
@@ -491,17 +506,19 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     onPressed: _isUploading ? null : _uploadDocuments,
-                    icon: _isUploading 
+                    icon: _isUploading
                         ? const SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(AppColors.surface),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.surface),
                             ),
                           )
                         : const Icon(Icons.cloud_upload),
-                    label: Text(_isUploading ? 'جاري الرفع...' : 'رفع المستندات'),
+                    label:
+                        Text(_isUploading ? 'جاري الرفع...' : 'رفع المستندات'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: AppColors.surface,

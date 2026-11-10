@@ -2,17 +2,12 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart'
     show CupertinoIcons, CupertinoPageRoute, CupertinoSliverRefreshControl;
-import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../constants/app_constants.dart';
 import '../design/design.dart';
 import '../models/donation.dart';
-import '../providers/auth_provider.dart';
 import '../services/donation_service.dart';
-import '../widgets/common/main_tab_bar.dart';
-import 'home_screen.dart';
+import 'main_shell.dart';
 import 'login_screen.dart';
-import 'settings_screen.dart';
 
 class MyDonationsScreen extends StatefulWidget {
   final bool forceRefresh;
@@ -237,32 +232,6 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
   String _filterLabel(String filter) =>
       _filters.contains(filter) ? filter.tr() : filter;
 
-  void _onBottomNavigationTap(int index, bool isAuthenticated) {
-    if (index == 1) {
-      _checkAuthAndLoadDonations();
-      return;
-    }
-
-    if (index == 0) {
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).popUntil((route) =>
-            route.isFirst || route.settings.name == AppConstants.homeRoute);
-      } else {
-        Navigator.of(context).pushReplacement(
-          CupertinoPageRoute(builder: (context) => const HomeScreen()),
-        );
-      }
-      return;
-    }
-
-    if (index == 2) {
-      Navigator.push(
-        context,
-        CupertinoPageRoute(builder: (context) => const SettingsScreen()),
-      );
-    }
-  }
-
   ({Color color, IconData icon, String text}) _statusInfo(Donation donation) {
     final p = AppPalette.of(context);
     if (donation.isPaid || donation.isCompleted) {
@@ -311,13 +280,9 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthProvider>(
-      builder: (context, authProvider, child) {
-        final isAuthenticated = authProvider.isAuthenticated;
-        final bottom = MediaQuery.paddingOf(context).bottom;
-
+    return Builder(
+      builder: (context) {
         return Scaffold(
-          extendBody: true,
           body: CustomScrollView(
             physics: const BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
@@ -327,20 +292,16 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
               CupertinoSliverRefreshControl(
                 onRefresh: _checkAuthAndLoadDonations,
               ),
-              ..._buildBody(bottom),
+              ..._buildBody(),
             ],
-          ),
-          bottomNavigationBar: MainTabBar(
-            currentIndex: 1,
-            onTap: (index) => _onBottomNavigationTap(index, isAuthenticated),
           ),
         );
       },
     );
   }
 
-  List<Widget> _buildBody(double bottomInset) {
-    final listBottom = AppTabBar.barHeight + bottomInset + AppSpace.xl;
+  List<Widget> _buildBody() {
+    final listBottom = MainShell.bottomReserve(context) + AppSpace.xl;
 
     if (_isLoading && _donations.isEmpty) {
       return [
@@ -442,13 +403,12 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
               icon: loginRequired
                   ? CupertinoIcons.lock_fill
                   : CupertinoIcons.exclamationmark_circle,
-              title: loginRequired
-                  ? 'login_required'.tr()
-                  : 'error_occurred'.tr(),
+              title:
+                  loginRequired ? 'login_required'.tr() : 'error_occurred'.tr(),
               message: _errorMessage!,
               actionLabel: loginRequired ? 'login'.tr() : 'retry'.tr(),
               onAction: loginRequired
-                  ? () => Navigator.pushReplacement(
+                  ? () => Navigator.push(
                         context,
                         CupertinoPageRoute(
                             builder: (context) => const LoginScreen()),
@@ -544,10 +504,10 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
   Widget _buildDonationRow(Donation donation) {
     final p = AppPalette.of(context);
     final status = _statusInfo(donation);
-    final title = donation
-            .getLocalizedCampaignName(context.locale.languageCode) ??
-        donation.programName ??
-        'charity_donation'.tr();
+    final title =
+        donation.getLocalizedCampaignName(context.locale.languageCode) ??
+            donation.programName ??
+            'charity_donation'.tr();
 
     return AppListTile(
       leading: Container(
@@ -579,9 +539,8 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
 
     final isProgram = donation.programId != null;
     final isCampaign = donation.campaignId != null;
-    final targetName = donation.programName ??
-        donation.getLocalizedCampaignName(lang) ??
-        '';
+    final targetName =
+        donation.programName ?? donation.getLocalizedCampaignName(lang) ?? '';
 
     showModalBottomSheet<void>(
       context: context,

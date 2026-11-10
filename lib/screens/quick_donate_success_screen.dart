@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import '../constants/app_colors.dart';
 import '../constants/app_text_styles.dart';
 import '../constants/app_constants.dart';
-import '../screens/home_screen.dart';
+import 'main_shell.dart';
 import '../services/donation_service.dart';
 import 'my_donations_screen.dart';
 
@@ -20,7 +20,8 @@ class QuickDonateSuccessScreen extends StatefulWidget {
   });
 
   @override
-  State<QuickDonateSuccessScreen> createState() => _QuickDonateSuccessScreenState();
+  State<QuickDonateSuccessScreen> createState() =>
+      _QuickDonateSuccessScreenState();
 }
 
 class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
@@ -29,23 +30,23 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
   late AnimationController _checkmarkController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _checkmarkAnimation;
-  
+
   final DonationService _donationService = DonationService();
 
   @override
   void initState() {
     super.initState();
-    
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _checkmarkController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _scaleAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -53,7 +54,7 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
       parent: _animationController,
       curve: Curves.elasticOut,
     ));
-    
+
     _checkmarkAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -61,7 +62,7 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
       parent: _checkmarkController,
       curve: Curves.easeInOut,
     ));
-    
+
     _startAnimations();
   }
 
@@ -82,11 +83,11 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
   void _onBackToHome() {
     Navigator.pushAndRemoveUntil(
       context,
-      CupertinoPageRoute(builder: (context) => const HomeScreen()),
+      CupertinoPageRoute(builder: (context) => const MainShell()),
       (route) => false,
     );
   }
-  
+
   void _goToMyDonations() {
     Navigator.pushAndRemoveUntil(
       context,
@@ -96,7 +97,7 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
       (route) => false,
     );
   }
-  
+
   Future<void> _refreshDonationsData() async {
     try {
       // Force refresh donations data by calling the API
@@ -106,8 +107,6 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
       print('QuickDonateSuccessScreen: Error refreshing donations data: $e');
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +118,7 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
           child: Column(
             children: [
               const SizedBox(height: AppConstants.extraLargePadding),
-              
+
               // Success Animation
               ScaleTransition(
                 scale: _scaleAnimation,
@@ -219,7 +218,7 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
                       ],
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Donation Type
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -240,7 +239,7 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
                       ],
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Date
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -261,7 +260,7 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
                       ],
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Transaction ID
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -366,9 +365,9 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Back to Home Button
                   SizedBox(
                     width: double.infinity,
@@ -444,4 +443,4 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
       ),
     );
   }
-} 
+}

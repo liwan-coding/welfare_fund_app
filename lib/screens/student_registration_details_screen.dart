@@ -17,11 +17,14 @@ class StudentRegistrationDetailsScreen extends StatefulWidget {
   });
 
   @override
-  State<StudentRegistrationDetailsScreen> createState() => _StudentRegistrationDetailsScreenState();
+  State<StudentRegistrationDetailsScreen> createState() =>
+      _StudentRegistrationDetailsScreenState();
 }
 
-class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDetailsScreen> {
-  final StudentRegistrationService _studentService = StudentRegistrationService();
+class _StudentRegistrationDetailsScreenState
+    extends State<StudentRegistrationDetailsScreen> {
+  final StudentRegistrationService _studentService =
+      StudentRegistrationService();
   StudentRegistration? _registration;
   bool _isLoading = true;
   String? _error;
@@ -39,7 +42,8 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
         _error = null;
       });
 
-      final data = await _studentService.getStudentRegistrationById(widget.registrationId);
+      final data = await _studentService
+          .getStudentRegistrationById(widget.registrationId);
       final registration = StudentRegistration.fromJson(data);
 
       setState(() {
@@ -57,7 +61,7 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
   String _getStatusText(String status) {
     // Normalize status
     String normalizedStatus = status.toLowerCase();
-    
+
     switch (normalizedStatus) {
       case 'pending':
       case 'في الانتظار':
@@ -76,7 +80,8 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
       case 'تم الرفض':
         return 'application_rejected'.tr();
       default:
-        print('Warning: Unknown status in _getStatusText: $status, defaulting to pending');
+        print(
+            'Warning: Unknown status in _getStatusText: $status, defaulting to pending');
         return 'pending'.tr();
     }
   }
@@ -84,7 +89,7 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
   Color _getStatusColor(String status) {
     // Normalize status
     String normalizedStatus = status.toLowerCase();
-    
+
     switch (normalizedStatus) {
       case 'pending':
       case 'في الانتظار':
@@ -103,7 +108,8 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
       case 'تم الرفض':
         return AppColors.error;
       default:
-        print('Warning: Unknown status in _getStatusColor: $status, defaulting to warning color');
+        print(
+            'Warning: Unknown status in _getStatusColor: $status, defaulting to warning color');
         return AppColors.warning;
     }
   }
@@ -111,7 +117,7 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
   IconData _getStatusIcon(String status) {
     // Normalize status
     String normalizedStatus = status.toLowerCase();
-    
+
     switch (normalizedStatus) {
       case 'pending':
       case 'في الانتظار':
@@ -130,7 +136,8 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
       case 'تم الرفض':
         return CupertinoIcons.xmark_circle_fill;
       default:
-        print('Warning: Unknown status in _getStatusIcon: $status, defaulting to schedule icon');
+        print(
+            'Warning: Unknown status in _getStatusIcon: $status, defaulting to schedule icon');
         return CupertinoIcons.clock;
     }
   }
@@ -199,7 +206,8 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                           backgroundColor: AppColors.primary,
                           foregroundColor: AppColors.surface,
                           elevation: 0,
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -230,7 +238,8 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                       ),
                     )
                   : SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -239,10 +248,12 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                             width: double.infinity,
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: _getStatusColor(_registration!.status).withOpacity(0.1),
+                              color: _getStatusColor(_registration!.status)
+                                  .withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: _getStatusColor(_registration!.status).withOpacity(0.2),
+                                color: _getStatusColor(_registration!.status)
+                                    .withOpacity(0.2),
                               ),
                             ),
                             child: Column(
@@ -256,7 +267,8 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                                 Text(
                                   _getStatusText(_registration!.status),
                                   style: AppTextStyles.headlineSmall.copyWith(
-                                    color: _getStatusColor(_registration!.status),
+                                    color:
+                                        _getStatusColor(_registration!.status),
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -280,14 +292,22 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                             icon: CupertinoIcons.person,
                             color: AppColors.primary,
                             children: [
-                              _buildInfoRow('full_name'.tr(), _registration!.fullName),
-                              _buildInfoRow('student_id'.tr(), _registration!.studentId),
-                              _buildInfoRow('phone_number'.tr(), _registration!.phone),
-                              if (_registration!.email != null && _registration!.email!.isNotEmpty)
-                                _buildInfoRow('email'.tr(), _registration!.email!),
-                              if (_registration!.gender != null && _registration!.gender!.isNotEmpty)
-                                _buildInfoRow('gender'.tr(), _registration!.gender!),
-                              _buildInfoRow('marital_status'.tr(), _registration!.maritalStatus),
+                              _buildInfoRow(
+                                  'full_name'.tr(), _registration!.fullName),
+                              _buildInfoRow(
+                                  'student_id'.tr(), _registration!.studentId),
+                              _buildInfoRow(
+                                  'phone_number'.tr(), _registration!.phone),
+                              if (_registration!.email != null &&
+                                  _registration!.email!.isNotEmpty)
+                                _buildInfoRow(
+                                    'email'.tr(), _registration!.email!),
+                              if (_registration!.gender != null &&
+                                  _registration!.gender!.isNotEmpty)
+                                _buildInfoRow(
+                                    'gender'.tr(), _registration!.gender!),
+                              _buildInfoRow('marital_status'.tr(),
+                                  _registration!.maritalStatus),
                             ],
                           ),
                           const SizedBox(height: 20),
@@ -298,11 +318,18 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                             icon: Icons.school_outlined,
                             color: AppColors.secondary,
                             children: [
-                              _buildInfoRow('university'.tr(), _registration!.university),
-                              _buildInfoRow('college'.tr(), _registration!.college ?? ''),
-                              _buildInfoRow('major'.tr(), _registration!.major ?? ''),
-                              _buildInfoRow('academic_year'.tr(), _registration!.academicYear?.toString() ?? ''),
-                              _buildInfoRow('gpa'.tr(), _registration!.gpa?.toString() ?? ''),
+                              _buildInfoRow(
+                                  'university'.tr(), _registration!.university),
+                              _buildInfoRow(
+                                  'college'.tr(), _registration!.college ?? ''),
+                              _buildInfoRow(
+                                  'major'.tr(), _registration!.major ?? ''),
+                              _buildInfoRow(
+                                  'academic_year'.tr(),
+                                  _registration!.academicYear?.toString() ??
+                                      ''),
+                              _buildInfoRow('gpa'.tr(),
+                                  _registration!.gpa?.toString() ?? ''),
                             ],
                           ),
                           const SizedBox(height: 20),
@@ -313,8 +340,10 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                             icon: Icons.account_balance_wallet_outlined,
                             color: AppColors.accent,
                             children: [
-                              _buildInfoRow('income_level'.tr(), _registration!.incomeLevel),
-                              _buildInfoRow('family_size'.tr(), _registration!.familySize),
+                              _buildInfoRow('income_level'.tr(),
+                                  _registration!.incomeLevel),
+                              _buildInfoRow('family_size'.tr(),
+                                  _registration!.familySize),
                             ],
                           ),
                           const SizedBox(height: 20),
@@ -327,20 +356,23 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                               icon: CupertinoIcons.creditcard,
                               color: AppColors.info,
                               children: [
-                                _buildIdCardImage(_registration!.documents!.idCard!),
+                                _buildIdCardImage(
+                                    _registration!.documents!.idCard!),
                               ],
                             ),
                             const SizedBox(height: 20),
                           ],
 
                           // Additional Information
-                          if (_registration!.address != null && _registration!.address!.isNotEmpty) ...[
+                          if (_registration!.address != null &&
+                              _registration!.address!.isNotEmpty) ...[
                             _buildSection(
                               title: 'additional_information'.tr(),
                               icon: Icons.info_outlined,
                               color: AppColors.info,
                               children: [
-                                _buildInfoRow('address'.tr(), _registration!.address!),
+                                _buildInfoRow(
+                                    'address'.tr(), _registration!.address!),
                               ],
                             ),
                             const SizedBox(height: 20),
@@ -349,31 +381,37 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                           const SizedBox(height: 16),
 
                           // Action Buttons (only show if status allows editing)
-                          if (_registration!.status == 'pending' || _registration!.status == 'rejected') ...[
+                          if (_registration!.status == 'pending' ||
+                              _registration!.status == 'rejected') ...[
                             Row(
                               children: [
                                 Expanded(
                                   child: ElevatedButton.icon(
                                     onPressed: () {
                                       // TODO: Implement edit functionality
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         SnackBar(
-                                          content: Text('feature_coming_soon'.tr()),
+                                          content:
+                                              Text('feature_coming_soon'.tr()),
                                           backgroundColor: AppColors.info,
                                           behavior: SnackBarBehavior.floating,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
                                           ),
                                         ),
                                       );
                                     },
-                                    icon: const Icon(CupertinoIcons.pencil, size: 18),
+                                    icon: const Icon(CupertinoIcons.pencil,
+                                        size: 18),
                                     label: Text('edit'.tr()),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.info,
                                       foregroundColor: AppColors.surface,
                                       elevation: 0,
-                                      padding: const EdgeInsets.symmetric(vertical: 14),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 14),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
@@ -385,24 +423,29 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                                   child: ElevatedButton.icon(
                                     onPressed: () {
                                       // TODO: Implement documents upload
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         SnackBar(
-                                          content: Text('feature_coming_soon'.tr()),
+                                          content:
+                                              Text('feature_coming_soon'.tr()),
                                           backgroundColor: AppColors.info,
                                           behavior: SnackBarBehavior.floating,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
                                           ),
                                         ),
                                       );
                                     },
-                                    icon: const Icon(Icons.upload_file, size: 18),
+                                    icon:
+                                        const Icon(Icons.upload_file, size: 18),
                                     label: Text('upload_documents'.tr()),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.primary,
                                       foregroundColor: AppColors.surface,
                                       elevation: 0,
-                                      padding: const EdgeInsets.symmetric(vertical: 14),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 14),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
@@ -412,7 +455,7 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                               ],
                             ),
                           ],
-                          
+
                           const SizedBox(height: 24),
                         ],
                       ),
@@ -490,12 +533,12 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
     if (imagePath == null || imagePath.isEmpty) {
       return '';
     }
-    
+
     // If it's already a full URL, return it
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
       return imagePath;
     }
-    
+
     // Otherwise, construct the full URL
     String baseUrl = AppConfig.serverBaseUrl;
     String cleanPath = imagePath.startsWith('/') ? imagePath : '/$imagePath';
@@ -504,7 +547,7 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
 
   Widget _buildIdCardImage(String imagePath) {
     final imageUrl = _getImageUrl(imagePath);
-    
+
     return Container(
       width: double.infinity,
       constraints: const BoxConstraints(
@@ -538,7 +581,8 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                                 color: Colors.black87,
                                 child: const Center(
                                   child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        AppColors.primary),
                                   ),
                                 ),
                               ),
@@ -583,7 +627,8 @@ class _StudentRegistrationDetailsScreenState extends State<StudentRegistrationDe
                     color: AppColors.surfaceVariant,
                     child: const Center(
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(AppColors.primary),
                       ),
                     ),
                   ),

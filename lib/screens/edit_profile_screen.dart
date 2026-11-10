@@ -10,7 +10,7 @@ import '../providers/auth_provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final Map<String, dynamic>? userProfile;
-  
+
   const EditProfileScreen({
     super.key,
     this.userProfile,
@@ -119,7 +119,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                   centerTitle: true,
                   iconTheme: const IconThemeData(color: AppColors.surface),
                   leading: IconButton(
-                    icon: const Icon(AppIcons.chevronBack, color: AppColors.surface),
+                    icon: const Icon(AppIcons.chevronBack,
+                        color: AppColors.surface),
                     onPressed: () => Navigator.pop(context),
                   ),
                   title: Text(
@@ -200,7 +201,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                   children: [
                                     Text(
                                       'profile'.tr(),
-                                      style: AppTextStyles.headlineSmall.copyWith(
+                                      style:
+                                          AppTextStyles.headlineSmall.copyWith(
                                         color: AppColors.surface,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -209,7 +211,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                     Text(
                                       'update_your_personal_information'.tr(),
                                       style: AppTextStyles.bodyMedium.copyWith(
-                                        color: AppColors.surface.withOpacity(0.9),
+                                        color:
+                                            AppColors.surface.withOpacity(0.9),
                                       ),
                                     ),
                                   ],
@@ -252,7 +255,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                     const SizedBox(width: 12),
                                     Text(
                                       'account_information'.tr(),
-                                      style: AppTextStyles.headlineSmall.copyWith(
+                                      style:
+                                          AppTextStyles.headlineSmall.copyWith(
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.textPrimary,
                                       ),
@@ -265,15 +269,18 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                 _buildTextField(
                                   controller: _nameController,
                                   label: '${'full_name'.tr()} *',
-                                  hint: 'please_enter_full_name_validation'.tr(),
+                                  hint:
+                                      'please_enter_full_name_validation'.tr(),
                                   icon: CupertinoIcons.person,
                                   keyboardType: TextInputType.name,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'please_enter_full_name_validation'.tr();
+                                      return 'please_enter_full_name_validation'
+                                          .tr();
                                     }
                                     if (value.trim().length < 2) {
-                                      return 'name_must_be_at_least_2_characters'.tr();
+                                      return 'name_must_be_at_least_2_characters'
+                                          .tr();
                                     }
                                     return null;
                                   },
@@ -291,7 +298,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                   enabled: false,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'please_enter_phone_validation'.tr();
+                                      return 'please_enter_phone_validation'
+                                          .tr();
                                     }
                                     if (value.length != 8) {
                                       return 'phone_must_be_8_digits'.tr();
@@ -310,9 +318,11 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                   keyboardType: TextInputType.emailAddress,
                                   validator: (value) {
                                     if (value != null && value.isNotEmpty) {
-                                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                      if (!RegExp(
+                                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
                                           .hasMatch(value)) {
-                                        return 'please_enter_valid_email_validation'.tr();
+                                        return 'please_enter_valid_email_validation'
+                                            .tr();
                                       }
                                     }
                                     return null;
@@ -491,7 +501,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         await authProvider.updateProfile(
           name: _nameController.text.trim(),
           phone: _phoneController.text.trim(),
-          email: _emailController.text.trim().isEmpty ? null : _emailController.text.trim(),
+          email: _emailController.text.trim().isEmpty
+              ? null
+              : _emailController.text.trim(),
         );
 
         setState(() {
@@ -515,9 +527,10 @@ class _EditProfileScreenState extends State<EditProfileScreen>
               ),
             ),
           );
-          
+
           // Navigate back to settings
-          Navigator.pop(context, true); // Return true to indicate successful update
+          Navigator.pop(
+              context, true); // Return true to indicate successful update
         }
       } catch (error) {
         setState(() {

@@ -18,8 +18,8 @@ class PaymentScreen extends StatefulWidget {
   final double initialAmount;
   final String? campaignTitle;
   final String? campaignCategory;
-  final String? itemId;     // معرف البرنامج/الحملة كسلسلة
-  final String? itemType;   // 'program' | 'campaign'
+  final String? itemId; // معرف البرنامج/الحملة كسلسلة
+  final String? itemType; // 'program' | 'campaign'
 
   const PaymentScreen({
     super.key,
@@ -34,7 +34,8 @@ class PaymentScreen extends StatefulWidget {
   State<PaymentScreen> createState() => _PaymentScreenState();
 }
 
-class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateMixin {
+class _PaymentScreenState extends State<PaymentScreen>
+    with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -61,11 +62,13 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0)
-        .animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
 
-    _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero)
-        .animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+            CurvedAnimation(
+                parent: _animationController, curve: Curves.easeOutCubic));
 
     _animationController.forward();
   }
@@ -94,28 +97,29 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
       _toast('please_choose_donation_amount_validation'.tr());
       return false;
     }
-    
+
     // حد أدنى للمبلغ (1 ريال)
     const double minAmount = 1.0;
     if (_selectedAmount < minAmount) {
       _toast('${'minimum_amount_is'.tr()} $minAmount ${'riyal'.tr()}');
       return false;
     }
-    
+
     // حد أقصى للمبلغ (100,000 ريال) لحماية من القيم غير المعقولة
     const double maxAmount = 100000.0;
     if (_selectedAmount > maxAmount) {
-      _toast('${'maximum_amount_is'.tr()} ${maxAmount.toStringAsFixed(0)} ${'riyal'.tr()}');
+      _toast(
+          '${'maximum_amount_is'.tr()} ${maxAmount.toStringAsFixed(0)} ${'riyal'.tr()}');
       return false;
     }
-    
+
     // التحقق من الاسم
     final donorName = _donorNameController.text.trim();
     if (donorName.isEmpty) {
       _toast('please_enter_donor_name_validation'.tr());
       return false;
     }
-    
+
     // التحقق من طول الاسم (2-100 حرف)
     if (donorName.length < 2) {
       _toast('donor_name_must_be_at_least_2_characters'.tr());
@@ -125,7 +129,7 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
       _toast('donor_name_too_long'.tr());
       return false;
     }
-    
+
     // التحقق من البريد الإلكتروني
     final email = _donorEmailController.text.trim();
     if (email.isNotEmpty) {
@@ -140,10 +144,11 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
         return false;
       }
     }
-    
+
     // التحقق من رقم الهاتف — مطلوب للمستخدمين غير المسجلين
     final phone = _donorPhoneController.text.trim();
-    final isLoggedIn = context.read<AuthProvider>().isAuthenticated && context.read<AuthProvider>().userProfile != null;
+    final isLoggedIn = context.read<AuthProvider>().isAuthenticated &&
+        context.read<AuthProvider>().userProfile != null;
     if (!isLoggedIn && phone.isEmpty) {
       _toast('please_enter_donor_phone'.tr());
       return false;
@@ -159,14 +164,14 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
         return false;
       }
     }
-    
+
     // التحقق من طول الرسالة (إذا تم إدخالها)
     final message = _messageController.text.trim();
     if (message.isNotEmpty && message.length > 500) {
       _toast('message_too_long'.tr());
       return false;
     }
-    
+
     return true;
   }
 
@@ -178,7 +183,7 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
 
   Future<void> _proceedToPayment() async {
     if (!_validateForm()) return;
-    
+
     if (!mounted) return;
 
     try {
@@ -199,26 +204,36 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
 
       final auth = context.read<AuthProvider>();
       final donorPhone = (auth.isAuthenticated && auth.userProfile != null)
-          ? (auth.userProfile!['phone']?.toString() ?? auth.userProfile!['user']?['phone']?.toString())
-          : (_donorPhoneController.text.trim().isNotEmpty ? _donorPhoneController.text.trim() : null);
+          ? (auth.userProfile!['phone']?.toString() ??
+              auth.userProfile!['user']?['phone']?.toString())
+          : (_donorPhoneController.text.trim().isNotEmpty
+              ? _donorPhoneController.text.trim()
+              : null);
 
       // إنشاء التبرع مع الدفع مباشرة (رقم الهاتف من الملف الشخصي إن كان مسجلاً)
       await provider.initiateDonationWithPayment(
         amount: _selectedAmount,
         donorName: _donorNameController.text.trim(),
-        donorEmail: _donorEmailController.text.trim().isNotEmpty ? _donorEmailController.text.trim() : null,
+        donorEmail: _donorEmailController.text.trim().isNotEmpty
+            ? _donorEmailController.text.trim()
+            : null,
         donorPhone: donorPhone,
-        message: _messageController.text.trim().isNotEmpty ? _messageController.text.trim() : null,
+        message: _messageController.text.trim().isNotEmpty
+            ? _messageController.text.trim()
+            : null,
         itemId: widget.itemId,
         itemType: widget.itemType,
         programId: programId,
         campaignId: campaignId,
-        note: _messageController.text.trim().isNotEmpty ? _messageController.text.trim() : null,
+        note: _messageController.text.trim().isNotEmpty
+            ? _messageController.text.trim()
+            : null,
       );
 
       if (!mounted) return;
 
-      if (provider.state == PaymentState.sessionCreated && provider.paymentUrl != null) {
+      if (provider.state == PaymentState.sessionCreated &&
+          provider.paymentUrl != null) {
         // انتقل للـ WebView
         provider.startPayment();
 
@@ -234,30 +249,34 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
 
         print('PaymentScreen: Received result from PaymentWebView: $result');
         final parsedResult = _PaymentFlowResult.fromNavigatorResult(result);
-        print('PaymentScreen: Parsed result - state: ${parsedResult.state}, donationId: ${parsedResult.donationId}, sessionId: ${parsedResult.sessionId}, amount: ${parsedResult.amount}, campaignTitle: ${parsedResult.campaignTitle}');
+        print(
+            'PaymentScreen: Parsed result - state: ${parsedResult.state}, donationId: ${parsedResult.donationId}, sessionId: ${parsedResult.sessionId}, amount: ${parsedResult.amount}, campaignTitle: ${parsedResult.campaignTitle}');
         final PaymentState? resultState = parsedResult.state;
 
         // التعامل مع النتيجة
         if (resultState == PaymentState.paymentSuccess) {
           if (!mounted) return;
-          
+
           // التحقق الإضافي من الحالة قبل عرض صفحة النجاح
           final sessionId = parsedResult.sessionId ?? provider.currentSessionId;
           if (sessionId != null) {
             try {
               await provider.checkPaymentStatus();
-              
+
               // إذا كانت الحالة pending، لا نعرض صفحة النجاح
               if (provider.isPending) {
-                print('PaymentScreen: Payment is still pending, not showing success screen');
+                print(
+                    'PaymentScreen: Payment is still pending, not showing success screen');
                 // نعرض رسالة الانتظار بدلاً من ذلك
-                _toast('checking_payment_status_please_wait'.tr(), color: AppColors.info);
+                _toast('checking_payment_status_please_wait'.tr(),
+                    color: AppColors.info);
                 return;
               }
-              
+
               // إذا لم تكن الحالة success، لا نعرض صفحة النجاح
               if (!provider.isPaymentSuccessful) {
-                print('PaymentScreen: Payment is not successful, not showing success screen');
+                print(
+                    'PaymentScreen: Payment is not successful, not showing success screen');
                 return;
               }
             } catch (e) {
@@ -265,25 +284,29 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
               // في حالة الخطأ، نعرض صفحة النجاح بناءً على النتيجة الأصلية
             }
           }
-          
+
           final finalAmount = parsedResult.amount ?? _selectedAmount;
-          final finalCampaignTitle = parsedResult.campaignTitle ?? widget.campaignTitle ?? 'charity_donation'.tr();
+          final finalCampaignTitle = parsedResult.campaignTitle ??
+              widget.campaignTitle ??
+              'charity_donation'.tr();
           final finalDonationId = parsedResult.donationId;
-          final finalSessionId = parsedResult.sessionId ?? provider.currentSessionId;
-          
+          final finalSessionId =
+              parsedResult.sessionId ?? provider.currentSessionId;
+
           print('PaymentScreen: Navigating to DonationSuccessScreen with:');
           print('  - amount: $finalAmount');
           print('  - campaignTitle: $finalCampaignTitle');
           print('  - donationId: $finalDonationId');
           print('  - sessionId: $finalSessionId');
-          
+
           Navigator.pushReplacement(
             context,
             CupertinoPageRoute(
               builder: (_) => DonationSuccessScreen(
                 amount: finalAmount,
                 campaignTitle: finalCampaignTitle,
-                campaignCategory: widget.campaignCategory ?? 'general_donation'.tr(),
+                campaignCategory:
+                    widget.campaignCategory ?? 'general_donation'.tr(),
                 donationId: finalDonationId,
                 sessionId: finalSessionId,
               ),
@@ -313,8 +336,10 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
               CupertinoPageRoute(
                 builder: (_) => DonationSuccessScreen(
                   amount: _selectedAmount,
-                  campaignTitle: widget.campaignTitle ?? 'charity_donation'.tr(),
-                  campaignCategory: widget.campaignCategory ?? 'general_donation'.tr(),
+                  campaignTitle:
+                      widget.campaignTitle ?? 'charity_donation'.tr(),
+                  campaignCategory:
+                      widget.campaignCategory ?? 'general_donation'.tr(),
                 ),
               ),
             );
@@ -325,7 +350,8 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
               CupertinoPageRoute(
                 builder: (_) => PaymentFailedScreen(
                   errorMessage: provider.displayErrorMessage,
-                  campaignTitle: widget.campaignTitle ?? 'charity_donation'.tr(),
+                  campaignTitle:
+                      widget.campaignTitle ?? 'charity_donation'.tr(),
                   amount: _selectedAmount,
                 ),
               ),
@@ -352,7 +378,7 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
       // معالجة الأخطاء بشكل آمن دون تسريب معلومات حساسة
       if (!mounted) return;
       _toast('error_occurred_processing_payment'.tr());
-      
+
       // إعادة تعيين حالة الدفع
       final provider = context.read<PaymentProvider>();
       provider.resetPaymentState();
@@ -380,25 +406,29 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [AppColors.primary, AppColors.primary.withOpacity(0.8)],
+                        colors: [
+                          AppColors.primary,
+                          AppColors.primary.withOpacity(0.8)
+                        ],
                       ),
                     ),
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.payment, size: 48, color: AppColors.surface),
+                          const Icon(Icons.payment,
+                              size: 48, color: AppColors.surface),
                           const SizedBox(height: 16),
                           Text(
-                          'complete_donation'.tr(),
-                          style: AppTextStyles.headlineLarge.copyWith(
-                            color: AppColors.surface,
-                            fontWeight: FontWeight.bold,
+                            'complete_donation'.tr(),
+                            style: AppTextStyles.headlineLarge.copyWith(
+                              color: AppColors.surface,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'choose_donation_amount_and_enter_your_data'.tr(),
+                          const SizedBox(height: 8),
+                          Text(
+                            'choose_donation_amount_and_enter_your_data'.tr(),
                             style: AppTextStyles.bodyLarge.copyWith(
                               color: AppColors.surface.withOpacity(0.9),
                             ),
@@ -415,12 +445,12 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
                       color: AppColors.surface.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(AppIcons.chevronBack, color: AppColors.surface, size: 20),
+                    child: const Icon(AppIcons.chevronBack,
+                        color: AppColors.surface, size: 20),
                   ),
                   onPressed: () => Navigator.pop(context),
                 ),
               ),
-
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(AppConstants.largePadding),
@@ -451,18 +481,25 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
                                     child: GestureDetector(
                                       onTap: () => _selectAmount(amount),
                                       child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 12),
                                         decoration: BoxDecoration(
-                                          color: isSelected ? AppColors.primary : AppColors.surface,
-                                          borderRadius: BorderRadius.circular(16),
+                                          color: isSelected
+                                              ? AppColors.primary
+                                              : AppColors.surface,
+                                          borderRadius:
+                                              BorderRadius.circular(16),
                                           border: Border.all(
-                                            color: isSelected ? AppColors.primary : AppColors.textTertiary,
+                                            color: isSelected
+                                                ? AppColors.primary
+                                                : AppColors.textTertiary,
                                             width: 1.5,
                                           ),
                                           boxShadow: isSelected
                                               ? [
                                                   BoxShadow(
-                                                    color: AppColors.primary.withOpacity(0.2),
+                                                    color: AppColors.primary
+                                                        .withOpacity(0.2),
                                                     blurRadius: 8,
                                                     offset: const Offset(0, 4),
                                                   ),
@@ -471,8 +508,11 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
                                         ),
                                         child: Text(
                                           '${amount.toStringAsFixed(0)} ${'riyal'.tr()}',
-                                          style: AppTextStyles.bodyMedium.copyWith(
-                                            color: isSelected ? AppColors.surface : AppColors.textPrimary,
+                                          style:
+                                              AppTextStyles.bodyMedium.copyWith(
+                                            color: isSelected
+                                                ? AppColors.surface
+                                                : AppColors.textPrimary,
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
@@ -495,7 +535,8 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
                               decoration: BoxDecoration(
                                 color: AppColors.surface,
                                 borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: AppColors.textTertiary, width: 1.5),
+                                border: Border.all(
+                                    color: AppColors.textTertiary, width: 1.5),
                               ),
                               child: TextField(
                                 controller: _customAmountController,
@@ -503,11 +544,14 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
                                 style: AppTextStyles.bodyLarge,
                                 decoration: InputDecoration(
                                   hintText: 'enter_amount_in_riyal'.tr(),
-                                  hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textTertiary),
+                                  hintStyle: AppTextStyles.bodyMedium
+                                      .copyWith(color: AppColors.textTertiary),
                                   border: InputBorder.none,
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 16),
                                   suffixText: 'riyal'.tr(),
-                                  suffixStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                                  suffixStyle: AppTextStyles.bodyMedium
+                                      .copyWith(color: AppColors.textSecondary),
                                 ),
                                 onChanged: (value) {
                                   setState(() {
@@ -525,9 +569,7 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
                           ],
                         ),
                       ),
-
                       const SizedBox(height: 32),
-
                       _buildSection(
                         title: 'donor_information_title'.tr(),
                         icon: CupertinoIcons.person,
@@ -542,9 +584,10 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
                               ),
                             ),
                             const SizedBox(height: 8),
-                            _textField(controller: _donorNameController, hint: 'enter_your_full_name'.tr()),
+                            _textField(
+                                controller: _donorNameController,
+                                hint: 'enter_your_full_name'.tr()),
                             const SizedBox(height: 16),
-
                             Text(
                               'email_optional'.tr(),
                               style: AppTextStyles.bodyMedium.copyWith(
@@ -559,10 +602,10 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
                               keyboardType: TextInputType.emailAddress,
                             ),
                             const SizedBox(height: 16),
-
                             Consumer<AuthProvider>(
                               builder: (_, auth, __) {
-                                if (auth.isAuthenticated && auth.userProfile != null) {
+                                if (auth.isAuthenticated &&
+                                    auth.userProfile != null) {
                                   return const SizedBox.shrink();
                                 }
                                 return Column(
@@ -586,7 +629,6 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
                                 );
                               },
                             ),
-
                             Text(
                               'message_optional'.tr(),
                               style: AppTextStyles.bodyMedium.copyWith(
@@ -603,9 +645,7 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
                           ],
                         ),
                       ),
-
                       const SizedBox(height: 40),
-
                       Consumer<PaymentProvider>(
                         builder: (_, provider, __) {
                           final isLoading = provider.isLoading;
@@ -619,22 +659,30 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
                                 foregroundColor: AppColors.surface,
                                 elevation: 8,
                                 shadowColor: AppColors.primary.withOpacity(0.3),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16)),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
                               ),
                               child: isLoading
                                   ? Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         const SizedBox(
                                           width: 20,
                                           height: 20,
-                                          child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(AppColors.surface)),
+                                          child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      AppColors.surface)),
                                         ),
                                         const SizedBox(width: 12),
                                         Text(
                                           'creating_payment_session'.tr(),
-                                          style: AppTextStyles.buttonLarge.copyWith(
+                                          style: AppTextStyles.buttonLarge
+                                              .copyWith(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
                                             height: 1.2,
@@ -643,13 +691,15 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
                                       ],
                                     )
                                   : Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         const Icon(Icons.payment, size: 24),
                                         const SizedBox(width: 12),
                                         Text(
                                           'complete_payment'.tr(),
-                                          style: AppTextStyles.buttonLarge.copyWith(
+                                          style: AppTextStyles.buttonLarge
+                                              .copyWith(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
                                             height: 1.2,
@@ -661,30 +711,30 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
                           );
                         },
                       ),
-
                       const SizedBox(height: 20),
-
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: AppColors.info.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.info.withOpacity(0.3), width: 1),
+                          border: Border.all(
+                              color: AppColors.info.withOpacity(0.3), width: 1),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.security, color: AppColors.info, size: 20),
+                            const Icon(Icons.security,
+                                color: AppColors.info, size: 20),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
                                 'all_payments_secure_encrypted'.tr(),
-                                style: AppTextStyles.bodySmall.copyWith(color: AppColors.info),
+                                style: AppTextStyles.bodySmall
+                                    .copyWith(color: AppColors.info),
                               ),
                             ),
                           ],
                         ),
                       ),
-
                       const SizedBox(height: 40),
                     ],
                   ),
@@ -697,7 +747,8 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
     );
   }
 
-  Widget _buildSection({required String title, required IconData icon, required Widget child}) {
+  Widget _buildSection(
+      {required String title, required IconData icon, required Widget child}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -705,11 +756,15 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+              decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8)),
               child: Icon(icon, color: AppColors.primary, size: 20),
             ),
             const SizedBox(width: 12),
-            Text(title, style: AppTextStyles.headlineSmall.copyWith(fontWeight: FontWeight.bold)),
+            Text(title,
+                style: AppTextStyles.headlineSmall
+                    .copyWith(fontWeight: FontWeight.bold)),
           ],
         ),
         const SizedBox(height: 16),
@@ -737,9 +792,11 @@ class _PaymentScreenState extends State<PaymentScreen> with TickerProviderStateM
         style: AppTextStyles.bodyLarge,
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textTertiary),
+          hintStyle:
+              AppTextStyles.bodyMedium.copyWith(color: AppColors.textTertiary),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
       ),
     );
@@ -763,21 +820,26 @@ class _PaymentFlowResult {
 
   factory _PaymentFlowResult.fromNavigatorResult(dynamic result) {
     print('_PaymentFlowResult: Parsing result, type: ${result.runtimeType}');
-    
+
     if (result is Map) {
       final map = Map<String, dynamic>.from(result);
       print('_PaymentFlowResult: Map keys: ${map.keys.toList()}');
-      print('_PaymentFlowResult: Map values - state: ${map['state']}, donationId: ${map['donationId']}, donation_id: ${map['donation_id']}, sessionId: ${map['sessionId']}, session_id: ${map['session_id']}, amount: ${map['amount']}');
-      
+      print(
+          '_PaymentFlowResult: Map values - state: ${map['state']}, donationId: ${map['donationId']}, donation_id: ${map['donation_id']}, sessionId: ${map['sessionId']}, session_id: ${map['session_id']}, amount: ${map['amount']}');
+
       final parsed = _PaymentFlowResult(
         state: _parseState(map['state']),
         amount: _parseAmount(map['amount']),
-        campaignTitle: _extractString(map['campaignTitle']) ?? _extractString(map['campaign_title']),
-        donationId: _extractString(map['donationId']) ?? _extractString(map['donation_id']),
-        sessionId: _extractString(map['sessionId']) ?? _extractString(map['session_id']),
+        campaignTitle: _extractString(map['campaignTitle']) ??
+            _extractString(map['campaign_title']),
+        donationId: _extractString(map['donationId']) ??
+            _extractString(map['donation_id']),
+        sessionId: _extractString(map['sessionId']) ??
+            _extractString(map['session_id']),
       );
-      
-      print('_PaymentFlowResult: Parsed result - state: ${parsed.state}, donationId: ${parsed.donationId}, sessionId: ${parsed.sessionId}, amount: ${parsed.amount}');
+
+      print(
+          '_PaymentFlowResult: Parsed result - state: ${parsed.state}, donationId: ${parsed.donationId}, sessionId: ${parsed.sessionId}, amount: ${parsed.amount}');
       return parsed;
     }
 
@@ -786,7 +848,8 @@ class _PaymentFlowResult {
       return _PaymentFlowResult(state: result);
     }
 
-    print('_PaymentFlowResult: Result is null or unknown type, returning empty result');
+    print(
+        '_PaymentFlowResult: Result is null or unknown type, returning empty result');
     return const _PaymentFlowResult();
   }
 

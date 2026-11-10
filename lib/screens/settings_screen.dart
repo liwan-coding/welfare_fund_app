@@ -9,7 +9,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import '../constants/app_constants.dart';
 import '../design/design.dart';
 import '../providers/auth_provider.dart';
-import '../widgets/common/main_tab_bar.dart';
+import 'main_shell.dart';
 import 'login_screen.dart' as login;
 import 'edit_profile_screen.dart';
 import 'my_donations_screen.dart';
@@ -31,26 +31,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Navigator.push(context, CupertinoPageRoute(builder: (_) => screen));
   }
 
-  void _onBottomNavigationTap(int index, bool isAuthenticated) {
-    if (index == 2) {
-      setState(() {});
-      return;
-    }
-
-    if (index == 0) {
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-      return;
-    }
-
-    if (index == 1) {
-      _push(isAuthenticated
-          ? const MyDonationsScreen()
-          : const login.LoginScreen());
-    }
-  }
-
   Future<void> _editProfile(Map<String, dynamic>? userProfile) async {
     final result = await Navigator.push(
       context,
@@ -60,8 +40,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
 
     if (result == true && mounted) {
-      await Provider.of<AuthProvider>(context, listen: false)
-          .refreshProfile();
+      await Provider.of<AuthProvider>(context, listen: false).refreshProfile();
     }
   }
 
@@ -186,10 +165,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       builder: (context, authProvider, child) {
         final isAuthenticated = authProvider.isAuthenticated;
         final userProfile = authProvider.userProfile;
-        final bottom = MediaQuery.paddingOf(context).bottom;
 
         return Scaffold(
-          extendBody: true,
           body: CustomScrollView(
             physics: const BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
@@ -199,7 +176,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.only(
-                    bottom: AppTabBar.barHeight + bottom + AppSpace.xl,
+                    bottom: MainShell.bottomReserve(context) + AppSpace.xl,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,10 +209,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
             ],
-          ),
-          bottomNavigationBar: MainTabBar(
-            currentIndex: 2,
-            onTap: (index) => _onBottomNavigationTap(index, isAuthenticated),
           ),
         );
       },
@@ -274,7 +247,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 icon: CupertinoIcons.heart_fill,
                 iconColor: p.tint,
                 title: 'my_donations'.tr(),
-                onTap: () => _push(const MyDonationsScreen()),
+                onTap: () {
+                  if (!MainShell.selectTab(context, 1)) {
+                    _push(const MyDonationsScreen());
+                  }
+                },
               ),
             ],
           ),
@@ -313,8 +290,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               iconColor: p.tertiaryLabel,
               title: 'about_app'.tr(),
               subtitle: 'app_info_version'.tr(),
-              onTap: () =>
-                  _push(const SettingPageScreen(pageKey: 'about_app')),
+              onTap: () => _push(const SettingPageScreen(pageKey: 'about_app')),
             ),
             AppListTile(
               icon: CupertinoIcons.hand_raised_fill,
@@ -358,10 +334,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   /// Edit profile.
   Widget _buildProfileCard(Map<String, dynamic>? userProfile) {
     final p = AppPalette.of(context);
-    final name = (userProfile?['name'] ??
-            userProfile?['user']?['name'] ??
-            'user'.tr())
-        .toString();
+    final name =
+        (userProfile?['name'] ?? userProfile?['user']?['name'] ?? 'user'.tr())
+            .toString();
     final phone =
         (userProfile?['phone'] ?? userProfile?['user']?['phone'] ?? '')
             .toString();

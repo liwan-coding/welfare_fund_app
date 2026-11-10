@@ -33,118 +33,123 @@ class FundNewsDetailScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            SliverAppBar(
-              expandedHeight: 220,
-              pinned: true,
-              stretch: true,
-              leading: IconButton(
-                icon: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.black26,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 220,
+            pinned: true,
+            stretch: true,
+            leading: IconButton(
+              icon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.black26,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                onPressed: () => Navigator.of(context).pop(),
+                child: const Icon(Icons.arrow_back_ios_new_rounded,
+                    color: Colors.white, size: 20),
               ),
-              backgroundColor: AppColors.primary,
-              flexibleSpace: FlexibleSpaceBar(
-                background: imageUrl.isNotEmpty
-                    ? Image.network(
-                        imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _placeholderBackground(),
-                      )
-                    : _placeholderBackground(),
-              ),
+              onPressed: () => Navigator.of(context).pop(),
             ),
-            SliverToBoxAdapter(
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: AppColors.background,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(AppConstants.extraLargeRadius),
-                    topRight: Radius.circular(AppConstants.extraLargeRadius),
+            backgroundColor: AppColors.primary,
+            flexibleSpace: FlexibleSpaceBar(
+              background: imageUrl.isNotEmpty
+                  ? Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => _placeholderBackground(),
+                    )
+                  : _placeholderBackground(),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              decoration: const BoxDecoration(
+                color: AppColors.background,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(AppConstants.extraLargeRadius),
+                  topRight: Radius.circular(AppConstants.extraLargeRadius),
+                ),
+              ),
+              transform: Matrix4.translationValues(0, -20, 0),
+              padding: const EdgeInsets.fromLTRB(
+                AppConstants.largePadding,
+                AppConstants.largePadding,
+                AppConstants.largePadding,
+                AppConstants.extraLargePadding,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (news.isFeatured)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          gradient: AppColors.accentGradient,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          'fund_news_featured_badge'.tr(),
+                          style: AppTextStyles.labelMedium.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  Text(
+                    title,
+                    style: AppTextStyles.headlineMedium,
                   ),
-                ),
-                transform: Matrix4.translationValues(0, -20, 0),
-                padding: const EdgeInsets.fromLTRB(
-                  AppConstants.largePadding,
-                  AppConstants.largePadding,
-                  AppConstants.largePadding,
-                  AppConstants.extraLargePadding,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (news.isFeatured)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(
-                            gradient: AppColors.accentGradient,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            'fund_news_featured_badge'.tr(),
-                            style: AppTextStyles.labelMedium.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                  if (news.publishedAt != null) ...[
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Icon(Icons.calendar_today_rounded,
+                            size: 18, color: AppColors.textTertiary),
+                        const SizedBox(width: 8),
+                        Text(
+                          _formatDate(news.publishedAt!),
+                          style: AppTextStyles.bodySmall
+                              .copyWith(color: AppColors.textSecondary),
                         ),
-                      ),
-                    Text(
-                      title,
-                      style: AppTextStyles.headlineMedium,
+                      ],
                     ),
-                    if (news.publishedAt != null) ...[
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Icon(Icons.calendar_today_rounded, size: 18, color: AppColors.textTertiary),
-                          const SizedBox(width: 8),
-                          Text(
-                            _formatDate(news.publishedAt!),
-                            style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
-                          ),
-                        ],
-                      ),
-                    ],
-                    const SizedBox(height: AppConstants.largePadding),
-                    Container(
-                      height: 1,
-                      color: AppColors.surfaceVariant,
-                    ),
-                    const SizedBox(height: AppConstants.largePadding),
-                    if (content.isNotEmpty)
-                      SelectableText(
-                        content,
-                        style: AppTextStyles.bodyLarge.copyWith(
-                          height: 1.7,
-                          color: AppColors.textPrimary,
-                        ),
-                      )
-                    else
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 24),
-                        child: Center(
-                          child: Text(
-                            'fund_news_no_content'.tr(),
-                            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
-                          ),
-                        ),
-                      ),
                   ],
-                ),
+                  const SizedBox(height: AppConstants.largePadding),
+                  Container(
+                    height: 1,
+                    color: AppColors.surfaceVariant,
+                  ),
+                  const SizedBox(height: AppConstants.largePadding),
+                  if (content.isNotEmpty)
+                    SelectableText(
+                      content,
+                      style: AppTextStyles.bodyLarge.copyWith(
+                        height: 1.7,
+                        color: AppColors.textPrimary,
+                      ),
+                    )
+                  else
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 24),
+                      child: Center(
+                        child: Text(
+                          'fund_news_no_content'.tr(),
+                          style: AppTextStyles.bodyMedium
+                              .copyWith(color: AppColors.textSecondary),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -158,7 +163,8 @@ class FundNewsDetailScreen extends StatelessWidget {
         ),
       ),
       child: Center(
-        child: Icon(Icons.article_rounded, size: 80, color: Colors.white.withOpacity(0.5)),
+        child: Icon(Icons.article_rounded,
+            size: 80, color: Colors.white.withOpacity(0.5)),
       ),
     );
   }

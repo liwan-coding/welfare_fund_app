@@ -98,7 +98,9 @@ class _DonationScreenState extends State<DonationScreen> {
         : null;
     final String? donorPhoneToSend = phone.isNotEmpty
         ? phone
-        : (profilePhone != null && profilePhone.isNotEmpty ? profilePhone : null);
+        : (profilePhone != null && profilePhone.isNotEmpty
+            ? profilePhone
+            : null);
 
     // للمتبرعين غير المسجلين: رقم الهاتف مطلوب
     if (!isLoggedIn && (donorPhoneToSend == null || donorPhoneToSend.isEmpty)) {
@@ -130,7 +132,7 @@ class _DonationScreenState extends State<DonationScreen> {
     try {
       // ✅ احصل على التوكن
       final token = await _getAuthToken();
-      
+
       if (token == null) {
         _showErrorSnackBar('login_required'.tr());
         return;
@@ -138,7 +140,7 @@ class _DonationScreenState extends State<DonationScreen> {
 
       // الحصول على origin للمنصة الويب
       final origin = kIsWeb ? Uri.base.origin : AppConfig.serverBaseUrl;
-      
+
       // 1) استدعاء POST /api/v1/donations/with-payment مع return_origin
       final response = await http.post(
         Uri.parse(AppConfig.donationsWithPaymentEndpoint),
@@ -150,9 +152,10 @@ class _DonationScreenState extends State<DonationScreen> {
           'campaign_id': widget.campaignId ?? 1,
           'amount': amount,
           'donor_name': _donorNameController.text.trim(),
-          if (donorPhoneToSend != null && donorPhoneToSend.isNotEmpty) 'donor_phone': donorPhoneToSend,
-          'note': _noteController.text.trim().isEmpty 
-              ? 'quick_donation_for_needy_students'.tr() 
+          if (donorPhoneToSend != null && donorPhoneToSend.isNotEmpty)
+            'donor_phone': donorPhoneToSend,
+          'note': _noteController.text.trim().isEmpty
+              ? 'quick_donation_for_needy_students'.tr()
               : _noteController.text.trim(),
           'return_origin': origin, // إضافة return_origin
         }),
@@ -161,20 +164,23 @@ class _DonationScreenState extends State<DonationScreen> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         print('✅ Donation response: $data');
-        
+
         // استخراج البيانات من الاستجابة
         final sessionId = data['session_id'] ?? data['data']?['session_id'];
-        final checkoutUrl = data['checkout_url'] ?? data['data']?['checkout_url'] ?? data['payment_url'];
-        
-        print('✅ Payment session created: sessionId=$sessionId, checkoutUrl=$checkoutUrl');
-        
+        final checkoutUrl = data['checkout_url'] ??
+            data['data']?['checkout_url'] ??
+            data['payment_url'];
+
+        print(
+            '✅ Payment session created: sessionId=$sessionId, checkoutUrl=$checkoutUrl');
+
         // 2) فتح checkout مباشرة في نفس التبويب للمنصة الويب
         if (kIsWeb) {
           await launchUrlString(
             checkoutUrl,
             webOnlyWindowName: '_self', // نفس التبويب
           );
-          
+
           // إظهار رسالة للمستخدم
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -183,7 +189,7 @@ class _DonationScreenState extends State<DonationScreen> {
               duration: const Duration(seconds: 3),
             ),
           );
-          
+
           // الانتظار قليلاً ثم التحقق من حالة الدفع
           await Future.delayed(const Duration(seconds: 5));
           await _confirmPayment(sessionId);
@@ -193,7 +199,8 @@ class _DonationScreenState extends State<DonationScreen> {
         }
       } else {
         final errorData = jsonDecode(response.body);
-        final errorMessage = errorData['message'] ?? 'payment_failed_creating_session'.tr();
+        final errorMessage =
+            errorData['message'] ?? 'payment_failed_creating_session'.tr();
         throw Exception(errorMessage);
       }
     } catch (e) {
@@ -251,7 +258,7 @@ class _DonationScreenState extends State<DonationScreen> {
   Future<void> _confirmPayment(String sessionId) async {
     try {
       final token = await _getAuthToken();
-      
+
       final response = await http.post(
         Uri.parse(AppConfig.paymentsConfirmEndpoint),
         headers: {
@@ -293,7 +300,8 @@ class _DonationScreenState extends State<DonationScreen> {
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            const Icon(CupertinoIcons.checkmark_circle_fill, color: Colors.green),
+            const Icon(CupertinoIcons.checkmark_circle_fill,
+                color: Colors.green),
             const SizedBox(width: 8),
             Text('donation_successful'.tr()),
           ],
@@ -421,7 +429,8 @@ class _DonationScreenState extends State<DonationScreen> {
                               decoration: InputDecoration(
                                 labelText: 'donor_phone_label'.tr(),
                                 hintText: 'enter_your_phone'.tr(),
-                                prefixIcon: const Icon(CupertinoIcons.phone_fill),
+                                prefixIcon:
+                                    const Icon(CupertinoIcons.phone_fill),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -472,7 +481,8 @@ class _DonationScreenState extends State<DonationScreen> {
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         ),
                         const SizedBox(width: 12),

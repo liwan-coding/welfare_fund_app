@@ -121,7 +121,8 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
         Navigator.push(
           context,
           CupertinoPageRoute(
-            builder: (context) => AllCampaignsScreen(initialCampaigns: _campaigns),
+            builder: (context) =>
+                AllCampaignsScreen(initialCampaigns: _campaigns),
           ),
         );
         break;
@@ -211,16 +212,16 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
             Text(
               'login_required'.tr(),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 8),
             Text(
               'login_to_view_donations'.tr(),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSecondary,
-              ),
+                    color: AppColors.textSecondary,
+                  ),
             ),
           ],
         ),
@@ -275,4 +276,3 @@ class _WebHomeScreenState extends State<WebHomeScreen> {
     );
   }
 }
-

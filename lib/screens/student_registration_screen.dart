@@ -22,7 +22,8 @@ class StudentRegistrationScreen extends StatefulWidget {
   });
 
   @override
-  State<StudentRegistrationScreen> createState() => _StudentRegistrationScreenState();
+  State<StudentRegistrationScreen> createState() =>
+      _StudentRegistrationScreenState();
 }
 
 class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
@@ -37,7 +38,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
 
   // Form Controllers
   final _formKey = GlobalKey<FormState>();
-  
+
   // البيانات الشخصية (Personal)
   final _fullNameController = TextEditingController();
   final _civilIdController = TextEditingController();
@@ -46,7 +47,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
   final _emailController = TextEditingController();
   DateTime? _selectedDateOfBirth;
   String _selectedMaritalStatus = 'single';
-  
+
   // البيانات الأكاديمية (Academic)
   final _institutionController = TextEditingController();
   final _studentIdController = TextEditingController();
@@ -55,7 +56,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
   final _programController = TextEditingController();
   final _gpaController = TextEditingController();
   String? _selectedAcademicYear;
-  
+
   // بيانات ولي الأمر (Guardian)
   final _guardianNameController = TextEditingController();
   final _guardianJobController = TextEditingController();
@@ -64,26 +65,32 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
   bool _isFatherAlive = true;
   bool _isMotherAlive = true;
   String _parentsMaritalStatus = 'stable';
-  
+
   // Programs data
   List<Map<String, dynamic>> _programs = [];
   String? _selectedProgramId;
   bool _isLoadingPrograms = false;
-  
+
   // المرفقات (Documents)
   final Map<String, Uint8List> _documentFiles = {};
   final Map<String, String> _documentFileNames = {};
-  
+
   // Application Status
   String _applicationStatus = 'under_review';
   String? _rejectionReason;
-  
+
   // Services
-  final StudentRegistrationService _studentService = StudentRegistrationService();
+  final StudentRegistrationService _studentService =
+      StudentRegistrationService();
 
   // قيم الحالة الاجتماعية
-  final List<String> _maritalStatusOptions = ['single', 'married', 'divorced', 'widowed'];
-  
+  final List<String> _maritalStatusOptions = [
+    'single',
+    'married',
+    'divorced',
+    'widowed'
+  ];
+
   // قيم حالة الوالدين
   final List<String> _parentsMaritalStatusOptions = ['stable', 'separated'];
 
@@ -104,12 +111,12 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _progressAnimationController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    
+
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -117,7 +124,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
-    
+
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
@@ -137,18 +144,19 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       reverseCurve: Curves.easeInOut,
     );
     _helpButtonScale = Tween<double>(begin: 1.0, end: 1.1).animate(helpCurve);
-    _helpButtonOpacity = Tween<double>(begin: 0.88, end: 1.0).animate(helpCurve);
+    _helpButtonOpacity =
+        Tween<double>(begin: 0.88, end: 1.0).animate(helpCurve);
 
     if (widget.existingData != null) {
       _loadExistingData();
     }
-    
+
     _initializeScreen();
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _prefillFromUserProfile();
     });
-    
+
     _loadPrograms();
   }
 
@@ -166,7 +174,9 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           orElse: () => {},
         );
         if (selectedProgram.isNotEmpty) {
-          _programController.text = StudentRegistrationService.getLocalizedProgramName(selectedProgram, context.locale.languageCode);
+          _programController.text =
+              StudentRegistrationService.getLocalizedProgramName(
+                  selectedProgram, context.locale.languageCode);
         }
       });
     }
@@ -174,14 +184,14 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
 
   void _loadExistingData() {
     final data = widget.existingData!;
-    
+
     print('=== Loading Existing Data Debug ===');
     print('Data: $data');
-    
+
     // Normalize status
     String rawStatus = data['status']?.toString() ?? 'under_review';
     String normalizedStatus = rawStatus.toLowerCase();
-    
+
     switch (normalizedStatus) {
       case 'under_review':
       case 'قيد المراجعة':
@@ -202,12 +212,12 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       default:
         _applicationStatus = 'under_review';
     }
-    
+
     _rejectionReason = data['rejection_reason']?.toString();
     if (_rejectionReason != null && _rejectionReason!.isEmpty) {
       _rejectionReason = null;
     }
-    
+
     // Load personal data
     final personal = data['personal'] as Map<String, dynamic>? ?? {};
     _fullNameController.text = personal['full_name'] ?? data['full_name'] ?? '';
@@ -216,32 +226,39 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
     _addressController.text = personal['address'] ?? '';
     _emailController.text = personal['email'] ?? data['email'] ?? '';
     _selectedMaritalStatus = personal['marital_status'] ?? 'single';
-    
+
     // Parse date of birth
     final dobString = personal['date_of_birth'] ?? data['date_of_birth'];
     if (dobString != null) {
       _selectedDateOfBirth = DateTime.tryParse(dobString.toString());
     }
-    
+
     // Load academic data
     final academic = data['academic'] as Map<String, dynamic>? ?? {};
-    _institutionController.text = academic['institution'] ?? data['university'] ?? '';
-    _studentIdController.text = academic['student_id'] ?? data['student_id'] ?? '';
+    _institutionController.text =
+        academic['institution'] ?? data['university'] ?? '';
+    _studentIdController.text =
+        academic['student_id'] ?? data['student_id'] ?? '';
     _collegeController.text = academic['college'] ?? data['college'] ?? '';
     _majorController.text = academic['major'] ?? data['major'] ?? '';
     _programController.text = academic['program'] ?? '';
     _gpaController.text = (academic['gpa'] ?? data['gpa'] ?? '').toString();
-    _selectedAcademicYear = _convertAcademicYearToString(academic['academic_year'] ?? data['academic_year'] ?? 1);
+    _selectedAcademicYear = _convertAcademicYearToString(
+        academic['academic_year'] ?? data['academic_year'] ?? 1);
     _selectedProgramId = data['program_id']?.toString();
-    
+
     // Load guardian data
     final guardian = data['guardian'] as Map<String, dynamic>? ?? {};
     _guardianNameController.text = guardian['name'] ?? '';
     _guardianJobController.text = guardian['job'] ?? '';
-    _guardianIncomeController.text = (guardian['monthly_income'] ?? '').toString();
-    _guardianFamilySizeController.text = (guardian['family_size'] ?? '').toString();
-    _isFatherAlive = guardian['is_father_alive'] == true || guardian['is_father_alive'] == 1;
-    _isMotherAlive = guardian['is_mother_alive'] == true || guardian['is_mother_alive'] == 1;
+    _guardianIncomeController.text =
+        (guardian['monthly_income'] ?? '').toString();
+    _guardianFamilySizeController.text =
+        (guardian['family_size'] ?? '').toString();
+    _isFatherAlive =
+        guardian['is_father_alive'] == true || guardian['is_father_alive'] == 1;
+    _isMotherAlive =
+        guardian['is_mother_alive'] == true || guardian['is_mother_alive'] == 1;
     _parentsMaritalStatus = guardian['parents_marital_status'] ?? 'stable';
   }
 
@@ -252,17 +269,25 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       if (profile == null) return;
 
       final extractedName = profile['name'] ?? profile['user']?['name'] ?? '';
-      final extractedEmail = profile['email'] ?? profile['user']?['email'] ?? '';
-      final extractedPhone = profile['phone'] ?? profile['user']?['phone'] ?? '';
+      final extractedEmail =
+          profile['email'] ?? profile['user']?['email'] ?? '';
+      final extractedPhone =
+          profile['phone'] ?? profile['user']?['phone'] ?? '';
 
       setState(() {
-        if (extractedName is String && extractedName.isNotEmpty && _fullNameController.text.isEmpty) {
+        if (extractedName is String &&
+            extractedName.isNotEmpty &&
+            _fullNameController.text.isEmpty) {
           _fullNameController.text = extractedName;
         }
-        if (extractedEmail is String && extractedEmail.isNotEmpty && _emailController.text.isEmpty) {
+        if (extractedEmail is String &&
+            extractedEmail.isNotEmpty &&
+            _emailController.text.isEmpty) {
           _emailController.text = extractedEmail;
         }
-        if (extractedPhone is String && extractedPhone.isNotEmpty && _phoneController.text.isEmpty) {
+        if (extractedPhone is String &&
+            extractedPhone.isNotEmpty &&
+            _phoneController.text.isEmpty) {
           _phoneController.text = extractedPhone;
         }
       });
@@ -274,25 +299,39 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
   String _convertAcademicYearToString(dynamic year) {
     final yearNum = year is int ? year : int.tryParse(year.toString()) ?? 1;
     switch (yearNum) {
-      case 1: return 'first_year';
-      case 2: return 'second_year';
-      case 3: return 'third_year';
-      case 4: return 'fourth_year';
-      case 5: return 'fifth_year';
-      case 6: return 'sixth_year';
-      default: return 'first_year';
+      case 1:
+        return 'first_year';
+      case 2:
+        return 'second_year';
+      case 3:
+        return 'third_year';
+      case 4:
+        return 'fourth_year';
+      case 5:
+        return 'fifth_year';
+      case 6:
+        return 'sixth_year';
+      default:
+        return 'first_year';
     }
   }
 
   int _convertAcademicYearToNumber(String? academicYear) {
     switch (academicYear) {
-      case 'first_year': return 1;
-      case 'second_year': return 2;
-      case 'third_year': return 3;
-      case 'fourth_year': return 4;
-      case 'fifth_year': return 5;
-      case 'sixth_year': return 6;
-      default: return 1;
+      case 'first_year':
+        return 1;
+      case 'second_year':
+        return 2;
+      case 'third_year':
+        return 3;
+      case 'fourth_year':
+        return 4;
+      case 'fifth_year':
+        return 5;
+      case 'sixth_year':
+        return 6;
+      default:
+        return 1;
     }
   }
 
@@ -301,17 +340,17 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
     if (['single', 'married', 'divorced', 'widowed'].contains(value)) {
       return value.tr();
     }
-    
+
     // Handle parents marital status
     if (['stable', 'separated'].contains(value)) {
       return value.tr();
     }
-    
+
     // Handle academic year values
     if (_academicYears.contains(value)) {
       return value.tr();
     }
-    
+
     return value;
   }
 
@@ -319,13 +358,13 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
     if (widget.existingData == null) {
       return false;
     }
-    
+
     String normalizedStatus = _applicationStatus.toLowerCase();
-    
-    return widget.isReadOnly || 
-           normalizedStatus == 'under_review' || 
-           normalizedStatus == 'accepted' ||
-           normalizedStatus == 'completed';
+
+    return widget.isReadOnly ||
+        normalizedStatus == 'under_review' ||
+        normalizedStatus == 'accepted' ||
+        normalizedStatus == 'completed';
   }
 
   bool get _isRejected {
@@ -335,7 +374,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
 
   String _getStatusText(String status) {
     String normalizedStatus = status.toLowerCase();
-    
+
     switch (normalizedStatus) {
       case 'under_review':
         return 'application_under_review'.tr();
@@ -352,7 +391,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
 
   Color _getStatusColor(String status) {
     String normalizedStatus = status.toLowerCase();
-    
+
     switch (normalizedStatus) {
       case 'under_review':
         return AppColors.warning;
@@ -369,7 +408,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
 
   IconData _getStatusIcon(String status) {
     String normalizedStatus = status.toLowerCase();
-    
+
     switch (normalizedStatus) {
       case 'under_review':
         return Icons.hourglass_empty;
@@ -386,7 +425,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
 
   String _getStatusDescription(String status) {
     String normalizedStatus = status.toLowerCase();
-    
+
     switch (normalizedStatus) {
       case 'under_review':
         return 'application_under_review_description'.tr();
@@ -440,7 +479,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
 
     try {
       final programs = await _studentService.getSupportPrograms();
-      
+
       final validPrograms = programs.where((program) {
         final hasId = program['id'] != null;
         final hasName = program['name'] != null;
@@ -454,16 +493,18 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           'description': program['description'] ?? '',
         };
       }).toList();
-      
+
       setState(() {
         _programs = validPrograms;
         _isLoadingPrograms = false;
       });
-      
+
       if (validPrograms.isNotEmpty && _selectedProgramId == null) {
         setState(() {
           _selectedProgramId = validPrograms.first['id']?.toString();
-          _programController.text = StudentRegistrationService.getLocalizedProgramName(validPrograms.first, context.locale.languageCode);
+          _programController.text =
+              StudentRegistrationService.getLocalizedProgramName(
+                  validPrograms.first, context.locale.languageCode);
         });
       }
     } catch (error) {
@@ -471,7 +512,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       setState(() {
         _isLoadingPrograms = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -490,7 +531,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
 
   Future<void> _selectDateOfBirth() async {
     if (_isReadOnly) return;
-    
+
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedDateOfBirth ?? DateTime(2000, 1, 1),
@@ -498,7 +539,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       lastDate: DateTime.now(),
       locale: context.locale,
     );
-    
+
     if (picked != null && picked != _selectedDateOfBirth) {
       setState(() {
         _selectedDateOfBirth = picked;
@@ -513,7 +554,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
 
   Future<void> _pickImageForDocument(String documentType) async {
     final ImagePicker picker = ImagePicker();
-    
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -523,7 +564,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(CupertinoIcons.camera, color: AppColors.primary),
+                leading:
+                    const Icon(CupertinoIcons.camera, color: AppColors.primary),
                 title: Text('camera'.tr()),
                 onTap: () async {
                   Navigator.pop(context);
@@ -543,7 +585,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 },
               ),
               ListTile(
-                leading: const Icon(CupertinoIcons.photo, color: AppColors.primary),
+                leading:
+                    const Icon(CupertinoIcons.photo, color: AppColors.primary),
                 title: Text('gallery'.tr()),
                 onTap: () async {
                   Navigator.pop(context);
@@ -580,7 +623,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       );
       return;
     }
-    
+
     // Validate date of birth
     if (_selectedDateOfBirth == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -591,7 +634,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       );
       return;
     }
-    
+
     // Validate program selection
     if (_selectedProgramId == null || _selectedProgramId!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -602,7 +645,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       );
       return;
     }
-    
+
     // Validate academic year
     if (_selectedAcademicYear == null || _selectedAcademicYear!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -613,7 +656,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       );
       return;
     }
-    
+
     // Validate all documents are uploaded
     final requiredDocuments = [
       DocumentType.applicationLetter,
@@ -626,9 +669,11 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       DocumentType.supportingDocuments,
       DocumentType.housingLetter,
     ];
-    
-    final missingDocuments = requiredDocuments.where((doc) => !_documentFiles.containsKey(doc)).toList();
-    
+
+    final missingDocuments = requiredDocuments
+        .where((doc) => !_documentFiles.containsKey(doc))
+        .toList();
+
     if (missingDocuments.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -638,7 +683,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       );
       return;
     }
-    
+
     // Show loading dialog
     showDialog(
       context: context,
@@ -695,20 +740,32 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         phone: _phoneController.text.trim(),
         address: _addressController.text.trim(),
         maritalStatus: _selectedMaritalStatus,
-        email: _emailController.text.trim().isEmpty ? null : _emailController.text.trim(),
+        email: _emailController.text.trim().isEmpty
+            ? null
+            : _emailController.text.trim(),
         // البيانات الأكاديمية
         institution: _institutionController.text.trim(),
         studentId: _studentIdController.text.trim(),
-        college: _collegeController.text.trim().isEmpty ? null : _collegeController.text.trim(),
-        major: _majorController.text.trim().isEmpty ? null : _majorController.text.trim(),
-        program: _programController.text.trim().isEmpty ? null : _programController.text.trim(),
-        academicYear: _selectedAcademicYear != null ? _convertAcademicYearToNumber(_selectedAcademicYear) : null,
+        college: _collegeController.text.trim().isEmpty
+            ? null
+            : _collegeController.text.trim(),
+        major: _majorController.text.trim().isEmpty
+            ? null
+            : _majorController.text.trim(),
+        program: _programController.text.trim().isEmpty
+            ? null
+            : _programController.text.trim(),
+        academicYear: _selectedAcademicYear != null
+            ? _convertAcademicYearToNumber(_selectedAcademicYear)
+            : null,
         gpa: double.tryParse(_gpaController.text),
         // بيانات ولي الأمر
         guardianName: _guardianNameController.text.trim(),
         guardianJob: _guardianJobController.text.trim(),
-        guardianMonthlyIncome: double.tryParse(_guardianIncomeController.text) ?? 0,
-        guardianFamilySize: int.tryParse(_guardianFamilySizeController.text) ?? 1,
+        guardianMonthlyIncome:
+            double.tryParse(_guardianIncomeController.text) ?? 0,
+        guardianFamilySize:
+            int.tryParse(_guardianFamilySizeController.text) ?? 1,
         isFatherAlive: _isFatherAlive,
         isMotherAlive: _isMotherAlive,
         parentsMaritalStatus: _parentsMaritalStatus,
@@ -718,13 +775,13 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
 
       // Close loading dialog
       Navigator.of(context).pop();
-      
+
       // Show success dialog
       _showSuccessDialog();
     } catch (error) {
       // Close loading dialog
       Navigator.of(context).pop();
-      
+
       if (mounted) {
         print('Registration error: $error');
         ScaffoldMessenger.of(context).showSnackBar(
@@ -748,7 +805,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
 
   void _showSuccessDialog() {
     final navigator = Navigator.of(context);
-    
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -848,14 +905,15 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         ),
       );
 
-      final currentRegistration = await _studentService.getCurrentUserRegistration();
-      
+      final currentRegistration =
+          await _studentService.getCurrentUserRegistration();
+
       if (currentRegistration != null) {
         setState(() {
           _applicationStatus = currentRegistration['status'] ?? 'under_review';
           _rejectionReason = currentRegistration['rejection_reason'];
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -905,27 +963,27 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                           _buildStatusIndicator(),
                           const SizedBox(height: 24),
                         ],
-                        
+
                         // 1. البيانات الشخصية (Personal Information)
                         _buildPersonalInformationSection(),
                         const SizedBox(height: 24),
-                        
+
                         // 2. البيانات الأكاديمية (Academic Information)
                         _buildAcademicInformationSection(),
                         const SizedBox(height: 24),
-                        
+
                         // 3. بيانات ولي الأمر (Guardian Information)
                         _buildGuardianInformationSection(),
                         const SizedBox(height: 24),
-                        
+
                         // 4. المرفقات (Documents)
                         _buildDocumentsSection(),
                         const SizedBox(height: 32),
-                        
+
                         // Submit Button
                         _buildSubmitButton(),
                         const SizedBox(height: 16),
-                        
+
                         // Privacy Note
                         _buildPrivacyNote(),
                         const SizedBox(height: 32),
@@ -1061,7 +1119,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         children: [
           Row(
             children: [
-              Icon(Icons.assignment_outlined, color: AppColors.primary, size: 22),
+              Icon(Icons.assignment_outlined,
+                  color: AppColors.primary, size: 22),
               const SizedBox(width: 10),
               Text(
                 'fund_info.section1_title'.tr(),
@@ -1093,31 +1152,31 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           _buildNumberedSubtitle('أولًا: الشروط العامة للمساعدة'),
           const SizedBox(height: 8),
           ...generalConditions.asMap().entries.map((e) => Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              textDirection: TextDirection.rtl,
-              children: [
-                Text(
-                  '${e.key + 1}. ',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    e.value,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textPrimary,
-                      height: 1.5,
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  textDirection: TextDirection.rtl,
+                  children: [
+                    Text(
+                      '${e.key + 1}. ',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                    textDirection: TextDirection.rtl,
-                  ),
+                    Expanded(
+                      child: Text(
+                        e.value,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textPrimary,
+                          height: 1.5,
+                        ),
+                        textDirection: TextDirection.rtl,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          )),
+              )),
           const SizedBox(height: 16),
           _buildNumberedSubtitle('ثانياً: الحالات غير المشمولة بالدعم'),
           const SizedBox(height: 8),
@@ -1131,31 +1190,31 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           ),
           const SizedBox(height: 6),
           ...excludedCases.asMap().entries.map((e) => Padding(
-            padding: const EdgeInsets.only(bottom: 6),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              textDirection: TextDirection.rtl,
-              children: [
-                Text(
-                  '${e.key + 1}. ',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.secondary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    e.value,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textPrimary,
-                      height: 1.5,
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  textDirection: TextDirection.rtl,
+                  children: [
+                    Text(
+                      '${e.key + 1}. ',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.secondary,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                    textDirection: TextDirection.rtl,
-                  ),
+                    Expanded(
+                      child: Text(
+                        e.value,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textPrimary,
+                          height: 1.5,
+                        ),
+                        textDirection: TextDirection.rtl,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          )),
+              )),
         ],
       ),
     );
@@ -1235,41 +1294,41 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           ),
           const SizedBox(height: 16),
           ...reasons.asMap().entries.map((e) => Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              textDirection: TextDirection.rtl,
-              children: [
-                Container(
-                  width: 24,
-                  height: 24,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: AppColors.secondary.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    '${e.key + 1}',
-                    style: AppTextStyles.labelMedium.copyWith(
-                      color: AppColors.secondary,
-                      fontWeight: FontWeight.bold,
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  textDirection: TextDirection.rtl,
+                  children: [
+                    Container(
+                      width: 24,
+                      height: 24,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: AppColors.secondary.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        '${e.key + 1}',
+                        style: AppTextStyles.labelMedium.copyWith(
+                          color: AppColors.secondary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    e.value,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textPrimary,
-                      height: 1.5,
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        e.value,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textPrimary,
+                          height: 1.5,
+                        ),
+                        textDirection: TextDirection.rtl,
+                      ),
                     ),
-                    textDirection: TextDirection.rtl,
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          )),
+              )),
           const SizedBox(height: 18),
           Container(
             padding: const EdgeInsets.all(14),
@@ -1361,7 +1420,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: AppColors.surface.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20),
@@ -1386,7 +1446,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                   ),
                   const SizedBox(height: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
                       color: AppColors.surface.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(8),
@@ -1599,7 +1660,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // الرقم المدني
               _buildTextField(
                 controller: _civilIdController,
@@ -1615,7 +1676,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // تاريخ الميلاد
               _buildDatePickerField(
                 label: 'date_of_birth'.tr(),
@@ -1623,7 +1684,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 onTap: _selectDateOfBirth,
               ),
               const SizedBox(height: 16),
-              
+
               // رقم الهاتف (غير قابل للتعديل - يؤخذ من بيانات الحساب)
               _buildTextField(
                 controller: _phoneController,
@@ -1634,7 +1695,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 alwaysReadOnly: true,
               ),
               const SizedBox(height: 16),
-              
+
               // العنوان
               _buildTextField(
                 controller: _addressController,
@@ -1650,7 +1711,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // الحالة الاجتماعية
               _buildDropdownField(
                 label: 'marital_status'.tr(),
@@ -1663,7 +1724,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // البريد الإلكتروني (اختياري)
               _buildTextField(
                 controller: _emailController,
@@ -1673,7 +1734,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value != null && value.isNotEmpty) {
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                        .hasMatch(value)) {
                       return 'please_enter_valid_email'.tr();
                     }
                   }
@@ -1726,7 +1788,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // الرقم الجامعي
               _buildTextField(
                 controller: _studentIdController,
@@ -1741,7 +1803,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // الكلية
               _buildTextField(
                 controller: _collegeController,
@@ -1756,7 +1818,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // التخصص
               _buildTextField(
                 controller: _majorController,
@@ -1771,11 +1833,11 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // البرنامج
               _buildProgramDropdown(),
               const SizedBox(height: 16),
-              
+
               // السنة الدراسية
               _buildDropdownField(
                 label: 'academic_year'.tr(),
@@ -1788,14 +1850,15 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // المعدل
               _buildTextField(
                 controller: _gpaController,
                 label: 'gpa'.tr(),
                 hint: '0.0 - 4.0',
                 icon: Icons.grade,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
                 ],
@@ -1856,7 +1919,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // الوظيفة
               _buildTextField(
                 controller: _guardianJobController,
@@ -1871,7 +1934,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // الدخل الشهري
               _buildTextField(
                 controller: _guardianIncomeController,
@@ -1887,7 +1950,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // عدد أفراد الأسرة
               _buildTextField(
                 controller: _guardianFamilySizeController,
@@ -1910,7 +1973,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // هل الأب على قيد الحياة
               _buildSwitchTile(
                 title: 'is_father_alive'.tr(),
@@ -1922,7 +1985,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 },
               ),
               const SizedBox(height: 8),
-              
+
               // هل الأم على قيد الحياة
               _buildSwitchTile(
                 title: 'is_mother_alive'.tr(),
@@ -1934,7 +1997,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // حالة الوالدين الاجتماعية
               _buildDropdownField(
                 label: 'parents_marital_status'.tr(),
@@ -2011,7 +2074,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
               _buildDocumentUploadTile(
                 type: DocumentType.applicationLetter,
                 title: 'application_letter'.tr(),
-                subtitle: DocumentType.getDescription(DocumentType.applicationLetter),
+                subtitle:
+                    DocumentType.getDescription(DocumentType.applicationLetter),
               ),
               _buildDocumentUploadTile(
                 type: DocumentType.idCard,
@@ -2021,12 +2085,14 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
               _buildDocumentUploadTile(
                 type: DocumentType.enrollmentLetter,
                 title: 'enrollment_letter'.tr(),
-                subtitle: DocumentType.getDescription(DocumentType.enrollmentLetter),
+                subtitle:
+                    DocumentType.getDescription(DocumentType.enrollmentLetter),
               ),
               _buildDocumentUploadTile(
                 type: DocumentType.tuitionLetter,
                 title: 'tuition_letter'.tr(),
-                subtitle: DocumentType.getDescription(DocumentType.tuitionLetter),
+                subtitle:
+                    DocumentType.getDescription(DocumentType.tuitionLetter),
               ),
               _buildDocumentUploadTile(
                 type: DocumentType.incomeProof,
@@ -2036,7 +2102,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
               _buildDocumentUploadTile(
                 type: DocumentType.bankStatements,
                 title: 'bank_statements'.tr(),
-                subtitle: DocumentType.getDescription(DocumentType.bankStatements),
+                subtitle:
+                    DocumentType.getDescription(DocumentType.bankStatements),
               ),
               _buildDocumentUploadTile(
                 type: DocumentType.debtProof,
@@ -2046,12 +2113,14 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
               _buildDocumentUploadTile(
                 type: DocumentType.supportingDocuments,
                 title: 'supporting_documents'.tr(),
-                subtitle: DocumentType.getDescription(DocumentType.supportingDocuments),
+                subtitle: DocumentType.getDescription(
+                    DocumentType.supportingDocuments),
               ),
               _buildDocumentUploadTile(
                 type: DocumentType.housingLetter,
                 title: 'housing_letter'.tr(),
-                subtitle: DocumentType.getDescription(DocumentType.housingLetter),
+                subtitle:
+                    DocumentType.getDescription(DocumentType.housingLetter),
               ),
             ],
           ),
@@ -2067,28 +2136,34 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
   }) {
     final bool hasFile = _documentFiles.containsKey(type);
     final String? fileName = _documentFileNames[type];
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: InkWell(
-        onTap: _isReadOnly ? null : () {
-          if (hasFile) {
-            setState(() {
-              _documentFiles.remove(type);
-              _documentFileNames.remove(type);
-            });
-          } else {
-            _pickDocument(type);
-          }
-        },
+        onTap: _isReadOnly
+            ? null
+            : () {
+                if (hasFile) {
+                  setState(() {
+                    _documentFiles.remove(type);
+                    _documentFileNames.remove(type);
+                  });
+                } else {
+                  _pickDocument(type);
+                }
+              },
         borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: hasFile ? AppColors.success.withOpacity(0.05) : Colors.transparent,
+            color: hasFile
+                ? AppColors.success.withOpacity(0.05)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: hasFile ? AppColors.success.withOpacity(0.3) : Colors.transparent,
+              color: hasFile
+                  ? AppColors.success.withOpacity(0.3)
+                  : Colors.transparent,
             ),
           ),
           child: Row(
@@ -2096,11 +2171,15 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: hasFile ? AppColors.success.withOpacity(0.1) : AppColors.info.withOpacity(0.1),
+                  color: hasFile
+                      ? AppColors.success.withOpacity(0.1)
+                      : AppColors.info.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
-                  hasFile ? CupertinoIcons.checkmark_circle_fill : Icons.upload_file,
+                  hasFile
+                      ? CupertinoIcons.checkmark_circle_fill
+                      : Icons.upload_file,
                   color: hasFile ? AppColors.success : AppColors.info,
                   size: 22,
                 ),
@@ -2129,7 +2208,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                     if (hasFile && fileName != null) ...[
                       const SizedBox(height: 4),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
                           color: AppColors.success.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4),
@@ -2153,7 +2233,9 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: hasFile ? AppColors.error.withOpacity(0.1) : AppColors.primary.withOpacity(0.1),
+                    color: hasFile
+                        ? AppColors.error.withOpacity(0.1)
+                        : AppColors.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -2176,7 +2258,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       child: ElevatedButton(
         onPressed: _isReadOnly ? null : _submitRegistration,
         style: ElevatedButton.styleFrom(
-          backgroundColor: _isReadOnly ? AppColors.surfaceVariant : AppColors.primary,
+          backgroundColor:
+              _isReadOnly ? AppColors.surfaceVariant : AppColors.primary,
           foregroundColor: AppColors.surface,
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -2187,16 +2270,20 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              _isReadOnly 
-                  ? CupertinoIcons.lock 
-                  : (_isRejected ? CupertinoIcons.refresh : CupertinoIcons.paperplane),
+              _isReadOnly
+                  ? CupertinoIcons.lock
+                  : (_isRejected
+                      ? CupertinoIcons.refresh
+                      : CupertinoIcons.paperplane),
               size: 20,
             ),
             const SizedBox(width: 8),
             Text(
-              _isReadOnly 
-                  ? 'cannot_edit'.tr() 
-                  : (_isRejected ? 'resubmit_application'.tr() : 'register'.tr()),
+              _isReadOnly
+                  ? 'cannot_edit'.tr()
+                  : (_isRejected
+                      ? 'resubmit_application'.tr()
+                      : 'register'.tr()),
               style: AppTextStyles.buttonLarge.copyWith(
                 fontWeight: FontWeight.w600,
               ),
@@ -2268,7 +2355,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       enabled: !isFieldReadOnly,
       readOnly: isFieldReadOnly,
       style: AppTextStyles.bodyLarge.copyWith(
-        color: isFieldReadOnly ? AppColors.textSecondary : AppColors.textPrimary,
+        color:
+            isFieldReadOnly ? AppColors.textSecondary : AppColors.textPrimary,
       ),
       decoration: InputDecoration(
         labelText: label,
@@ -2279,7 +2367,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           size: 20,
         ),
         filled: true,
-        fillColor: isFieldReadOnly ? AppColors.surfaceVariant : AppColors.surface,
+        fillColor:
+            isFieldReadOnly ? AppColors.surfaceVariant : AppColors.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
@@ -2367,7 +2456,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         ),
       );
     }
-    
+
     return DropdownButtonFormField<String>(
       value: value,
       isExpanded: true,
@@ -2426,7 +2515,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
     final String displayText = value != null
         ? DateFormat('yyyy-MM-dd').format(value)
         : 'please_select_date_of_birth'.tr();
-    
+
     return InkWell(
       onTap: _isReadOnly ? null : onTap,
       child: Container(
@@ -2461,7 +2550,9 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                     displayText,
                     style: AppTextStyles.bodyLarge.copyWith(
                       color: value != null
-                          ? (_isReadOnly ? AppColors.textSecondary : AppColors.textPrimary)
+                          ? (_isReadOnly
+                              ? AppColors.textSecondary
+                              : AppColors.textPrimary)
                           : AppColors.textTertiary,
                     ),
                   ),
@@ -2505,7 +2596,9 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
             child: Text(
               title,
               style: AppTextStyles.bodyMedium.copyWith(
-                color: _isReadOnly ? AppColors.textSecondary : AppColors.textPrimary,
+                color: _isReadOnly
+                    ? AppColors.textSecondary
+                    : AppColors.textPrimary,
               ),
             ),
           ),
@@ -2551,7 +2644,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         ),
       );
     }
-    
+
     if (_programs.isEmpty) {
       return Container(
         padding: const EdgeInsets.all(16),
@@ -2566,7 +2659,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           children: [
             Row(
               children: [
-                const Icon(CupertinoIcons.exclamationmark_circle, color: AppColors.error, size: 20),
+                const Icon(CupertinoIcons.exclamationmark_circle,
+                    color: AppColors.error, size: 20),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -2595,16 +2689,17 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         ),
       );
     }
-    
+
     if (_isReadOnly) {
       final selectedProgram = _programs.firstWhere(
         (p) => p['id']?.toString() == _selectedProgramId,
         orElse: () => {},
       );
       final programName = selectedProgram.isNotEmpty
-          ? StudentRegistrationService.getLocalizedProgramName(selectedProgram, context.locale.languageCode)
+          ? StudentRegistrationService.getLocalizedProgramName(
+              selectedProgram, context.locale.languageCode)
           : '';
-      
+
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
@@ -2638,12 +2733,13 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 ],
               ),
             ),
-            const Icon(CupertinoIcons.lock, color: AppColors.textSecondary, size: 18),
+            const Icon(CupertinoIcons.lock,
+                color: AppColors.textSecondary, size: 18),
           ],
         ),
       );
     }
-    
+
     return DropdownButtonFormField<String>(
       value: _selectedProgramId,
       isExpanded: true,
@@ -2651,7 +2747,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         return DropdownMenuItem<String>(
           value: program['id']?.toString(),
           child: Text(
-            StudentRegistrationService.getLocalizedProgramName(program, context.locale.languageCode),
+            StudentRegistrationService.getLocalizedProgramName(
+                program, context.locale.languageCode),
             style: AppTextStyles.bodyMedium,
             overflow: TextOverflow.ellipsis,
           ),
@@ -2665,13 +2762,16 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
               (p) => p['id']?.toString() == value,
               orElse: () => {},
             );
-            _programController.text = StudentRegistrationService.getLocalizedProgramName(selectedProgram, context.locale.languageCode);
+            _programController.text =
+                StudentRegistrationService.getLocalizedProgramName(
+                    selectedProgram, context.locale.languageCode);
           }
         });
       },
       decoration: InputDecoration(
         labelText: 'program'.tr(),
-        prefixIcon: const Icon(Icons.school, color: AppColors.primary, size: 20),
+        prefixIcon:
+            const Icon(Icons.school, color: AppColors.primary, size: 20),
         filled: true,
         fillColor: AppColors.surface,
         border: OutlineInputBorder(

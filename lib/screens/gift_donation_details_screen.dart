@@ -23,7 +23,8 @@ class GiftDonationDetailsScreen extends StatefulWidget {
   });
 
   @override
-  State<GiftDonationDetailsScreen> createState() => _GiftDonationDetailsScreenState();
+  State<GiftDonationDetailsScreen> createState() =>
+      _GiftDonationDetailsScreenState();
 }
 
 class _GiftDonationDetailsScreenState extends State<GiftDonationDetailsScreen> {
@@ -33,7 +34,7 @@ class _GiftDonationDetailsScreenState extends State<GiftDonationDetailsScreen> {
   final _messageController = TextEditingController();
   final _donorNameController = TextEditingController();
   final _donorPhoneController = TextEditingController();
-  
+
   bool _isAnonymous = false;
   bool _isLoading = false;
 
@@ -217,7 +218,8 @@ class _GiftDonationDetailsScreenState extends State<GiftDonationDetailsScreen> {
                     ),
                     const SizedBox(height: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: AppColors.surface.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(8),
@@ -458,9 +460,10 @@ class _GiftDonationDetailsScreenState extends State<GiftDonationDetailsScreen> {
           hintText: hint,
           prefixIcon: Icon(icon, color: AppColors.textSecondary),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),
       ),
     );
   }
-} 
+}

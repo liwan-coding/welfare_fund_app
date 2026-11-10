@@ -30,17 +30,19 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
   List<Map<String, dynamic>> get _categories {
     final currentLocale = context.locale.languageCode;
     final fallbackCategories = CategoryUtils.getLocalizedFallbackCategories();
-    
-    return fallbackCategories.map((category) => {
-      'id': category['id'],
-      'title': CategoryUtils.getCategoryName(
-        nameAr: category['name_ar'],
-        nameEn: category['name_en'],
-        currentLocale: currentLocale,
-      ),
-      'icon': _getIconFromString(category['icon']),
-      'color': _getColorFromString(category['color']),
-    }).toList();
+
+    return fallbackCategories
+        .map((category) => {
+              'id': category['id'],
+              'title': CategoryUtils.getCategoryName(
+                nameAr: category['name_ar'],
+                nameEn: category['name_en'],
+                currentLocale: currentLocale,
+              ),
+              'icon': _getIconFromString(category['icon']),
+              'color': _getColorFromString(category['color']),
+            })
+        .toList();
   }
 
   final List<Map<String, dynamic>> _programs = [
@@ -91,7 +93,9 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
 
   List<Map<String, dynamic>> get _filteredPrograms {
     if (_selectedCategory == null) return [];
-    return _programs.where((program) => program['category'] == _selectedCategory).toList();
+    return _programs
+        .where((program) => program['category'] == _selectedCategory)
+        .toList();
   }
 
   @override
@@ -115,9 +119,11 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
       CupertinoPageRoute(
         builder: (context) => GiftDonationDetailsScreen(
           categoryId: _selectedCategory!,
-          categoryTitle: _categories.firstWhere((cat) => cat['id'] == _selectedCategory)['title'],
+          categoryTitle: _categories
+              .firstWhere((cat) => cat['id'] == _selectedCategory)['title'],
           programId: _selectedProgram,
-          programTitle: _programs.firstWhere((prog) => prog['id'] == _selectedProgram)['title'],
+          programTitle: _programs
+              .firstWhere((prog) => prog['id'] == _selectedProgram)['title'],
           amount: widget.amount,
         ),
       ),
@@ -221,7 +227,7 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
               itemBuilder: (context, index) {
                 final category = _categories[index];
                 final isSelected = _selectedCategory == category['id'];
-                
+
                 return GestureDetector(
                   onTap: () {
                     setState(() {
@@ -231,15 +237,21 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: isSelected ? category['color'].withOpacity(0.1) : AppColors.surface,
+                      color: isSelected
+                          ? category['color'].withOpacity(0.1)
+                          : AppColors.surface,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: isSelected ? category['color'] : AppColors.surfaceVariant,
+                        color: isSelected
+                            ? category['color']
+                            : AppColors.surfaceVariant,
                         width: isSelected ? 2 : 1,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: isSelected ? category['color'].withOpacity(0.2) : Colors.grey.withOpacity(0.1),
+                          color: isSelected
+                              ? category['color'].withOpacity(0.2)
+                              : Colors.grey.withOpacity(0.1),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -251,21 +263,28 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: isSelected ? category['color'] : AppColors.surfaceVariant,
+                            color: isSelected
+                                ? category['color']
+                                : AppColors.surfaceVariant,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
                             category['icon'],
                             size: 24,
-                            color: isSelected ? Colors.white : category['color'],
+                            color:
+                                isSelected ? Colors.white : category['color'],
                           ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           category['title'],
                           style: AppTextStyles.titleSmall.copyWith(
-                            color: isSelected ? category['color'] : AppColors.textPrimary,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                            color: isSelected
+                                ? category['color']
+                                : AppColors.textPrimary,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.normal,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -305,26 +324,34 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
                   itemBuilder: (context, index) {
                     final program = _filteredPrograms[index];
                     final isSelected = _selectedProgram == program['id'];
-                    
+
                     return ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: isSelected ? AppColors.primary : AppColors.surfaceVariant,
+                          color: isSelected
+                              ? AppColors.primary
+                              : AppColors.surfaceVariant,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(
                           Icons.work_outline,
                           size: 20,
-                          color: isSelected ? Colors.white : AppColors.textSecondary,
+                          color: isSelected
+                              ? Colors.white
+                              : AppColors.textSecondary,
                         ),
                       ),
                       title: Text(
                         program['title'],
                         style: AppTextStyles.titleMedium.copyWith(
-                          color: isSelected ? AppColors.primary : AppColors.textPrimary,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                          color: isSelected
+                              ? AppColors.primary
+                              : AppColors.textPrimary,
+                          fontWeight:
+                              isSelected ? FontWeight.w600 : FontWeight.normal,
                         ),
                       ),
                       trailing: isSelected
@@ -388,4 +415,4 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
       ),
     );
   }
-} 
+}

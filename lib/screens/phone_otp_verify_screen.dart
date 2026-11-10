@@ -166,7 +166,11 @@ class _PhoneOtpVerifyScreenState extends State<PhoneOtpVerifyScreen> {
       if (success) {
         AppToast.show(context, 'phone_verified_successfully'.tr(),
             kind: AppToastKind.success);
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/home',
+          (route) => false,
+        );
       } else {
         AppToast.show(context, 'invalid_verification_code'.tr(),
             kind: AppToastKind.error);

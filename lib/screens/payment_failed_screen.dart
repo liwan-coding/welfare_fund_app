@@ -45,7 +45,7 @@ class _PaymentFailedScreenState extends State<PaymentFailedScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     // استخراج query parameters من URL
     _extractQueryParameters();
   }
@@ -57,22 +57,26 @@ class _PaymentFailedScreenState extends State<PaymentFailedScreen> {
       _donationId = uri.queryParameters['donation_id'];
       _sessionId = uri.queryParameters['session_id'];
       _errorMessage = uri.queryParameters['error_message'];
-      
+
       // استخراج المبلغ إذا كان متوفراً
       final amountStr = uri.queryParameters['amount'];
       if (amountStr != null) {
         _amount = double.tryParse(amountStr);
         print('PaymentFailedScreen: Parsed amount from URL: $_amount');
       }
-      
+
       // استخراج عنوان الحملة إذا كان متوفراً
       _campaignTitle = uri.queryParameters['campaign_title'];
-      
-      if (_donationId == null && widget.donationId != null) _donationId = widget.donationId;
-      if (_sessionId == null && widget.sessionId != null) _sessionId = widget.sessionId;
-      if (_errorMessage == null && widget.errorMessage != null) _errorMessage = widget.errorMessage;
+
+      if (_donationId == null && widget.donationId != null)
+        _donationId = widget.donationId;
+      if (_sessionId == null && widget.sessionId != null)
+        _sessionId = widget.sessionId;
+      if (_errorMessage == null && widget.errorMessage != null)
+        _errorMessage = widget.errorMessage;
       if (_amount == null && widget.amount != null) _amount = widget.amount;
-      if (_campaignTitle == null && widget.campaignTitle != null) _campaignTitle = widget.campaignTitle;
+      if (_campaignTitle == null && widget.campaignTitle != null)
+        _campaignTitle = widget.campaignTitle;
 
       if (kDebugMode) {
         print('PaymentFailedScreen: donation_id = $_donationId');
@@ -94,13 +98,13 @@ class _PaymentFailedScreenState extends State<PaymentFailedScreen> {
   Future<void> _fetchDonationDetails() async {
     try {
       if (_donationId == null) return;
-      
+
       print('PaymentFailedScreen: Fetching donation details for $_donationId');
-      
+
       // استدعاء API للحصول على تفاصيل التبرع
       final donationService = DonationService();
       final response = await donationService.checkDonationStatus(_donationId!);
-      
+
       // Backend returns { message, data } (no "success" key); treat as success when data exists
       final data = response?['data'] as Map<String, dynamic>?;
       if (response != null && data != null) {
@@ -120,7 +124,8 @@ class _PaymentFailedScreenState extends State<PaymentFailedScreen> {
         print('PaymentFailedScreen: Fetched amount: $_amount');
         print('PaymentFailedScreen: Fetched campaign title: $_campaignTitle');
       } else {
-        print('PaymentFailedScreen: No donation data in response - user may not be authenticated');
+        print(
+            'PaymentFailedScreen: No donation data in response - user may not be authenticated');
         if (_amount == null && widget.amount != null) {
           setState(() => _amount = widget.amount);
         }
@@ -218,7 +223,7 @@ class _PaymentFailedScreenState extends State<PaymentFailedScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    
+
                     // Donation ID (if available)
                     if (_donationId != null) ...[
                       const SizedBox(height: 8),
@@ -239,7 +244,8 @@ class _PaymentFailedScreenState extends State<PaymentFailedScreen> {
               // Info
               Text(
                 'payment_failed_info'.tr(),
-                style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                style: AppTextStyles.bodyMedium
+                    .copyWith(color: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
@@ -251,16 +257,19 @@ class _PaymentFailedScreenState extends State<PaymentFailedScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context, PaymentFailedScreen.retryResult),
+                      onPressed: () => Navigator.pop(
+                          context, PaymentFailedScreen.retryResult),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: AppColors.surface,
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
                       ),
                       child: Text(
                         'try_again'.tr(),
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -277,7 +286,7 @@ class _PaymentFailedScreenState extends State<PaymentFailedScreen> {
                             // Web-specific navigation would go here
                           }
                         }
-                        
+
                         Navigator.pushNamedAndRemoveUntil(
                           context,
                           AppConstants.homeRoute,
@@ -288,11 +297,13 @@ class _PaymentFailedScreenState extends State<PaymentFailedScreen> {
                         foregroundColor: AppColors.primary,
                         side: const BorderSide(color: AppColors.primary),
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
                       ),
                       child: Text(
                         'home'.tr(),
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),

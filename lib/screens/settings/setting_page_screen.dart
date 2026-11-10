@@ -247,7 +247,7 @@ class _SettingPageScreenState extends State<SettingPageScreen>
 
   Widget _buildContent(SettingPageModel page, String locale, bool isRTL) {
     final rawContent = page.getLocalizedContent(locale);
-    
+
     // Preserve line breaks and spacing by converting \n to <br> tags
     // and wrapping in <div> with white-space style
     final content = _processContent(rawContent);
@@ -381,12 +381,12 @@ class _SettingPageScreenState extends State<SettingPageScreen>
       ),
     );
   }
-  
+
   /// Process content to preserve formatting and line breaks
   String _processContent(String content) {
     // Check if content already contains HTML tags
     final hasHtmlTags = RegExp(r'<[^>]+>').hasMatch(content);
-    
+
     if (hasHtmlTags) {
       // If content has HTML tags, just ensure line breaks are preserved
       // Replace \n that are not already handled by HTML
@@ -397,17 +397,16 @@ class _SettingPageScreenState extends State<SettingPageScreen>
       String processed = content
           .replaceAll('\r\n', '\n')
           .replaceAll('\r', '\n')
-          .replaceAll('\n\n', '</p><p>')  // Double line breaks become paragraphs
-          .replaceAll('\n', '<br>')        // Single line breaks become <br>
+          .replaceAll('\n\n', '</p><p>') // Double line breaks become paragraphs
+          .replaceAll('\n', '<br>') // Single line breaks become <br>
           .replaceAll('  ', '&nbsp;&nbsp;'); // Preserve double spaces
-      
+
       // Wrap in paragraph tags if not already
       if (!processed.startsWith('<p>')) {
         processed = '<p>$processed</p>';
       }
-      
+
       return processed;
     }
   }
 }
-

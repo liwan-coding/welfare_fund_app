@@ -250,7 +250,9 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
           : null;
       final donorPhone = phoneFromController.isNotEmpty
           ? phoneFromController
-          : (profilePhone != null && profilePhone.isNotEmpty ? profilePhone : null);
+          : (profilePhone != null && profilePhone.isNotEmpty
+              ? profilePhone
+              : null);
 
       // الحصول على origin للمنصة الويب
       final origin = kIsWeb ? Uri.base.origin : AppConfig.serverBaseUrl;
@@ -342,7 +344,8 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
         }
       } else {
         final errorData = jsonDecode(response.body);
-        final errorMessage = errorData['message'] ?? 'payment_failed_creating_session'.tr();
+        final errorMessage =
+            errorData['message'] ?? 'payment_failed_creating_session'.tr();
         throw Exception(errorMessage);
       }
     } catch (e) {
@@ -661,13 +664,17 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                       child: TextField(
                         controller: _donorPhoneController,
                         keyboardType: TextInputType.phone,
-                        style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textPrimary),
+                        style: AppTextStyles.bodyLarge
+                            .copyWith(color: AppColors.textPrimary),
                         decoration: InputDecoration(
                           hintText: 'enter_your_phone'.tr(),
-                          hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
-                          prefixIcon: const Icon(CupertinoIcons.phone, color: AppColors.textSecondary),
+                          hintStyle: AppTextStyles.bodyMedium
+                              .copyWith(color: AppColors.textSecondary),
+                          prefixIcon: const Icon(CupertinoIcons.phone,
+                              color: AppColors.textSecondary),
                           border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 14),
                         ),
                       ),
                     ),
@@ -681,7 +688,8 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
             if (_selectedAmount > 0) ...[
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -1022,7 +1030,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                   ),
                 ],
               ),
-              
+
               // Content Section
               Padding(
                 padding: const EdgeInsets.all(12),
@@ -1041,7 +1049,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 6),
-                    
+
                     // Description
                     Text(
                       campaignDescription,
@@ -1052,7 +1060,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    
+
                     // Progress Bar
                     Row(
                       children: [
@@ -1090,14 +1098,15 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    
+
                     // Statistics Row
                     Row(
                       children: [
                         Expanded(
                           child: _buildCompactStatItem(
                             icon: Icons.trending_up_rounded,
-                            value: '${campaign.currentAmount.toStringAsFixed(0)}',
+                            value:
+                                '${campaign.currentAmount.toStringAsFixed(0)}',
                             label: 'riyal'.tr(),
                             color: AppColors.success,
                           ),
@@ -1110,7 +1119,8 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                         Expanded(
                           child: _buildCompactStatItem(
                             icon: Icons.flag_rounded,
-                            value: '${campaign.targetAmount.toStringAsFixed(0)}',
+                            value:
+                                '${campaign.targetAmount.toStringAsFixed(0)}',
                             label: 'riyal'.tr(),
                             color: AppColors.primary,
                           ),
@@ -1131,7 +1141,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    
+
                     // Change Campaign Button
                     SizedBox(
                       width: double.infinity,

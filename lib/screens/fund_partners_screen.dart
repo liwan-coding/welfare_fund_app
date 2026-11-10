@@ -90,19 +90,22 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
   ///   {APP_URL}/storage/{path}
   String _resolveLogoUrl(String? path) {
     if (path == null || path.isEmpty) {
-      if (kDebugMode) debugPrint('[FundPartners] resolveLogo: input is null or empty');
+      if (kDebugMode)
+        debugPrint('[FundPartners] resolveLogo: input is null or empty');
       return '';
     }
     final p = path.replaceAll(RegExp(r'\\'), '/').trim();
     if (p.isEmpty) {
-      if (kDebugMode) debugPrint('[FundPartners] resolveLogo: input trimmed empty');
+      if (kDebugMode)
+        debugPrint('[FundPartners] resolveLogo: input trimmed empty');
       return '';
     }
     final base = AppConfig.serverBaseUrl.replaceAll(RegExp(r'/+$'), '');
     final baseUri = Uri.tryParse(base);
     String url;
     if (p.startsWith('http://') || p.startsWith('https://')) {
-      if (kDebugMode) debugPrint('[FundPartners] resolveLogo: using full URL from API');
+      if (kDebugMode)
+        debugPrint('[FundPartners] resolveLogo: using full URL from API');
       url = p;
       if (baseUri != null) {
         final imgUri = Uri.tryParse(p);
@@ -110,17 +113,24 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
             (imgUri.host == 'localhost' ||
                 imgUri.host == '127.0.0.1' ||
                 imgUri.host.isEmpty)) {
-          url = '${baseUri.scheme}://${baseUri.host}${baseUri.port != 80 && baseUri.port != 443 ? ':${baseUri.port}' : ''}${imgUri.path}${imgUri.query.isNotEmpty ? '?${imgUri.query}' : ''}';
-          if (kDebugMode) debugPrint('[FundPartners] resolveLogo: replaced localhost → $url');
+          url =
+              '${baseUri.scheme}://${baseUri.host}${baseUri.port != 80 && baseUri.port != 443 ? ':${baseUri.port}' : ''}${imgUri.path}${imgUri.query.isNotEmpty ? '?${imgUri.query}' : ''}';
+          if (kDebugMode)
+            debugPrint('[FundPartners] resolveLogo: replaced localhost → $url');
         }
       }
     } else if (p.startsWith('//')) {
       url = 'https:$p';
-      if (kDebugMode) debugPrint('[FundPartners] resolveLogo: protocol-relative → $url');
+      if (kDebugMode)
+        debugPrint('[FundPartners] resolveLogo: protocol-relative → $url');
     } else {
-      if (kDebugMode) debugPrint('[FundPartners] resolveLogo: building from path (logo only): "$p"');
+      if (kDebugMode)
+        debugPrint(
+            '[FundPartners] resolveLogo: building from path (logo only): "$p"');
       final withSlash = p.startsWith('/') ? p : '/$p';
-      final pathForStorage = withSlash.toLowerCase().contains('storage') ? withSlash : '/storage$withSlash';
+      final pathForStorage = withSlash.toLowerCase().contains('storage')
+          ? withSlash
+          : '/storage$withSlash';
       url = '$base$pathForStorage';
     }
     if (kDebugMode) debugPrint('[FundPartners] resolveLogo: final url = $url');
@@ -165,7 +175,8 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
           ),
           actions: [
             IconButton(
-              icon: const Icon(CupertinoIcons.refresh, color: AppColors.surface, size: 22),
+              icon: const Icon(CupertinoIcons.refresh,
+                  color: AppColors.surface, size: 22),
               onPressed: _isLoading ? null : _load,
             ),
           ],
@@ -194,7 +205,8 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
             const SizedBox(height: AppConstants.defaultPadding),
             Text(
               'loading'.tr(),
-              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+              style: AppTextStyles.bodyMedium
+                  .copyWith(color: AppColors.textSecondary),
             ),
           ],
         ),
@@ -224,7 +236,8 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
               Text(
                 _errorMessage!,
                 textAlign: TextAlign.center,
-                style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textSecondary),
+                style: AppTextStyles.bodyLarge
+                    .copyWith(color: AppColors.textSecondary),
               ),
               const SizedBox(height: AppConstants.defaultPadding),
               FilledButton.icon(
@@ -232,9 +245,11 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: AppColors.surface,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                    borderRadius:
+                        BorderRadius.circular(AppConstants.defaultRadius),
                   ),
                 ),
                 icon: const Icon(CupertinoIcons.refresh, size: 20),
@@ -269,7 +284,8 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
               Text(
                 'fund_partners_empty'.tr(),
                 textAlign: TextAlign.center,
-                style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textSecondary),
+                style: AppTextStyles.bodyLarge
+                    .copyWith(color: AppColors.textSecondary),
               ),
             ],
           ),
@@ -320,7 +336,8 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: AppConstants.defaultPadding),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppConstants.defaultPadding),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
@@ -329,7 +346,8 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
                         .toList();
                     if (index >= list.length) return null;
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: AppConstants.defaultPadding),
+                      padding: const EdgeInsets.only(
+                          bottom: AppConstants.defaultPadding),
                       child: _PartnerCard(
                         partner: list[index],
                         locale: locale,
@@ -345,7 +363,8 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
                 ),
               ),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: AppConstants.extraLargePadding)),
+            const SliverToBoxAdapter(
+                child: SizedBox(height: AppConstants.extraLargePadding)),
           ],
         ),
       ),
@@ -445,7 +464,8 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
           SnackBar(
             content: Text(
               'cannot_open_link'.tr(),
-              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.surface),
+              style:
+                  AppTextStyles.bodyMedium.copyWith(color: AppColors.surface),
             ),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
@@ -522,14 +542,16 @@ class _FeaturedPartnerCard extends StatelessWidget {
               ),
               child: logoUrl.isNotEmpty
                   ? ClipRRect(
-                      borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                      borderRadius:
+                          BorderRadius.circular(AppConstants.defaultRadius),
                       child: CachedNetworkImage(
                         imageUrl: logoUrl,
                         fit: BoxFit.contain,
                         placeholder: (_, __) => _buildLogoPlaceholder(name, 80),
                         errorWidget: (_, url, error) {
                           if (kDebugMode) {
-                            debugPrint('[FundPartners] image load FAILED (featured) url=$url error=$error');
+                            debugPrint(
+                                '[FundPartners] image load FAILED (featured) url=$url error=$error');
                           }
                           return _buildLogoPlaceholder(name, 80);
                         },
@@ -619,14 +641,16 @@ class _PartnerCard extends StatelessWidget {
               ),
               child: logoUrl.isNotEmpty
                   ? ClipRRect(
-                      borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                      borderRadius:
+                          BorderRadius.circular(AppConstants.defaultRadius),
                       child: CachedNetworkImage(
                         imageUrl: logoUrl,
                         fit: BoxFit.contain,
                         placeholder: (_, __) => _buildLogoPlaceholder(name, 64),
                         errorWidget: (_, url, error) {
                           if (kDebugMode) {
-                            debugPrint('[FundPartners] image load FAILED (card) url=$url error=$error');
+                            debugPrint(
+                                '[FundPartners] image load FAILED (card) url=$url error=$error');
                           }
                           return _buildLogoPlaceholder(name, 64);
                         },
@@ -664,7 +688,9 @@ class _PartnerCard extends StatelessWidget {
             ),
             if (hasLink)
               Icon(
-                isRTL ? Icons.arrow_back_ios_new_rounded : Icons.arrow_forward_ios_rounded,
+                isRTL
+                    ? Icons.arrow_back_ios_new_rounded
+                    : Icons.arrow_forward_ios_rounded,
                 size: 18,
                 color: AppColors.primary,
               ),
@@ -677,9 +703,8 @@ class _PartnerCard extends StatelessWidget {
 
 /// عرض الحرف الأول من اسم الشريك عندما لا يوجد شعار أو فشل تحميله
 Widget _buildLogoPlaceholder(String name, double size) {
-  final letter = name.trim().isNotEmpty
-      ? name.trim().substring(0, 1).toUpperCase()
-      : '?';
+  final letter =
+      name.trim().isNotEmpty ? name.trim().substring(0, 1).toUpperCase() : '?';
   return Container(
     width: size,
     height: size,

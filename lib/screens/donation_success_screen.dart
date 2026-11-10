@@ -39,9 +39,9 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
   late AnimationController _checkmarkController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _checkmarkAnimation;
-  
+
   final DonationService _donationService = DonationService();
-  
+
   // متغيرات للبيانات المستخرجة من URL
   String? _donationId;
   String? _sessionId;
@@ -51,25 +51,29 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
   @override
   void initState() {
     super.initState();
-    
-    print('DonationSuccessScreen: initState - widget.donationId = ${widget.donationId}');
-    print('DonationSuccessScreen: initState - widget.sessionId = ${widget.sessionId}');
-    print('DonationSuccessScreen: initState - widget.amount = ${widget.amount}');
-    print('DonationSuccessScreen: initState - widget.campaignTitle = ${widget.campaignTitle}');
-    
+
+    print(
+        'DonationSuccessScreen: initState - widget.donationId = ${widget.donationId}');
+    print(
+        'DonationSuccessScreen: initState - widget.sessionId = ${widget.sessionId}');
+    print(
+        'DonationSuccessScreen: initState - widget.amount = ${widget.amount}');
+    print(
+        'DonationSuccessScreen: initState - widget.campaignTitle = ${widget.campaignTitle}');
+
     // استخراج query parameters من URL
     _extractQueryParameters();
-    
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _checkmarkController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _scaleAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -77,7 +81,7 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
       parent: _animationController,
       curve: Curves.elasticOut,
     ));
-    
+
     _checkmarkAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -85,7 +89,7 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
       parent: _checkmarkController,
       curve: Curves.easeInOut,
     ));
-    
+
     _startAnimations();
   }
 
@@ -103,32 +107,38 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
       _sessionId = widget.sessionId;
       _amount = widget.amount;
       _campaignTitle = widget.campaignTitle;
-      
-      print('DonationSuccessScreen: Widget params - donation_id = $_donationId');
+
+      print(
+          'DonationSuccessScreen: Widget params - donation_id = $_donationId');
       print('DonationSuccessScreen: Widget params - session_id = $_sessionId');
       print('DonationSuccessScreen: Widget params - amount = $_amount');
-      print('DonationSuccessScreen: Widget params - campaign_title = $_campaignTitle');
-      
+      print(
+          'DonationSuccessScreen: Widget params - campaign_title = $_campaignTitle');
+
       // ثانياً: إذا لم تكن متوفرة في widget parameters، حاول استخراجها من URL
       if (_donationId == null || _sessionId == null || _amount == null) {
         final uri = Uri.base;
         _donationId ??= uri.queryParameters['donation_id'];
         _sessionId ??= uri.queryParameters['session_id'];
-        
+
         final amountStr = uri.queryParameters['amount'];
         if (amountStr != null && _amount == null) {
           _amount = double.tryParse(amountStr);
           print('DonationSuccessScreen: Parsed amount from URL: $_amount');
         }
-        
+
         _campaignTitle ??= uri.queryParameters['campaign_title'];
-        
-        print('DonationSuccessScreen: After URL extraction - donation_id = $_donationId');
-        print('DonationSuccessScreen: After URL extraction - session_id = $_sessionId');
-        print('DonationSuccessScreen: After URL extraction - amount = $_amount');
-        print('DonationSuccessScreen: After URL extraction - campaign_title = $_campaignTitle');
+
+        print(
+            'DonationSuccessScreen: After URL extraction - donation_id = $_donationId');
+        print(
+            'DonationSuccessScreen: After URL extraction - session_id = $_sessionId');
+        print(
+            'DonationSuccessScreen: After URL extraction - amount = $_amount');
+        print(
+            'DonationSuccessScreen: After URL extraction - campaign_title = $_campaignTitle');
       }
-      
+
       // إذا كان لدينا donation_id، احصل على تفاصيل التبرع من API
       if (_donationId != null) {
         _fetchDonationDetails();
@@ -146,12 +156,13 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
   Future<void> _fetchDonationDetails() async {
     try {
       if (_donationId == null) return;
-      
-      print('DonationSuccessScreen: Fetching donation details for $_donationId');
-      
+
+      print(
+          'DonationSuccessScreen: Fetching donation details for $_donationId');
+
       // استدعاء API للحصول على تفاصيل التبرع
       final response = await _donationService.checkDonationStatus(_donationId!);
-      
+
       if (response != null && response['success'] == true) {
         final data = response['data'];
         if (data != null) {
@@ -159,12 +170,14 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
             _amount = (data['amount'] as num?)?.toDouble();
             _campaignTitle = data['campaign_title'] as String?;
           });
-          
+
           print('DonationSuccessScreen: Fetched amount: $_amount');
-          print('DonationSuccessScreen: Fetched campaign title: $_campaignTitle');
+          print(
+              'DonationSuccessScreen: Fetched campaign title: $_campaignTitle');
         }
       } else {
-        print('DonationSuccessScreen: Failed to fetch donation details - user may not be authenticated');
+        print(
+            'DonationSuccessScreen: Failed to fetch donation details - user may not be authenticated');
         // إذا فشل الحصول على البيانات من API، استخدم البيانات من URL
         if (_amount == null && widget.amount != null) {
           setState(() {
@@ -207,14 +220,14 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
         // Web-specific navigation would go here
       }
     }
-    
+
     Navigator.pushNamedAndRemoveUntil(
       context,
       AppConstants.homeRoute,
       (route) => false,
     );
   }
-  
+
   void _goToMyDonations() {
     // للويب، نظف URL في المتصفح
     if (kIsWeb) {
@@ -222,7 +235,7 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
         // Web-specific navigation would go here
       }
     }
-    
+
     Navigator.of(context).popUntil((route) => route.isFirst);
     // Navigate to My Donations screen with force refresh
     Navigator.push(
@@ -232,7 +245,7 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
       ),
     );
   }
-  
+
   Future<void> _refreshDonationsData() async {
     try {
       // Force refresh donations data by calling the API
@@ -254,7 +267,7 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
             children: [
               // Language Switcher
               const SizedBox(height: AppConstants.extraLargePadding),
-              
+
               // Success Animation
               ScaleTransition(
                 scale: _scaleAnimation,
@@ -367,7 +380,7 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
                       ],
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Campaign Info (if available)
                     if ((_campaignTitle ?? widget.campaignTitle) != null) ...[
                       Row(
@@ -393,7 +406,7 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
                       ),
                       const SizedBox(height: 16),
                     ],
-                    
+
                     // Date
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -420,7 +433,7 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
                       ],
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Transaction ID
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -509,7 +522,8 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
                               await _refreshDonationsData();
                               _goToMyDonations();
                             },
-                            icon: const Icon(CupertinoIcons.heart_fill, size: 20),
+                            icon:
+                                const Icon(CupertinoIcons.heart_fill, size: 20),
                             label: Text(
                               'my_donations'.tr(),
                               style: AppTextStyles.buttonLarge.copyWith(
@@ -534,9 +548,9 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
                       }
                     },
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Back to Home Button
                   SizedBox(
                     width: double.infinity,
@@ -614,4 +628,4 @@ class _DonationSuccessScreenState extends State<DonationSuccessScreen>
       ),
     );
   }
-} 
+}

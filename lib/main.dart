@@ -5,12 +5,10 @@ import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'constants/app_colors.dart';
 import 'design/app_theme.dart';
-import 'constants/app_text_styles.dart';
 import 'constants/app_constants.dart';
 import 'screens/splash_screen.dart';
-import 'screens/home_screen.dart';
+import 'screens/main_shell.dart';
 import 'screens/donation_success_screen.dart';
 import 'screens/payment_failed_screen.dart';
 import 'screens/payment_loading_screen.dart';
@@ -31,39 +29,40 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize Firebase (only for non-web platforms or when options are available)
   if (!kIsWeb) {
     await Firebase.initializeApp();
     // Set up background message handler
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   } else {
-    print('⚠️ Firebase not initialized on web - firebase_options.dart is required');
+    print(
+        '⚠️ Firebase not initialized on web - firebase_options.dart is required');
     print('Run: dart pub global activate flutterfire_cli');
     print('Then: flutterfire configure');
   }
-  
+
   // Initialize EasyLocalization
   await EasyLocalization.ensureInitialized();
-  
+
   // Register web implementation for webview_flutter when running on web
   if (kIsWeb) {
     // Only register web platform when actually running on web
     // This will be handled by conditional imports if needed
   }
-  
+
   try {
     // Initialize API Client
     await ApiClient().initialize();
     print('API Client initialized successfully');
-    
+
     // Initialize Auth Service
     await AuthService().initialize();
     print('Auth Service initialized successfully');
   } catch (e) {
     print('Error during initialization: $e');
   }
-  
+
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('ar')],
@@ -99,15 +98,16 @@ class StudentWelfareFundApp extends StatelessWidget {
       } else {
         currentPath = '/';
       }
-      
+
       // إذا كان URL يحتوي على payment/success أو payment/cancel
       // ابدأ من payment loading screen لمعالجة المعاملات بشكل صحيح
-      if (currentPath.contains('/payment/success') || 
+      if (currentPath.contains('/payment/success') ||
           currentPath.contains('/payment/cancel')) {
-        print('Payment redirect detected, starting from payment loading screen');
+        print(
+            'Payment redirect detected, starting from payment loading screen');
         return '/payment/loading';
       }
-      
+
       // إذا كان URL يحتوي على /home
       if (currentPath.contains('/home')) {
         print('Redirecting to home screen');
@@ -116,7 +116,7 @@ class StudentWelfareFundApp extends StatelessWidget {
     } catch (e) {
       print('Error checking URL: $e');
     }
-    
+
     // افتراضي: ابدأ من splash screen
     return AppConstants.splashRoute;
   }
@@ -132,39 +132,41 @@ class StudentWelfareFundApp extends StatelessWidget {
       child: Consumer<AuthProvider>(
         builder: (context, authProvider, child) {
           return MaterialApp(
-        title: AppConstants.appName,
-        debugShowCheckedModeBanner: false,
-        
-        // Localization configuration
-        locale: context.locale,
-        supportedLocales: context.supportedLocales,
-        localizationsDelegates: context.localizationDelegates,
+            title: AppConstants.appName,
+            debugShowCheckedModeBanner: false,
 
-        // RTL for Arabic, LTR for English
-        builder: (context, child) {
-          final isRtl = context.locale.languageCode == 'ar';
-          return Directionality(
-            textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-            child: child ?? const SizedBox.shrink(),
-          );
-        },
+            // Localization configuration
+            locale: context.locale,
+            supportedLocales: context.supportedLocales,
+            localizationsDelegates: context.localizationDelegates,
 
-        // Theme configuration (Apple HIG). Dark theme is enabled once screens
-        // stop hard-coding light colors.
-        theme: AppTheme.light(),
+            // RTL for Arabic, LTR for English
+            builder: (context, child) {
+              final isRtl = context.locale.languageCode == 'ar';
+              return Directionality(
+                textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+                child: child ?? const SizedBox.shrink(),
+              );
+            },
 
-        // Initial route - check URL first
-        initialRoute: _getInitialRoute(),
+            // Theme configuration (Apple HIG). Dark theme is enabled once screens
+            // stop hard-coding light colors.
+            theme: AppTheme.light(),
 
-        // Route configuration
-        routes: {
-          AppConstants.splashRoute: (context) => const SplashScreen(),
-          AppConstants.homeRoute: (context) => const HomeScreen(),
-          AppConstants.paymentSuccessRoute: (context) => const DonationSuccessScreen(),
-          AppConstants.paymentCancelRoute: (context) => const PaymentFailedScreen(),
-          '/payment/loading': (context) => const PaymentLoadingScreen(),
-          AppConstants.fundNewsRoute: (context) => const FundNewsScreen(),
-        },
+            // Initial route - check URL first
+            initialRoute: _getInitialRoute(),
+
+            // Route configuration
+            routes: {
+              AppConstants.splashRoute: (context) => const SplashScreen(),
+              AppConstants.homeRoute: (context) => const MainShell(),
+              AppConstants.paymentSuccessRoute: (context) =>
+                  const DonationSuccessScreen(),
+              AppConstants.paymentCancelRoute: (context) =>
+                  const PaymentFailedScreen(),
+              '/payment/loading': (context) => const PaymentLoadingScreen(),
+              AppConstants.fundNewsRoute: (context) => const FundNewsScreen(),
+            },
           );
         },
       ),

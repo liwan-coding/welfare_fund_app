@@ -10,10 +10,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_text_styles.dart';
-import '../constants/app_constants.dart';
 import 'package:flutter/services.dart';
 import '../widgets/common/campaign_card.dart';
-import '../widgets/common/main_tab_bar.dart';
+import 'main_shell.dart';
 import '../design/design.dart';
 import '../widgets/home/hero_banner.dart';
 import '../widgets/home/home_header.dart';
@@ -34,7 +33,6 @@ import 'fund_news_screen.dart';
 import 'campaign_donation_screen.dart';
 import 'student_registration_screen.dart';
 import 'settings_screen.dart';
-import 'my_donations_screen.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
 import 'all_campaigns_screen.dart';
@@ -62,7 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Campaign> _allCampaigns = []; // جميع الحملات الأصلية
   List<Donation> _recentDonations = []; // التبرعات الأخيرة
   List<AppBanner> _banners = [];
-  int _currentIndex = 0; // Home tab is active (الرئيسية في index 0)
   List<Map<String, dynamic>> _categories = [];
   Map<String, List<String>> _categoryMatchers = {};
   bool _isLoadingCategories = false;
@@ -140,36 +137,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return fallbackKey.tr();
-  }
-
-  List<Color> _getRegistrationCardOverlayColors(
-      StudentRegistrationCardData? cardData) {
-    final background = cardData?.background;
-    final List<Color> overlayColors = [];
-
-    if (background != null) {
-      if (background.colorFrom != null) {
-        overlayColors.add(background.colorFrom!.withOpacity(0.7));
-      }
-      if (background.colorTo != null) {
-        overlayColors.add(background.colorTo!.withOpacity(0.65));
-      }
-      if (overlayColors.isEmpty && background.colorFrom != null) {
-        overlayColors.add(background.colorFrom!.withOpacity(0.65));
-      }
-    }
-
-    if (overlayColors.isEmpty) {
-      overlayColors.addAll([
-        AppColors.primary.withOpacity(0.7),
-        AppColors.secondary.withOpacity(0.6),
-      ]);
-    } else if (overlayColors.length == 1) {
-      overlayColors.add(overlayColors.first);
-    }
-
-    overlayColors.add(Colors.black.withOpacity(0.35));
-    return overlayColors;
   }
 
   Future<void> _loadCategories() async {
@@ -840,12 +807,10 @@ class _HomeScreenState extends State<HomeScreen> {
           value: SystemUiOverlayStyle.dark,
           child: Scaffold(
             backgroundColor: AppPalette.of(context).background,
-            extendBody: true,
             body: _buildHomeBody(
               isAuthenticated: isAuthenticated,
               userProfile: userProfile,
             ),
-            bottomNavigationBar: _buildNavBar(),
           ),
         );
       },
@@ -1309,13 +1274,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         displayName:
                             isAuthenticated ? userName?.toString() : null,
                         onAvatarTap: isAuthenticated
-                            ? () => Navigator.push(
-                                  context,
-                                  CupertinoPageRoute(
-                                    builder: (context) =>
-                                        const SettingsScreen(),
-                                  ),
-                                )
+                            ? () {
+                                if (!MainShell.selectTab(context, 2)) {
+                                  Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (context) =>
+                                          const SettingsScreen(),
+                                    ),
+                                  );
+                                }
+                              }
                             : _showLoginBottomSheet,
                       ),
                     ),
@@ -1324,9 +1293,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         AppSpace.screen,
                         0,
                         AppSpace.screen,
-                        AppTabBar.barHeight +
-                            media.padding.bottom +
-                            AppSpace.xl,
+                        MainShell.bottomReserve(context) + AppSpace.xl,
                       ),
                       child: _buildSheetContent(),
                     ),
@@ -1435,36 +1402,6 @@ class _HomeScreenState extends State<HomeScreen> {
         focusedBorder: border,
         contentPadding: const EdgeInsets.symmetric(vertical: 10),
       ),
-    );
-  }
-
-  Widget _buildNavBar() {
-    return MainTabBar(
-      currentIndex: _currentIndex,
-      onTap: (index) {
-        if (index == 0) {
-          _refreshHomeData();
-          setState(() => _currentIndex = index);
-        } else if (index == 1) {
-          final authProvider =
-              Provider.of<AuthProvider>(context, listen: false);
-          if (!authProvider.isAuthenticated) {
-            _showLoginBottomSheet();
-            return;
-          }
-          Navigator.push(
-            context,
-            CupertinoPageRoute(builder: (context) => const MyDonationsScreen()),
-          );
-        } else if (index == 2) {
-          Navigator.push(
-            context,
-            CupertinoPageRoute(builder: (context) => const SettingsScreen()),
-          );
-        } else {
-          setState(() => _currentIndex = index);
-        }
-      },
     );
   }
 

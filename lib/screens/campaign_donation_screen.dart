@@ -47,8 +47,10 @@ class _CampaignPaymentResult {
       return _CampaignPaymentResult(
         state: _parseState(map['state']),
         amount: _parseAmount(map['amount']),
-        campaignTitle: _asString(map['campaignTitle']) ?? _asString(map['campaign_title']),
-        donationId: _asString(map['donationId']) ?? _asString(map['donation_id']),
+        campaignTitle:
+            _asString(map['campaignTitle']) ?? _asString(map['campaign_title']),
+        donationId:
+            _asString(map['donationId']) ?? _asString(map['donation_id']),
         sessionId: _asString(map['sessionId']) ?? _asString(map['session_id']),
       );
     }
@@ -83,6 +85,7 @@ class _CampaignPaymentResult {
     return value?.toString();
   }
 }
+
 class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
   double _selectedAmount = 0;
   final List<double> _quickAmounts = [50, 100, 200, 500, 1000];
@@ -105,7 +108,8 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
 
   bool _validateAmount() {
     if (_selectedAmount <= 0) {
-      AppToast.show(context, 'please_choose_donation_amount'.tr(), kind: AppToastKind.error);
+      AppToast.show(context, 'please_choose_donation_amount'.tr(),
+          kind: AppToastKind.error);
       return false;
     }
     return true;
@@ -113,11 +117,13 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
 
   Future<void> _proceedToDonation() async {
     if (kDebugMode) {
-      debugPrint('[DONATION_LOG] بداية التبرع: amount=$_selectedAmount, campaignId=${widget.campaign.id}, type=${widget.campaign.type}');
+      debugPrint(
+          '[DONATION_LOG] بداية التبرع: amount=$_selectedAmount, campaignId=${widget.campaign.id}, type=${widget.campaign.type}');
     }
     // Check if campaign is completed
     if (widget.campaign.isCompleted) {
-      AppToast.show(context, 'campaign_completed_no_donations'.tr(), kind: AppToastKind.success);
+      AppToast.show(context, 'campaign_completed_no_donations'.tr(),
+          kind: AppToastKind.success);
       return;
     }
 
@@ -127,21 +133,25 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
     final auth = context.read<AuthProvider>();
     final isLoggedIn = auth.isAuthenticated && auth.userProfile != null;
     String? donorPhone = isLoggedIn
-        ? (auth.userProfile!['phone']?.toString() ?? auth.userProfile!['user']?['phone']?.toString())
+        ? (auth.userProfile!['phone']?.toString() ??
+            auth.userProfile!['user']?['phone']?.toString())
         : _donorPhoneController.text.trim();
 
     if (!isLoggedIn) {
       if (donorPhone == null || donorPhone.isEmpty) {
-        AppToast.show(context, 'please_enter_donor_phone'.tr(), kind: AppToastKind.error);
+        AppToast.show(context, 'please_enter_donor_phone'.tr(),
+            kind: AppToastKind.error);
         return;
       }
       final cleanPhone = donorPhone.replaceAll(RegExp(r'[\s\-\(\)]'), '');
       if (!RegExp(r'^[0-9]+$').hasMatch(cleanPhone)) {
-        AppToast.show(context, 'please_enter_valid_phone'.tr(), kind: AppToastKind.error);
+        AppToast.show(context, 'please_enter_valid_phone'.tr(),
+            kind: AppToastKind.error);
         return;
       }
       if (cleanPhone.length < 8 || cleanPhone.length > 15) {
-        AppToast.show(context, 'phone_must_be_between_8_and_15_digits'.tr(), kind: AppToastKind.error);
+        AppToast.show(context, 'phone_must_be_between_8_and_15_digits'.tr(),
+            kind: AppToastKind.error);
         return;
       }
     }
@@ -155,7 +165,8 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
     int? programId;
     int? campaignId;
 
-    final isProgram = (widget.campaign.type == 'student_program' || widget.campaign.type == 'program');
+    final isProgram = (widget.campaign.type == 'student_program' ||
+        widget.campaign.type == 'program');
     if (parsedId != null) {
       if (isProgram) {
         programId = parsedId;
@@ -166,13 +177,15 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
 
     // إنشاء التبرع مع الدفع مباشرة (مع donor_phone للمسجلين)
     if (kDebugMode) {
-      debugPrint('[DONATION_LOG] استدعاء initiateDonationWithPayment: programId=$programId, campaignId=$campaignId');
+      debugPrint(
+          '[DONATION_LOG] استدعاء initiateDonationWithPayment: programId=$programId, campaignId=$campaignId');
     }
     await provider.initiateDonationWithPayment(
       amount: _selectedAmount,
       donorName: 'generous_donor'.tr(),
       donorPhone: donorPhone,
-      message: 'donation_for_campaign'.tr().replaceAll('{title}', widget.campaign.getLocalizedTitle(context.locale.languageCode)),
+      message: 'donation_for_campaign'.tr().replaceAll('{title}',
+          widget.campaign.getLocalizedTitle(context.locale.languageCode)),
       programId: programId,
       campaignId: campaignId,
       note: 'donation_message'.tr(),
@@ -181,9 +194,11 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
     if (!mounted) return;
 
     if (kDebugMode) {
-      debugPrint('[DONATION_LOG] بعد initiateDonationWithPayment: state=${provider.state}, paymentUrl=${provider.paymentUrl != null ? "موجود" : "null"}, errorMessage=${provider.displayErrorMessage}');
+      debugPrint(
+          '[DONATION_LOG] بعد initiateDonationWithPayment: state=${provider.state}, paymentUrl=${provider.paymentUrl != null ? "موجود" : "null"}, errorMessage=${provider.displayErrorMessage}');
     }
-    if (provider.state == PaymentState.sessionCreated && provider.paymentUrl != null) {
+    if (provider.state == PaymentState.sessionCreated &&
+        provider.paymentUrl != null) {
       // افتح الـ WebView داخل التطبيق
       provider.startPayment();
 
@@ -201,15 +216,19 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
       final PaymentState? resultState = paymentResult.state;
 
       // التعامل مع نتيجة الـ WebView
-      if (resultState == PaymentState.paymentSuccess || provider.isPaymentSuccessful) {
+      if (resultState == PaymentState.paymentSuccess ||
+          provider.isPaymentSuccessful) {
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
           CupertinoPageRoute(
             builder: (_) => DonationSuccessScreen(
               amount: _selectedAmount,
-              campaignTitle: paymentResult.campaignTitle ?? widget.campaign.getLocalizedTitle(context.locale.languageCode),
-              campaignCategory: widget.campaign.getLocalizedCategory(context.locale.languageCode),
+              campaignTitle: paymentResult.campaignTitle ??
+                  widget.campaign
+                      .getLocalizedTitle(context.locale.languageCode),
+              campaignCategory: widget.campaign
+                  .getLocalizedCategory(context.locale.languageCode),
               donationId: paymentResult.donationId,
               sessionId: paymentResult.sessionId ?? provider.currentSessionId,
             ),
@@ -225,7 +244,8 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
           CupertinoPageRoute(
             builder: (_) => PaymentFailedScreen(
               errorMessage: provider.displayErrorMessage,
-              campaignTitle: widget.campaign.getLocalizedTitle(context.locale.languageCode),
+              campaignTitle: widget.campaign
+                  .getLocalizedTitle(context.locale.languageCode),
               amount: _selectedAmount,
               donationId: provider.currentDonationId,
               sessionId: provider.currentSessionId,
@@ -239,11 +259,13 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
           Navigator.pushReplacement(
             context,
             CupertinoPageRoute(
-            builder: (_) => DonationSuccessScreen(
-              amount: _selectedAmount,
-              campaignTitle: widget.campaign.getLocalizedTitle(context.locale.languageCode),
-              campaignCategory: widget.campaign.getLocalizedCategory(context.locale.languageCode),
-            ),
+              builder: (_) => DonationSuccessScreen(
+                amount: _selectedAmount,
+                campaignTitle: widget.campaign
+                    .getLocalizedTitle(context.locale.languageCode),
+                campaignCategory: widget.campaign
+                    .getLocalizedCategory(context.locale.languageCode),
+              ),
             ),
           );
         } else if (provider.isPaymentFailed) {
@@ -267,8 +289,10 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
     } else {
       // فشل إنشاء الجلسة
       if (kDebugMode) {
-        debugPrint('[DONATION_LOG] ⚠ الانتقال لصفحة الفشل: السبب = إنشاء الجلسة فشل (state != sessionCreated أو paymentUrl null)');
-        debugPrint('[DONATION_LOG] state=${provider.state}, hasPaymentUrl=${provider.paymentUrl != null}, displayErrorMessage=${provider.displayErrorMessage}');
+        debugPrint(
+            '[DONATION_LOG] ⚠ الانتقال لصفحة الفشل: السبب = إنشاء الجلسة فشل (state != sessionCreated أو paymentUrl null)');
+        debugPrint(
+            '[DONATION_LOG] state=${provider.state}, hasPaymentUrl=${provider.paymentUrl != null}, displayErrorMessage=${provider.displayErrorMessage}');
       }
       if (!mounted) return;
       Navigator.pushReplacement(
@@ -382,19 +406,19 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
                         FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                       ],
                       suffix: Padding(
-                        padding: const EdgeInsetsDirectional.only(
-                            end: AppSpace.md),
+                        padding:
+                            const EdgeInsetsDirectional.only(end: AppSpace.md),
                         child: Center(
                           widthFactor: 1,
                           child: Text(
                             riyal,
-                            style: AppType.body
-                                .copyWith(color: p.secondaryLabel),
+                            style:
+                                AppType.body.copyWith(color: p.secondaryLabel),
                           ),
                         ),
                       ),
-                      onChanged: (value) =>
-                          setState(() => _selectedAmount = double.tryParse(value) ?? 0),
+                      onChanged: (value) => setState(
+                          () => _selectedAmount = double.tryParse(value) ?? 0),
                     ),
                     Consumer<AuthProvider>(
                       builder: (context, auth, _) {
@@ -616,8 +640,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(CupertinoIcons.lock_fill,
-                  size: 12, color: p.secondaryLabel),
+              Icon(CupertinoIcons.lock_fill, size: 12, color: p.secondaryLabel),
               const SizedBox(width: AppSpace.xxs),
               Flexible(
                 child: Text(

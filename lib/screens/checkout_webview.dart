@@ -29,23 +29,23 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
 
   bool _isSuccessUrl(String url) {
     return url.contains('success') ||
-           url.contains('payment_success') ||
-           url.contains('sfund.app') ||
-           url.contains('thawani.om') && url.contains('success') ||
-           url == widget.successUrl;
+        url.contains('payment_success') ||
+        url.contains('sfund.app') ||
+        url.contains('thawani.om') && url.contains('success') ||
+        url == widget.successUrl;
   }
-  
+
   bool _isCancelUrl(String url) {
     return url.contains('cancel') ||
-           url.contains('payment_cancel') ||
-           url.contains('thawani.om') && url.contains('cancel') ||
-           url == widget.cancelUrl;
+        url.contains('payment_cancel') ||
+        url.contains('thawani.om') && url.contains('cancel') ||
+        url == widget.cancelUrl;
   }
 
   @override
   void initState() {
     super.initState();
-    
+
     if (kIsWeb) {
       // For web platform, open payment in browser
       _openPaymentInBrowser();
@@ -53,14 +53,14 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
       // For mobile platforms, use WebView
       _controller = WebViewController();
       _controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-      
+
       _controller.setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (_) => setState(() => _isLoading = true),
           onPageFinished: (url) async {
             setState(() => _isLoading = false);
             print('CheckoutWebView: Page finished loading: $url');
-            
+
             if (_isSuccessUrl(url)) {
               print('CheckoutWebView: Detected success URL');
               if (mounted) {
@@ -75,7 +75,7 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
           },
           onNavigationRequest: (request) {
             print('CheckoutWebView: Navigation request to: ${request.url}');
-            
+
             if (_isSuccessUrl(request.url)) {
               print('CheckoutWebView: Intercepting success URL');
               if (mounted) {
@@ -93,11 +93,11 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
           },
         ),
       );
-      
+
       _controller.loadRequest(Uri.parse(widget.checkoutUrl));
     }
   }
-  
+
   Future<void> _openPaymentInBrowser() async {
     try {
       // For web platform, open in same tab using webOnlyWindowName: '_self'
@@ -105,7 +105,7 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
         widget.checkoutUrl,
         webOnlyWindowName: '_self',
       );
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -114,10 +114,10 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
             duration: const Duration(seconds: 3),
           ),
         );
-        
+
         // Wait for user to complete payment, then auto-check
         await Future.delayed(const Duration(seconds: 5));
-        
+
         // For web, we assume success after delay (user should handle manually)
         if (mounted) {
           Navigator.pop(context, {'status': 'success'});
@@ -222,7 +222,8 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
             const Padding(
               padding: EdgeInsets.all(16),
               child: SizedBox(
-                width: 20, height: 20,
+                width: 20,
+                height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   valueColor: AlwaysStoppedAnimation(AppColors.surface),
