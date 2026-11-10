@@ -4,14 +4,16 @@ import 'package:easy_localization/easy_localization.dart';
 import '../constants/app_colors.dart';
 
 class LanguageSwitcher extends StatelessWidget {
-  const LanguageSwitcher({super.key});
+  const LanguageSwitcher({super.key, this.color = AppColors.surface});
+
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<Locale>(
-      icon: const Icon(
+      icon: Icon(
         CupertinoIcons.globe,
-        color: AppColors.surface,
+        color: color,
       ),
       tooltip: 'language'.tr(),
       onSelected: (Locale locale) {

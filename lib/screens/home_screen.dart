@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
+import 'package:flutter/cupertino.dart' show CupertinoButton, CupertinoIcons, CupertinoPageRoute;
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -9,10 +9,9 @@ import '../constants/app_constants.dart';
 import 'package:flutter/services.dart';
 import '../widgets/common/campaign_card.dart';
 import '../widgets/common/main_tab_bar.dart';
-import '../design/widgets/app_tab_bar.dart';
-import '../widgets/home/home_header_backdrop.dart';
-import '../widgets/home/home_header_bar.dart';
-import '../widgets/home/home_hero_card.dart';
+import '../design/design.dart';
+import '../widgets/home/home_header.dart';
+import '../widgets/home/home_quick_actions.dart';
 import '../models/campaign.dart';
 import '../models/app_banner.dart';
 import '../models/donation.dart';
@@ -1053,9 +1052,9 @@ class _HomeScreenState extends State<HomeScreen> {
         final userProfile = authProvider.userProfile;
 
         return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light,
+          value: SystemUiOverlayStyle.dark,
           child: Scaffold(
-            backgroundColor: AppColors.background,
+            backgroundColor: AppPalette.of(context).background,
             extendBody: true,
             body: _buildHomeBody(
               isAuthenticated: isAuthenticated,
@@ -1742,30 +1741,33 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildFilterChip({required String id, required String label}) {
+    final p = AppPalette.of(context);
     final isSelected = _selectedCategoryId == id;
     return Padding(
-      padding: const EdgeInsetsDirectional.only(end: 8),
-      child: Material(
-        color: isSelected ? AppColors.primary : AppColors.surface,
-        shape: StadiumBorder(
-          side: BorderSide(
-            color: isSelected
-                ? AppColors.primary
-                : AppColors.textSecondary.withOpacity(0.18),
-          ),
-        ),
-        child: InkWell(
-          customBorder: const StadiumBorder(),
-          onTap: () => _applyCategoryFilter(id),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Center(
-              child: Text(
-                label,
-                style: AppTextStyles.labelMedium.copyWith(
-                  color: isSelected ? AppColors.surface : AppColors.textSecondary,
-                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                ),
+      padding: const EdgeInsetsDirectional.only(end: AppSpace.xs),
+      child: Semantics(
+        button: true,
+        selected: isSelected,
+        label: label,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            HapticFeedback.selectionClick();
+            _applyCategoryFilter(id);
+          },
+          child: AnimatedContainer(
+            duration: AppMotion.fast,
+            padding: const EdgeInsets.symmetric(horizontal: AppSpace.md),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: isSelected ? p.tint : p.fill,
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: Text(
+              label,
+              style: AppType.subheadline.copyWith(
+                color: isSelected ? Colors.white : p.label,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               ),
             ),
           ),
@@ -1774,149 +1776,97 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Header gradient + overlapping hero card + rounded content sheet.
-  ///
-  /// The gradient is pinned behind the scroll view so the sheet slides up over
-  /// it; the hero card is painted last so it hangs over the sheet's top edge.
   Widget _buildHomeBody({
     required bool isAuthenticated,
     required Map<String, dynamic>? userProfile,
   }) {
     final media = MediaQuery.of(context);
-    final topInset = media.padding.top;
-    const sheetTop =
-        HomeHeaderBar.height + HomeHeroCard.height - HomeHeroCard.overlap;
-    const sheetRadius = 28.0;
-
     final userName = userProfile?['name'] ?? userProfile?['user']?['name'];
 
-    return Stack(
-      children: [
-        PositionedDirectional(
-          top: 0,
-          start: 0,
-          end: 0,
-          child: HomeHeaderBackdrop(
-            height: topInset + sheetTop + sheetRadius,
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.only(top: media.padding.top),
+            child: HomeHeader(
+              displayName: isAuthenticated ? userName?.toString() : null,
+              onAvatarTap: isAuthenticated
+                  ? () => Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                          builder: (context) => const SettingsScreen(),
+                        ),
+                      )
+                  : _showLoginBottomSheet,
+            ),
           ),
         ),
-        CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.only(top: topInset),
-                child: HomeHeaderBar(
-                  displayName: isAuthenticated ? userName?.toString() : null,
-                  onAvatarTap: isAuthenticated
-                      ? () => Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                              builder: (context) => const SettingsScreen(),
-                            ),
-                          )
-                      : _showLoginBottomSheet,
-                ),
-              ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(
+              AppSpace.screen,
+              0,
+              AppSpace.screen,
+              AppTabBar.barHeight + media.padding.bottom + AppSpace.xl,
             ),
-            SliverToBoxAdapter(
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: HomeHeroCard.height - HomeHeroCard.overlap,
-                    ),
-                    child: Container(
-                      width: double.infinity,
-                      constraints: BoxConstraints(
-                        minHeight: media.size.height * 0.6,
-                      ),
-                      padding: EdgeInsetsDirectional.fromSTEB(
-                        AppConstants.largePadding,
-                        HomeHeroCard.overlap + AppConstants.largePadding,
-                        AppConstants.largePadding,
-                        AppTabBar.barHeight +
-                            media.padding.bottom +
-                            AppConstants.extraLargePadding,
-                      ),
-                      decoration: const BoxDecoration(
-                        color: AppColors.background,
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(sheetRadius),
-                        ),
-                      ),
-                      child: _buildSheetContent(),
-                    ),
-                  ),
-                  PositionedDirectional(
-                    top: 0,
-                    start: AppConstants.largePadding,
-                    end: AppConstants.largePadding,
-                    child: HomeHeroCard(
-                      onQuickDonate: _onQuickDonate,
-                      onCampaigns: _onViewAllCampaigns,
-                      onNews: _onFundNews,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            child: _buildSheetContent(),
+          ),
         ),
       ],
     );
   }
 
   Widget _buildSheetContent() {
+    final p = AppPalette.of(context);
     final displayedCampaigns = _campaigns.take(5).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        HomeQuickActions(
+          onQuickDonate: _onQuickDonate,
+          onCampaigns: _onViewAllCampaigns,
+          onNews: _onFundNews,
+        ),
+        const SizedBox(height: AppSpace.lg),
         _buildSearchField(),
-        const SizedBox(height: AppConstants.largePadding),
+        const SizedBox(height: AppSpace.lg),
         _buildStudentBannerCarousel(),
-        const SizedBox(height: AppConstants.extraLargePadding),
+        const SizedBox(height: AppSpace.xl),
         Row(
           children: [
             Expanded(
               child: Text(
                 'be_hope'.tr(),
-                style: AppTextStyles.headlineMedium,
+                style: AppType.title2.copyWith(color: p.label),
               ),
             ),
             if (_campaigns.isNotEmpty) _buildViewAllButton(),
           ],
         ),
-        const SizedBox(height: AppConstants.defaultPadding),
+        const SizedBox(height: AppSpace.sm),
         _buildCategoryFilterSection(),
-        const SizedBox(height: AppConstants.defaultPadding),
+        const SizedBox(height: AppSpace.md),
         if (_isLoadingCampaigns && displayedCampaigns.isEmpty)
           const Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: AppConstants.extraLargePadding,
-            ),
-            child: Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            ),
+            padding: EdgeInsets.symmetric(vertical: AppSpace.xxl),
+            child: Center(child: AppActivityIndicator()),
           )
         else if (_campaigns.isEmpty)
           Center(
             child: Padding(
-              padding: const EdgeInsets.all(AppConstants.extraLargePadding),
+              padding: const EdgeInsets.all(AppSpace.xxl),
               child: Column(
                 children: [
-                  const Icon(
-                    Icons.campaign,
-                    size: AppConstants.extraLargeIconSize,
-                    color: AppColors.textTertiary,
+                  Icon(
+                    CupertinoIcons.heart,
+                    size: 44,
+                    color: p.tertiaryLabel,
                   ),
-                  const SizedBox(height: AppConstants.defaultPadding),
+                  const SizedBox(height: AppSpace.md),
                   Text(
                     'no_active_campaigns'.tr(),
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                    style: AppType.subheadline.copyWith(color: p.secondaryLabel),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -1930,48 +1880,45 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () => _onCampaignTap(campaign),
             ),
           ),
-        const SizedBox(height: AppConstants.extraLargePadding),
+        const SizedBox(height: AppSpace.xl),
         Text(
           'recent_donations'.tr(),
-          style: AppTextStyles.headlineMedium,
+          style: AppType.title2.copyWith(color: p.label),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
         ),
-        const SizedBox(height: AppConstants.defaultPadding),
+        const SizedBox(height: AppSpace.sm),
         _buildRecentDonationsList(),
       ],
     );
   }
 
   Widget _buildSearchField() {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppConstants.largeRadius),
-        border: Border.all(color: AppColors.textSecondary.withOpacity(0.14)),
-      ),
-      child: TextField(
-        controller: _searchController,
-        style: AppTextStyles.bodyMedium,
-        onChanged: (_) => _applyFilters(),
-        textInputAction: TextInputAction.search,
-        decoration: InputDecoration(
-          hintText: 'search'.tr(),
-          hintStyle: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.textSecondary,
-          ),
-          prefixIcon: const Icon(
-            CupertinoIcons.search,
-            color: AppColors.textSecondary,
-            size: 22,
-          ),
-          suffixIcon: _buildSearchSuffixIcon(),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppConstants.defaultPadding,
-            vertical: 14,
-          ),
+    final p = AppPalette.of(context);
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(AppRadius.sm),
+      borderSide: BorderSide.none,
+    );
+    return TextField(
+      controller: _searchController,
+      style: AppType.body.copyWith(color: p.label),
+      cursorColor: p.tint,
+      onChanged: (_) => _applyFilters(),
+      textInputAction: TextInputAction.search,
+      decoration: InputDecoration(
+        hintText: 'search'.tr(),
+        hintStyle: AppType.body.copyWith(color: p.secondaryLabel),
+        prefixIcon: Icon(
+          CupertinoIcons.search,
+          color: p.secondaryLabel,
+          size: 20,
         ),
+        suffixIcon: _buildSearchSuffixIcon(),
+        isDense: true,
+        border: border,
+        enabledBorder: border,
+        focusedBorder: border,
+        contentPadding: const EdgeInsets.symmetric(vertical: 10),
       ),
     );
   }
@@ -2011,27 +1958,28 @@ class _HomeScreenState extends State<HomeScreen> {
     required String timeAgo,
     required bool isAnonymous,
   }) {
+    final p = AppPalette.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppConstants.defaultPadding,
-        vertical: 12,
+        horizontal: AppSpace.md,
+        vertical: AppSpace.sm,
       ),
       child: Row(
         children: [
           Container(
-            width: 44,
-            height: 44,
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.primary.withOpacity(0.1),
+              color: p.tint.withValues(alpha: 0.14),
             ),
             child: Icon(
-              isAnonymous ? Icons.shield_outlined : CupertinoIcons.heart_fill,
-              color: AppColors.primary,
-              size: 20,
+              isAnonymous ? CupertinoIcons.shield_fill : CupertinoIcons.heart_fill,
+              color: p.tint,
+              size: 18,
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpace.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2040,36 +1988,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.titleLarge,
+                  style: AppType.body.copyWith(color: p.label),
                 ),
                 Text(
                   timeAgo,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.bodySmall,
+                  style: AppType.footnote.copyWith(color: p.secondaryLabel),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 12),
-          Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: amount.toStringAsFixed(0),
-                  style: AppTextStyles.headlineSmall.copyWith(
-                    color: AppColors.successDark,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                TextSpan(
-                  text: ' ${'riyal'.tr()}',
-                  style: AppTextStyles.labelSmall.copyWith(
-                    color: AppColors.successDark,
-                  ),
-                ),
-              ],
-            ),
+          const SizedBox(width: AppSpace.sm),
+          Text(
+            '${amount.toStringAsFixed(0)} ${'riyal'.tr()}',
+            style: AppType.headline.copyWith(color: p.success),
           ),
         ],
       ),
@@ -2077,12 +2010,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildRecentDonationsList() {
+    final p = AppPalette.of(context);
     if (_isLoadingRecentDonations) {
       return const SizedBox(
         height: 150,
-        child: Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
-        ),
+        child: Center(child: AppActivityIndicator()),
       );
     }
 
@@ -2093,17 +2025,11 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.volunteer_activism_outlined,
-                size: 48,
-                color: AppColors.textTertiary,
-              ),
-              const SizedBox(height: 16),
+              Icon(CupertinoIcons.heart, size: 44, color: p.tertiaryLabel),
+              const SizedBox(height: AppSpace.md),
               Text(
                 'no_donations_found'.tr(),
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+                style: AppType.subheadline.copyWith(color: p.secondaryLabel),
               ),
             ],
           ),
@@ -2127,10 +2053,10 @@ class _HomeScreenState extends State<HomeScreen> {
       if (i > 0) {
         rows.add(
           Divider(
-            height: 1,
-            indent: AppConstants.defaultPadding + 56,
-            endIndent: AppConstants.defaultPadding,
-            color: AppColors.textSecondary.withOpacity(0.12),
+            height: 0.5,
+            thickness: 0.5,
+            indent: AppSpace.md + 40 + AppSpace.sm,
+            color: p.separator,
           ),
         );
       }
@@ -2144,34 +2070,30 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppConstants.extraLargeRadius),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(AppRadius.md),
+      child: ColoredBox(
+        color: p.surface,
+        child: Column(children: rows),
       ),
-      child: Column(children: rows),
     );
   }
 
   Widget _buildViewAllButton() {
-    return GestureDetector(
-      onTap: _onViewAllCampaigns,
+    final p = AppPalette.of(context);
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      minimumSize: const Size(44, 44),
+      onPressed: _onViewAllCampaigns,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             'view_all'.tr(),
-            style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w600,
-            ),
+            style: AppType.body.copyWith(color: p.tint),
           ),
-          const SizedBox(width: 4),
-          Icon(
-            CupertinoIcons.chevron_forward,
-            color: AppColors.primary,
-            size: 12,
-          ),
+          const SizedBox(width: 2),
+          Icon(CupertinoIcons.chevron_forward, color: p.tint, size: 14),
         ],
       ),
     );
