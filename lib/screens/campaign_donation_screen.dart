@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import '../design/app_icons.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-import '../constants/app_colors.dart';
-import '../constants/app_text_styles.dart';
-import '../constants/app_constants.dart';
+import '../design/design.dart';
 
 import '../models/campaign.dart';
 import '../providers/auth_provider.dart';
@@ -85,39 +83,14 @@ class _CampaignPaymentResult {
     return value?.toString();
   }
 }
-class _CampaignDonationScreenState extends State<CampaignDonationScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
-
+class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
   double _selectedAmount = 0;
   final List<double> _quickAmounts = [50, 100, 200, 500, 1000];
   final TextEditingController _customAmountController = TextEditingController();
   final TextEditingController _donorPhoneController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
-
-    _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero)
-        .animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic));
-
-    _animationController.forward();
-  }
-
-  @override
   void dispose() {
-    _animationController.dispose();
     _customAmountController.dispose();
     _donorPhoneController.dispose();
     super.dispose();
@@ -132,12 +105,7 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
 
   bool _validateAmount() {
     if (_selectedAmount <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('please_choose_donation_amount'.tr()),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      AppToast.show(context, 'please_choose_donation_amount'.tr(), kind: AppToastKind.error);
       return false;
     }
     return true;
@@ -145,20 +113,11 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
 
   Future<void> _proceedToDonation() async {
     if (kDebugMode) {
-      debugPrint('[DONATION_LOG] بداية التبرع: amount=${_selectedAmount}, campaignId=${widget.campaign.id}, type=${widget.campaign.type}');
+      debugPrint('[DONATION_LOG] بداية التبرع: amount=$_selectedAmount, campaignId=${widget.campaign.id}, type=${widget.campaign.type}');
     }
     // Check if campaign is completed
     if (widget.campaign.isCompleted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('campaign_completed_no_donations'.tr()),
-          backgroundColor: AppColors.success,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
+      AppToast.show(context, 'campaign_completed_no_donations'.tr(), kind: AppToastKind.success);
       return;
     }
 
@@ -173,31 +132,16 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
 
     if (!isLoggedIn) {
       if (donorPhone == null || donorPhone.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('please_enter_donor_phone'.tr()),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        AppToast.show(context, 'please_enter_donor_phone'.tr(), kind: AppToastKind.error);
         return;
       }
       final cleanPhone = donorPhone.replaceAll(RegExp(r'[\s\-\(\)]'), '');
       if (!RegExp(r'^[0-9]+$').hasMatch(cleanPhone)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('please_enter_valid_phone'.tr()),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        AppToast.show(context, 'please_enter_valid_phone'.tr(), kind: AppToastKind.error);
         return;
       }
       if (cleanPhone.length < 8 || cleanPhone.length > 15) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('phone_must_be_between_8_and_15_digits'.tr()),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        AppToast.show(context, 'phone_must_be_between_8_and_15_digits'.tr(), kind: AppToastKind.error);
         return;
       }
     }
@@ -233,6 +177,8 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
       campaignId: campaignId,
       note: 'donation_message'.tr(),
     );
+
+    if (!mounted) return;
 
     if (kDebugMode) {
       debugPrint('[DONATION_LOG] بعد initiateDonationWithPayment: state=${provider.state}, paymentUrl=${provider.paymentUrl != null ? "موجود" : "null"}, errorMessage=${provider.displayErrorMessage}');
@@ -342,625 +288,371 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen>
 
   @override
   Widget build(BuildContext context) {
+    final p = AppPalette.of(context);
     final isLoading = context.watch<PaymentProvider>().isLoading;
+    final campaign = widget.campaign;
+    final lang = context.locale.languageCode;
+    final done = campaign.isCompleted;
+    final accent = done ? p.success : p.tint;
+    final category = campaign.getLocalizedCategory(lang);
+    final riyal = 'riyal'.tr();
 
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: SlideTransition(
-          position: _slideAnimation,
-          child: CustomScrollView(
-            slivers: [
-              // App bar مع صورة الحملة
-              SliverAppBar(
-                expandedHeight: 350,
-                floating: false,
-                pinned: true,
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                surfaceTintColor: Colors.transparent,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Stack(
-                    children: [
-                      _buildCampaignImage(),
-                      Container(
-                        width: double.infinity,
-                        height: 350,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.transparent, AppColors.primary.withOpacity(0.8)],
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 16,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(AppConstants.largePadding),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // شارة التصنيف
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: AppConstants.smallPadding,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.surface,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  widget.campaign.getLocalizedCategory(context.locale.languageCode),
-                                  style: AppTextStyles.bodySmall.copyWith(
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              // العنوان
-                              Text(
-                                widget.campaign.getLocalizedTitle(context.locale.languageCode),
-                                style: AppTextStyles.headlineLarge.copyWith(
-                                  color: AppColors.surface,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 8),
-                              // الأرقام
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '${widget.campaign.currentAmount.toStringAsFixed(0)} ${'riyal'.tr()}',
-                                          style: AppTextStyles.titleLarge.copyWith(
-                                            color: AppColors.surface,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          widget.campaign.isCompleted
-                                              ? 'campaign_goal_achieved'.tr()
-                                              : '${'target_amount'.tr()}: ${widget.campaign.targetAmount.toStringAsFixed(0)} ${'riyal'.tr()}',
-                                          style: AppTextStyles.bodyMedium.copyWith(
-                                            color: AppColors.surface.withOpacity(0.8),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: widget.campaign.isCompleted
-                                          ? AppColors.success
-                                          : AppColors.accent,
-                                      borderRadius: BorderRadius.circular(20),
-                                      boxShadow: widget.campaign.isCompleted
-                                          ? [
-                                              BoxShadow(
-                                                color: AppColors.success.withOpacity(0.4),
-                                                blurRadius: 8,
-                                                offset: const Offset(0, 2),
-                                              ),
-                                            ]
-                                          : null,
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        if (widget.campaign.isCompleted)
-                                          const Icon(
-                                            CupertinoIcons.checkmark_circle_fill,
-                                            color: Colors.white,
-                                            size: 14,
-                                          ),
-                                        if (widget.campaign.isCompleted)
-                                          const SizedBox(width: 4),
-                                        Text(
-                                          widget.campaign.isCompleted
-                                              ? '${(widget.campaign.progressPercentage * 100).toStringAsFixed(0)}% ${'completed'.tr()}'
-                                              : '${(widget.campaign.progressPercentage * 100).toStringAsFixed(1)}%',
-                                          style: AppTextStyles.bodySmall.copyWith(
-                                            color: AppColors.surface,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                leading: IconButton(
-                  icon: Container(
-                    padding: const EdgeInsets.all(8),
+      bottomNavigationBar: done ? null : _buildDonateBar(isLoading),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            expandedHeight: 260,
+            backgroundColor: p.background,
+            surfaceTintColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            automaticallyImplyLeading: false,
+            leadingWidth: 60,
+            leading: Center(
+              child: Semantics(
+                button: true,
+                label: MaterialLocalizations.of(context).backButtonTooltip,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => Navigator.maybePop(context),
+                  child: Container(
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
-                      color: AppColors.surface.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12),
+                      shape: BoxShape.circle,
+                      color: p.surface.withValues(alpha: 0.9),
                     ),
-                    child: const Icon(AppIcons.chevronBack, color: AppColors.surface, size: 20),
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-
-              // المحتوى
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppConstants.largePadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // تفاصيل البرنامج
-                      _buildSection(
-                        title: 'program'.tr(),
-                        icon: CupertinoIcons.info_circle,
-                        child: Text(
-                          widget.campaign.getLocalizedDescription(context.locale.languageCode),
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.textSecondary,
-                            height: 1.6,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-
-                      // إحصائيات
-                      _buildSection(
-                        title: 'program_statistics'.tr(),
-                        icon: Icons.analytics_outlined,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: _buildStatCard(
-                                icon: Icons.people_outline,
-                                title: 'donors_count'.tr(),
-                                value: '${widget.campaign.donorCount}',
-                                color: AppColors.primary,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _buildStatCard(
-                                icon: Icons.calendar_today_outlined,
-                                title: 'days_remaining'.tr(),
-                                value: '${widget.campaign.remainingDays}',
-                                color: AppColors.secondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-
-                      // اختيار المبلغ (فقط إذا لم تكن الحملة مكتملة)
-                      if (!widget.campaign.isCompleted)
-                        _buildSection(
-                          title: 'select_amount'.tr(),
-                          icon: CupertinoIcons.heart,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'suggested_amounts'.tr(),
-                                style: AppTextStyles.titleMedium.copyWith(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: _quickAmounts.map((amount) {
-                                    final isSelected = _selectedAmount == amount;
-                                    return Container(
-                                      margin: const EdgeInsets.only(right: 12),
-                                      child: GestureDetector(
-                                        onTap: () => _selectAmount(amount),
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                                          decoration: BoxDecoration(
-                                            color: isSelected ? AppColors.primary : AppColors.surface,
-                                            borderRadius: BorderRadius.circular(16),
-                                            border: Border.all(
-                                              color: isSelected ? AppColors.primary : AppColors.textTertiary,
-                                              width: 1.5,
-                                            ),
-                                            boxShadow: isSelected
-                                                ? [
-                                                    BoxShadow(
-                                                      color: AppColors.primary.withOpacity(0.2),
-                                                      blurRadius: 8,
-                                                      offset: const Offset(0, 4),
-                                                    ),
-                                                  ]
-                                                : null,
-                                          ),
-                                          child: Text(
-                                            '${amount.toStringAsFixed(0)} ${'riyal'.tr()}',
-                                            style: AppTextStyles.bodyMedium.copyWith(
-                                              color: isSelected ? AppColors.surface : AppColors.textPrimary,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              Text(
-                                'or_enter_custom_amount'.tr(),
-                                style: AppTextStyles.titleMedium.copyWith(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: AppColors.surface,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: AppColors.textTertiary, width: 1.5),
-                                ),
-                                child: TextField(
-                                  controller: _customAmountController,
-                                  keyboardType: TextInputType.number,
-                                  style: AppTextStyles.bodyLarge,
-                                  decoration: InputDecoration(
-                                    hintText: 'enter_amount'.tr(),
-                                    hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textTertiary),
-                                    border: InputBorder.none,
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                                    suffixText: 'riyal'.tr(),
-                                    suffixStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
-                                  ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedAmount = double.tryParse(value) ?? 0;
-                                    });
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      const SizedBox(height: 24),
-
-                      // رقم الهاتف للمتبرعين غير المسجلين فقط
-                      Consumer<AuthProvider>(
-                        builder: (_, auth, __) {
-                          if (auth.isAuthenticated && auth.userProfile != null) return const SizedBox.shrink();
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'donor_phone_label'.tr(),
-                                style: AppTextStyles.titleMedium.copyWith(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: AppColors.surface,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: AppColors.textTertiary, width: 1.5),
-                                ),
-                                child: TextField(
-                                  controller: _donorPhoneController,
-                                  keyboardType: TextInputType.phone,
-                                  style: AppTextStyles.bodyLarge,
-                                  decoration: InputDecoration(
-                                    hintText: 'enter_your_phone'.tr(),
-                                    hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textTertiary),
-                                    prefixIcon: const Icon(CupertinoIcons.phone, color: AppColors.textSecondary),
-                                    border: InputBorder.none,
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 24),
-                            ],
-                          );
-                        },
-                      ),
-
-                      // زر التبرع أو حالة الإكمال
-                      if (widget.campaign.isCompleted)
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                AppColors.success.withOpacity(0.1),
-                                AppColors.success.withOpacity(0.05),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: AppColors.success.withOpacity(0.3),
-                              width: 2,
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: AppColors.success,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  CupertinoIcons.checkmark_circle_fill,
-                                  color: Colors.white,
-                                  size: 32,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'campaign_completed'.tr(),
-                                style: AppTextStyles.headlineSmall.copyWith(
-                                  color: AppColors.success,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'campaign_completed_message'.tr(),
-                                style: AppTextStyles.bodyMedium.copyWith(
-                                  color: AppColors.textSecondary,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 16),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.success.withOpacity(0.15),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.celebration,
-                                      color: AppColors.success,
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      '${(widget.campaign.progressPercentage * 100).toStringAsFixed(0)}% ${'goal_achieved'.tr()}',
-                                      style: AppTextStyles.bodyMedium.copyWith(
-                                        color: AppColors.success,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      else
-                        SizedBox(
-                          width: double.infinity,
-                          height: 60,
-                          child: ElevatedButton(
-                            onPressed: isLoading ? null : _proceedToDonation,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: AppColors.surface,
-                              elevation: 8,
-                              shadowColor: AppColors.primary.withOpacity(0.3),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                            ),
-                            child: isLoading
-                                ? Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                          valueColor: AlwaysStoppedAnimation<Color>(AppColors.surface),
-                                          strokeWidth: 2,
-                                        ),
-                                      ),
-                                      SizedBox(width: 12),
-                                      Text(
-                                        'processing_payment'.tr(),
-                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
-                                  )
-                                : Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Icon(CupertinoIcons.heart_fill, size: 24),
-                                      const SizedBox(width: 12),
-                                      Text(
-                                        'donate_now'.tr(),
-                                        style: AppTextStyles.buttonLarge.copyWith(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          height: 1.2,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                          ),
-                        ),
-                      const SizedBox(height: 20),
-
-                      // ملاحظة الأمان
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppColors.info.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.info.withOpacity(0.3), width: 1),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.security, color: AppColors.info, size: 20),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                'donation_security_notice'.tr(),
-                                style: AppTextStyles.bodySmall.copyWith(color: AppColors.info),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 40),
-                    ],
+                    child: Icon(AppIcons.chevronBack, color: p.tint, size: 20),
                   ),
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required IconData icon,
-    required Widget child,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(icon, color: AppColors.primary, size: 20),
             ),
-            const SizedBox(width: 12),
-            Text(title, style: AppTextStyles.headlineSmall.copyWith(fontWeight: FontWeight.bold)),
-          ],
-        ),
-        const SizedBox(height: 16),
-        child,
-      ],
-    );
-  }
-
-  Widget _buildStatCard({
-    required IconData icon,
-    required String title,
-    required String value,
-    required Color color,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.textTertiary, width: 1),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: AppTextStyles.headlineSmall.copyWith(color: color, fontWeight: FontWeight.bold),
+            flexibleSpace: FlexibleSpaceBar(
+              collapseMode: CollapseMode.parallax,
+              background: _buildCampaignImage(260),
+            ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            title,
-            style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
-            textAlign: TextAlign.center,
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpace.screen),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (category.isNotEmpty)
+                    Text(
+                      category,
+                      style: AppType.footnote.copyWith(
+                        color: accent,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  Text(
+                    campaign.getLocalizedTitle(lang),
+                    style: AppType.title1.copyWith(color: p.label),
+                  ),
+                  const SizedBox(height: AppSpace.md),
+                  _buildSummaryCard(accent, riyal),
+                  const SizedBox(height: AppSpace.lg),
+                  _buildSectionTitle('program'.tr()),
+                  Text(
+                    campaign.getLocalizedDescription(lang),
+                    style: AppType.body.copyWith(
+                      color: p.secondaryLabel,
+                      height: 1.6,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpace.lg),
+                  if (done)
+                    _buildCompletedCard()
+                  else ...[
+                    _buildSectionTitle('select_amount'.tr()),
+                    _buildAmountTiles(riyal),
+                    const SizedBox(height: AppSpace.md),
+                    AppTextField(
+                      controller: _customAmountController,
+                      label: 'or_enter_custom_amount'.tr(),
+                      hint: 'enter_amount'.tr(),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                      ],
+                      suffix: Padding(
+                        padding: const EdgeInsetsDirectional.only(
+                            end: AppSpace.md),
+                        child: Center(
+                          widthFactor: 1,
+                          child: Text(
+                            riyal,
+                            style: AppType.body
+                                .copyWith(color: p.secondaryLabel),
+                          ),
+                        ),
+                      ),
+                      onChanged: (value) =>
+                          setState(() => _selectedAmount = double.tryParse(value) ?? 0),
+                    ),
+                    Consumer<AuthProvider>(
+                      builder: (context, auth, _) {
+                        if (auth.isAuthenticated && auth.userProfile != null) {
+                          return const SizedBox.shrink();
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(top: AppSpace.md),
+                          child: AppTextField(
+                            controller: _donorPhoneController,
+                            label: 'donor_phone_label'.tr(),
+                            hint: 'enter_your_phone'.tr(),
+                            keyboardType: TextInputType.phone,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  // Build campaign image widget - use imageUrl directly from backend
-  Widget _buildCampaignImage() {
-    final imageUrl = widget.campaign.imageUrl.trim();
-    
-    if (imageUrl.isNotEmpty) {
-      return Image.network(
-        imageUrl,
-        width: double.infinity,
-        height: 350,
-        fit: BoxFit.cover,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) {
-            return child;
-          }
-          print('CampaignDonationScreen: Loading image from: $imageUrl');
-          return Container(
-            width: double.infinity,
-            height: 350,
-            color: Colors.grey[300],
-            child: const Center(child: CircularProgressIndicator()),
-          );
-        },
-        errorBuilder: (context, error, stackTrace) {
-          print('CampaignDonationScreen: ERROR loading image from: $imageUrl -> $error');
-          return Container(
-            width: double.infinity,
-            height: 350,
-            color: Colors.grey[300],
-            child: const Icon(
-              Icons.broken_image,
-              color: Colors.grey,
-              size: 48,
-            ),
-          );
-        },
-      );
-    }
-    
-    // Fallback if no image URL
+  Widget _buildSectionTitle(String text) {
+    final p = AppPalette.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpace.xs),
+      child: Text(text, style: AppType.title3.copyWith(color: p.label)),
+    );
+  }
+
+  /// Raised amount, progress bar and key figures on one flat card.
+  Widget _buildSummaryCard(Color accent, String riyal) {
+    final p = AppPalette.of(context);
+    final campaign = widget.campaign;
+    final done = campaign.isCompleted;
+    final percent = campaign.progressPercentage;
+
+    Widget stat(String value, String label) => Expanded(
+          child: Column(
+            children: [
+              Text(value, style: AppType.title3.copyWith(color: p.label)),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: AppType.caption1.copyWith(color: p.secondaryLabel),
+              ),
+            ],
+          ),
+        );
+
     return Container(
-      width: double.infinity,
-      height: 350,
-      color: Colors.grey[300],
-      child: const Icon(
-        Icons.image_not_supported,
-        color: Colors.grey,
-        size: 48,
+      padding: const EdgeInsets.all(AppSpace.md),
+      decoration: BoxDecoration(
+        color: p.surface,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '${campaign.currentAmount.toStringAsFixed(0)} $riyal',
+            style: AppType.title2.copyWith(color: p.label),
+          ),
+          Text(
+            done
+                ? 'campaign_goal_achieved'.tr()
+                : '${'target_amount'.tr()}: ${campaign.targetAmount.toStringAsFixed(0)} $riyal',
+            style: AppType.footnote.copyWith(color: p.secondaryLabel),
+          ),
+          const SizedBox(height: AppSpace.sm),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(3),
+            child: LinearProgressIndicator(
+              value: percent.clamp(0.0, 1.0),
+              minHeight: 6,
+              backgroundColor: p.fill,
+              valueColor: AlwaysStoppedAnimation(accent),
+            ),
+          ),
+          const SizedBox(height: AppSpace.xs),
+          Text(
+            done
+                ? '${(percent * 100).toStringAsFixed(0)}% ${'completed'.tr()}'
+                : '${(percent * 100).toStringAsFixed(1)}%',
+            style: AppType.footnote.copyWith(
+              color: accent,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Divider(height: AppSpace.lg * 2, color: p.separator),
+          Row(
+            children: [
+              stat('${campaign.donorCount}', 'donors_count'.tr()),
+              SizedBox(
+                height: 32,
+                child: VerticalDivider(width: 1, color: p.separator),
+              ),
+              stat('${campaign.remainingDays}', 'days_remaining'.tr()),
+            ],
+          ),
+        ],
       ),
     );
   }
 
+  Widget _buildAmountTiles(String riyal) {
+    final p = AppPalette.of(context);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const gap = AppSpace.xs;
+        final tileWidth = (constraints.maxWidth - gap * 2) / 3;
+        return Wrap(
+          spacing: gap,
+          runSpacing: gap,
+          children: [
+            for (final amount in _quickAmounts)
+              Builder(builder: (context) {
+                final selected = _selectedAmount == amount;
+                return Semantics(
+                  button: true,
+                  selected: selected,
+                  label: '${amount.toStringAsFixed(0)} $riyal',
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      _selectAmount(amount);
+                    },
+                    child: AnimatedContainer(
+                      duration: AppMotion.fast,
+                      width: tileWidth,
+                      height: 52,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: selected ? p.tint : p.surface,
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                      ),
+                      child: Text(
+                        '${amount.toStringAsFixed(0)} $riyal',
+                        style: AppType.headline.copyWith(
+                          color: selected ? Colors.white : p.label,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildCompletedCard() {
+    final p = AppPalette.of(context);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpace.lg),
+      decoration: BoxDecoration(
+        color: p.success.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+      ),
+      child: Column(
+        children: [
+          Icon(CupertinoIcons.checkmark_circle_fill,
+              color: p.success, size: 40),
+          const SizedBox(height: AppSpace.sm),
+          Text(
+            'campaign_completed'.tr(),
+            style: AppType.title3.copyWith(color: p.label),
+          ),
+          const SizedBox(height: AppSpace.xxs),
+          Text(
+            'campaign_completed_message'.tr(),
+            textAlign: TextAlign.center,
+            style: AppType.subheadline.copyWith(color: p.secondaryLabel),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Sticky primary action with the security note beneath it.
+  Widget _buildDonateBar(bool isLoading) {
+    final p = AppPalette.of(context);
+    final bottom = MediaQuery.paddingOf(context).bottom;
+    final amountSuffix = _selectedAmount > 0
+        ? ' · ${_selectedAmount.toStringAsFixed(_selectedAmount % 1 == 0 ? 0 : 2)} ${'riyal'.tr()}'
+        : '';
+
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        AppSpace.screen,
+        AppSpace.sm,
+        AppSpace.screen,
+        AppSpace.xs + bottom,
+      ),
+      decoration: BoxDecoration(
+        color: p.surface,
+        border: Border(top: BorderSide(color: p.separator, width: 0.5)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AppButton(
+            label: isLoading
+                ? 'processing_payment'.tr()
+                : '${'donate_now'.tr()}$amountSuffix',
+            icon: isLoading ? null : CupertinoIcons.heart_fill,
+            loading: isLoading,
+            onPressed: _proceedToDonation,
+          ),
+          const SizedBox(height: AppSpace.xs),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(CupertinoIcons.lock_fill,
+                  size: 12, color: p.secondaryLabel),
+              const SizedBox(width: AppSpace.xxs),
+              Flexible(
+                child: Text(
+                  'donation_security_notice'.tr(),
+                  textAlign: TextAlign.center,
+                  style: AppType.caption1.copyWith(color: p.secondaryLabel),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCampaignImage(double height) {
+    final p = AppPalette.of(context);
+    final imageUrl = widget.campaign.imageUrl.trim();
+
+    Widget placeholder([Widget? child]) => Container(
+          width: double.infinity,
+          height: height,
+          color: p.fill,
+          alignment: Alignment.center,
+          child: child ??
+              Icon(CupertinoIcons.photo, color: p.tertiaryLabel, size: 40),
+        );
+
+    if (imageUrl.isEmpty) return placeholder();
+
+    return Image.network(
+      imageUrl,
+      width: double.infinity,
+      height: height,
+      fit: BoxFit.cover,
+      loadingBuilder: (context, child, progress) =>
+          progress == null ? child : placeholder(const AppActivityIndicator()),
+      errorBuilder: (context, error, stackTrace) => placeholder(),
+    );
+  }
 }

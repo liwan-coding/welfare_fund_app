@@ -37,7 +37,7 @@ class AppNavBar extends StatelessWidget {
               padding: EdgeInsets.zero,
               minimumSize: const Size(44, 44),
               onPressed: () => Navigator.of(context).maybePop(),
-              // chevron_back mirrors automatically in RTL.
+              // AppIcons.chevronBack mirrors in RTL.
               child: Icon(AppIcons.chevronBack, color: p.tint),
             )
           : null,

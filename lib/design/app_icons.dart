@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/widgets.dart';
-import 'app_icons.dart';
 
-/// Direction-aware icons. Flutter's AppIcons.chevronBack / _forward do
+/// Direction-aware icons. Flutter's CupertinoIcons.chevron_back / _forward do
 /// not mirror in RTL, so these copies set matchTextDirection.
 class AppIcons {
   static const IconData chevronBack = IconData(
