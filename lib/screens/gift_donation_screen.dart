@@ -171,7 +171,7 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -202,7 +202,7 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
                   Text(
                     'اختر الفئة والبرنامج المراد التبرع له',
                     style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.surface.withOpacity(0.9),
+                      color: AppColors.surface.withValues(alpha: 0.9),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -251,7 +251,7 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
                         BoxShadow(
                           color: isSelected
                               ? category['color'].withOpacity(0.2)
-                              : Colors.grey.withOpacity(0.1),
+                              : Colors.grey.withValues(alpha: 0.1),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -307,7 +307,7 @@ class _GiftDonationScreenState extends State<GiftDonationScreen> {
                   border: Border.all(color: AppColors.surfaceVariant),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
+                      color: Colors.grey.withValues(alpha: 0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),

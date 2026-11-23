@@ -82,7 +82,7 @@ class WebCampaignGrid extends StatelessWidget {
         gradient: LinearGradient(
           colors: [
             AppColors.surface,
-            AppColors.surfaceVariant.withOpacity(0.5),
+            AppColors.surfaceVariant.withValues(alpha: 0.5),
           ],
         ),
         borderRadius: BorderRadius.circular(24),
@@ -96,13 +96,13 @@ class WebCampaignGrid extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.campaign_outlined,
               size: 64,
-              color: AppColors.primary.withOpacity(0.6),
+              color: AppColors.primary.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: 28),
@@ -209,15 +209,15 @@ class _WebCampaignCardState extends State<_WebCampaignCard>
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
                       color: _isHovered 
-                          ? AppColors.primary.withOpacity(0.3)
+                          ? AppColors.primary.withValues(alpha: 0.3)
                           : AppColors.surfaceVariant,
                       width: _isHovered ? 2 : 1,
                     ),
                     boxShadow: [
                       BoxShadow(
                         color: _isHovered 
-                            ? AppColors.primary.withOpacity(0.2)
-                            : AppColors.textPrimary.withOpacity(0.08),
+                            ? AppColors.primary.withValues(alpha: 0.2)
+                            : AppColors.textPrimary.withValues(alpha: 0.08),
                         blurRadius: _isHovered ? 30 : 20,
                         offset: Offset(0, _isHovered ? 15 : 10),
                       ),
@@ -247,7 +247,7 @@ class _WebCampaignCardState extends State<_WebCampaignCard>
                                       colors: [
                                         Colors.transparent,
                                         Colors.transparent,
-                                        Colors.black.withOpacity(0.7),
+                                        Colors.black.withValues(alpha: 0.7),
                                       ],
                                       stops: const [0.0, 0.4, 1.0],
                                     ),
@@ -273,7 +273,7 @@ class _WebCampaignCardState extends State<_WebCampaignCard>
                                       BoxShadow(
                                         color: (campaign.isCompleted 
                                             ? AppColors.success 
-                                            : AppColors.primary).withOpacity(0.4),
+                                            : AppColors.primary).withValues(alpha: 0.4),
                                         blurRadius: 8,
                                         offset: const Offset(0, 3),
                                       ),
@@ -303,7 +303,7 @@ class _WebCampaignCardState extends State<_WebCampaignCard>
                                       shape: BoxShape.circle,
                                       boxShadow: [
                                         BoxShadow(
-                                          color: AppColors.success.withOpacity(0.4),
+                                          color: AppColors.success.withValues(alpha: 0.4),
                                           blurRadius: 8,
                                           offset: const Offset(0, 3),
                                         ),
@@ -329,7 +329,7 @@ class _WebCampaignCardState extends State<_WebCampaignCard>
                                     fontWeight: FontWeight.bold,
                                     shadows: [
                                       Shadow(
-                                        color: Colors.black.withOpacity(0.5),
+                                        color: Colors.black.withValues(alpha: 0.5),
                                         blurRadius: 10,
                                       ),
                                     ],
@@ -366,7 +366,7 @@ class _WebCampaignCardState extends State<_WebCampaignCard>
                                           decoration: BoxDecoration(
                                             gradient: campaign.isCompleted
                                                 ? LinearGradient(
-                                                    colors: [AppColors.success, AppColors.success.withOpacity(0.8)],
+                                                    colors: [AppColors.success, AppColors.success.withValues(alpha: 0.8)],
                                                   )
                                                 : AppColors.modernGradient,
                                             borderRadius: BorderRadius.circular(5),
@@ -374,7 +374,7 @@ class _WebCampaignCardState extends State<_WebCampaignCard>
                                               BoxShadow(
                                                 color: (campaign.isCompleted 
                                                     ? AppColors.success 
-                                                    : AppColors.primary).withOpacity(0.4),
+                                                    : AppColors.primary).withValues(alpha: 0.4),
                                                 blurRadius: 6,
                                                 offset: const Offset(0, 2),
                                               ),
@@ -423,13 +423,13 @@ class _WebCampaignCardState extends State<_WebCampaignCard>
                                       ),
                                       decoration: BoxDecoration(
                                         color: campaign.isCompleted
-                                            ? AppColors.success.withOpacity(0.1)
-                                            : AppColors.primary.withOpacity(0.1),
+                                            ? AppColors.success.withValues(alpha: 0.1)
+                                            : AppColors.primary.withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(12),
                                         border: Border.all(
                                           color: campaign.isCompleted
-                                              ? AppColors.success.withOpacity(0.3)
-                                              : AppColors.primary.withOpacity(0.3),
+                                              ? AppColors.success.withValues(alpha: 0.3)
+                                              : AppColors.primary.withValues(alpha: 0.3),
                                         ),
                                       ),
                                       child: Text(
@@ -457,15 +457,15 @@ class _WebCampaignCardState extends State<_WebCampaignCard>
                                         ? null
                                         : (_isHovered ? AppColors.modernGradient : null),
                                     color: campaign.isCompleted
-                                        ? AppColors.success.withOpacity(0.1)
+                                        ? AppColors.success.withValues(alpha: 0.1)
                                         : (_isHovered ? null : AppColors.surfaceVariant),
                                     borderRadius: BorderRadius.circular(14),
                                     border: campaign.isCompleted
-                                        ? Border.all(color: AppColors.success.withOpacity(0.3))
-                                        : (_isHovered ? null : Border.all(color: AppColors.primary.withOpacity(0.2))),
+                                        ? Border.all(color: AppColors.success.withValues(alpha: 0.3))
+                                        : (_isHovered ? null : Border.all(color: AppColors.primary.withValues(alpha: 0.2))),
                                     boxShadow: _isHovered && !campaign.isCompleted ? [
                                       BoxShadow(
-                                        color: AppColors.primary.withOpacity(0.3),
+                                        color: AppColors.primary.withValues(alpha: 0.3),
                                         blurRadius: 12,
                                         offset: const Offset(0, 4),
                                       ),
@@ -525,7 +525,7 @@ class _WebCampaignCardState extends State<_WebCampaignCard>
           if (loadingProgress == null) return child;
           return Container(
             color: AppColors.surfaceVariant,
-            child: Center(
+            child: const Center(
               child: CircularProgressIndicator(
                 color: AppColors.primary,
                 strokeWidth: 3,
@@ -549,8 +549,8 @@ class _WebCampaignCardState extends State<_WebCampaignCard>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primary.withOpacity(0.2),
-            AppColors.secondary.withOpacity(0.2),
+            AppColors.primary.withValues(alpha: 0.2),
+            AppColors.secondary.withValues(alpha: 0.2),
           ],
         ),
       ),
@@ -558,7 +558,7 @@ class _WebCampaignCardState extends State<_WebCampaignCard>
         child: Icon(
           Icons.campaign_rounded,
           size: 56,
-          color: AppColors.primary.withOpacity(0.4),
+          color: AppColors.primary.withValues(alpha: 0.4),
         ),
       ),
     );
@@ -632,7 +632,7 @@ class _SkeletonCardState extends State<_SkeletonCard>
                             end: Alignment.centerRight,
                             colors: [
                               AppColors.surfaceVariant,
-                              AppColors.surfaceVariant.withOpacity(0.5),
+                              AppColors.surfaceVariant.withValues(alpha: 0.5),
                               AppColors.surfaceVariant,
                             ],
                             stops: [
@@ -687,7 +687,7 @@ class _SkeletonCardState extends State<_SkeletonCard>
               end: Alignment.centerRight,
               colors: [
                 AppColors.surfaceVariant,
-                AppColors.surfaceVariant.withOpacity(0.5),
+                AppColors.surfaceVariant.withValues(alpha: 0.5),
                 AppColors.surfaceVariant,
               ],
               stops: [

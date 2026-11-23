@@ -71,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoadingCampaigns = false;
   bool _isLoadingRecentDonations = false;
   bool _isLoadingBanners = false;
-  int _activeHeroIndex = 0;
+  final ValueNotifier<int> _activeHeroIndex = ValueNotifier<int>(0);
   static const String _defaultRegistrationCardImage =
       'https://images.pexels.com/photos/5905708/pexels-photo-5905708.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
   StudentRegistrationCardData? _registrationCardData;
@@ -315,14 +315,14 @@ class _HomeScreenState extends State<HomeScreen> {
       if (!mounted) return;
       setState(() {
         _banners = combined;
-        _activeHeroIndex = 0;
+        _activeHeroIndex.value = 0;
       });
     } catch (error) {
       print('HomeScreen: Error loading banners: $error');
       if (!mounted) return;
       setState(() {
         _banners = [];
-        _activeHeroIndex = 0;
+        _activeHeroIndex.value = 0;
       });
     } finally {
       if (!mounted) return;
@@ -358,6 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _searchController.dispose();
     _bannerPageController.dispose();
+    _activeHeroIndex.dispose();
     super.dispose();
   }
 
@@ -841,11 +842,7 @@ class _HomeScreenState extends State<HomeScreen> {
             controller: _bannerPageController,
             padEnds: false,
             itemCount: heroCards.length,
-            onPageChanged: (index) {
-              setState(() {
-                _activeHeroIndex = index;
-              });
-            },
+            onPageChanged: (index) => _activeHeroIndex.value = index,
             itemBuilder: (context, index) => Padding(
               padding: const EdgeInsetsDirectional.only(end: AppSpace.xs),
               child: heroCards[index],
@@ -909,10 +906,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeroIndicators(int count) {
+    return ValueListenableBuilder<int>(
+      valueListenable: _activeHeroIndex,
+      builder: (context, active, _) => _heroDots(count, active),
+    );
+  }
+
+  Widget _heroDots(int count, int active) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(count, (index) {
-        final isActive = index == _activeHeroIndex;
+        final isActive = index == active;
         return AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -1325,7 +1329,9 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: AppSpace.lg),
         AppReveal.staggered(index: 2, child: _buildSearchField()),
         const SizedBox(height: AppSpace.lg),
-        AppReveal.staggered(index: 3, child: _buildStudentBannerCarousel()),
+        AppReveal.staggered(
+            index: 3,
+            child: RepaintBoundary(child: _buildStudentBannerCarousel())),
         const SizedBox(height: AppSpace.xl),
         AppReveal.staggered(
           index: 4,

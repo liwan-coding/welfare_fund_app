@@ -79,7 +79,7 @@ class PaymentStatusResponse {
     }
 
     // العملة (إن وُجدت في raw_response)
-    final String? currency =
+    final String currency =
         _str(json['currency']) ??
         _str(raw?['currency']) ??
         'OMR';
@@ -208,7 +208,7 @@ class PaymentStatusResponse {
     }
   }
 
-  static String? _str(dynamic v) => v == null ? null : v.toString();
+  static String? _str(dynamic v) => v?.toString();
   static num? _toNum(dynamic v) {
     if (v == null) return null;
     if (v is num) return v;
@@ -216,7 +216,7 @@ class PaymentStatusResponse {
     }
   static double? _toDouble(dynamic v) {
     final n = _toNum(v);
-    return n == null ? null : n.toDouble();
+    return n?.toDouble();
   }
   static DateTime? _toDate(dynamic v) {
     if (v == null) return null;

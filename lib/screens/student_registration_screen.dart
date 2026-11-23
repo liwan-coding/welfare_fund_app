@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
+import 'package:flutter/cupertino.dart' show CupertinoButton, CupertinoIcons;
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:typed_data';
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:provider/provider.dart';
+import '../design/design.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_text_styles.dart';
 import '../constants/app_constants.dart';
@@ -26,18 +26,16 @@ class StudentRegistrationScreen extends StatefulWidget {
       _StudentRegistrationScreenState();
 }
 
-class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _animationController;
-  late AnimationController _progressAnimationController;
-  late AnimationController _helpButtonPulseController;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
-  late Animation<double> _helpButtonScale;
-  late Animation<double> _helpButtonOpacity;
+class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
+  static const int _stepCount = 4;
+
+  // Wizard state. Each step has its own Form so "Continue" validates only
+  // that step; the final submit re-validates all of them.
+  final _pageController = PageController();
+  final _stepKeys = List.generate(_stepCount, (_) => GlobalKey<FormState>());
+  int _step = 0;
 
   // Form Controllers
-  final _formKey = GlobalKey<FormState>();
 
   // البيانات الشخصية (Personal)
   final _fullNameController = TextEditingController();
@@ -105,53 +103,12 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
   ];
 
   @override
+  @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-
-    _progressAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
-
-    _helpButtonPulseController = AnimationController(
-      duration: const Duration(milliseconds: 2800),
-      vsync: this,
-    )..repeat(reverse: true);
-    // منحنى متماثل سلس عند البداية والنهاية لتفادي القفز عند عكس الحركة
-    final helpCurve = CurvedAnimation(
-      parent: _helpButtonPulseController,
-      curve: Curves.easeInOut,
-      reverseCurve: Curves.easeInOut,
-    );
-    _helpButtonScale = Tween<double>(begin: 1.0, end: 1.1).animate(helpCurve);
-    _helpButtonOpacity =
-        Tween<double>(begin: 0.88, end: 1.0).animate(helpCurve);
-
     if (widget.existingData != null) {
       _loadExistingData();
     }
-
-    _initializeScreen();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _prefillFromUserProfile();
@@ -442,9 +399,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
 
   @override
   void dispose() {
-    _animationController.dispose();
-    _progressAnimationController.dispose();
-    _helpButtonPulseController.dispose();
+    _pageController.dispose();
     _fullNameController.dispose();
     _civilIdController.dispose();
     _phoneController.dispose();
@@ -461,15 +416,6 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
     _guardianIncomeController.dispose();
     _guardianFamilySizeController.dispose();
     super.dispose();
-  }
-
-  Future<void> _initializeScreen() async {
-    _startAnimations();
-  }
-
-  void _startAnimations() {
-    _animationController.forward();
-    _progressAnimationController.forward();
   }
 
   Future<void> _loadPrograms() async {
@@ -612,76 +558,87 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
     );
   }
 
+  static const _requiredDocuments = [
+    DocumentType.applicationLetter,
+    DocumentType.idCard,
+    DocumentType.enrollmentLetter,
+    DocumentType.tuitionLetter,
+    DocumentType.incomeProof,
+    DocumentType.bankStatements,
+    DocumentType.debtProof,
+    DocumentType.supportingDocuments,
+    DocumentType.housingLetter,
+  ];
+
+  /// Validates one wizard step. Returns the error to show, or null if valid.
+  String? _validateStep(int i) {
+    if (_isReadOnly) return null;
+    final formOk = _stepKeys[i].currentState?.validate() ?? true;
+    if (!formOk) return 'please_fill_required_fields'.tr();
+    switch (i) {
+      case 0:
+        if (_selectedDateOfBirth == null) {
+          return 'please_select_date_of_birth'.tr();
+        }
+      case 1:
+        if (_selectedProgramId == null || _selectedProgramId!.isEmpty) {
+          return 'please_choose_program'.tr();
+        }
+        if (_selectedAcademicYear == null || _selectedAcademicYear!.isEmpty) {
+          return 'please_select_academic_year'.tr();
+        }
+      case 3:
+        if (_requiredDocuments.any((d) => !_documentFiles.containsKey(d))) {
+          return 'please_upload_all_documents'.tr();
+        }
+    }
+    return null;
+  }
+
+  void _showError(String message) {
+    HapticFeedback.lightImpact();
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.error,
+      ));
+  }
+
+  void _goToStep(int i) {
+    if (i < 0 || i >= _stepCount) return;
+    FocusScope.of(context).unfocus();
+    setState(() => _step = i);
+    _pageController.animateToPage(
+      i,
+      duration: AppMotion.standard,
+      curve: AppMotion.curve,
+    );
+  }
+
+  void _onContinue() {
+    final error = _validateStep(_step);
+    if (error != null) {
+      _showError(error);
+      return;
+    }
+    if (_step == _stepCount - 1) {
+      _submitRegistration();
+    } else {
+      HapticFeedback.selectionClick();
+      _goToStep(_step + 1);
+    }
+  }
+
   void _submitRegistration() async {
-    // Validate form
-    if (!_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('please_fill_required_fields'.tr()),
-          backgroundColor: AppColors.error,
-        ),
-      );
-      return;
-    }
-
-    // Validate date of birth
-    if (_selectedDateOfBirth == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('please_select_date_of_birth'.tr()),
-          backgroundColor: AppColors.error,
-        ),
-      );
-      return;
-    }
-
-    // Validate program selection
-    if (_selectedProgramId == null || _selectedProgramId!.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('please_choose_program'.tr()),
-          backgroundColor: AppColors.error,
-        ),
-      );
-      return;
-    }
-
-    // Validate academic year
-    if (_selectedAcademicYear == null || _selectedAcademicYear!.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('please_select_academic_year'.tr()),
-          backgroundColor: AppColors.error,
-        ),
-      );
-      return;
-    }
-
-    // Validate all documents are uploaded
-    final requiredDocuments = [
-      DocumentType.applicationLetter,
-      DocumentType.idCard,
-      DocumentType.enrollmentLetter,
-      DocumentType.tuitionLetter,
-      DocumentType.incomeProof,
-      DocumentType.bankStatements,
-      DocumentType.debtProof,
-      DocumentType.supportingDocuments,
-      DocumentType.housingLetter,
-    ];
-
-    final missingDocuments = requiredDocuments
-        .where((doc) => !_documentFiles.containsKey(doc))
-        .toList();
-
-    if (missingDocuments.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('please_upload_all_documents'.tr()),
-          backgroundColor: AppColors.error,
-        ),
-      );
-      return;
+    // Re-validate every step; jump to the first one that fails.
+    for (var i = 0; i < _stepCount; i++) {
+      final error = _validateStep(i);
+      if (error != null) {
+        _goToStep(i);
+        _showError(error);
+        return;
+      }
     }
 
     // Show loading dialog
@@ -698,7 +655,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -821,7 +778,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.success.withOpacity(0.1),
+                  color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(50),
                 ),
                 child: const Icon(
@@ -936,64 +893,201 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
     }
   }
 
+  static const _stepTitles = [
+    'personal_information',
+    'academic_information',
+    'guardian_information',
+    'documents',
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: SlideTransition(
-          position: _slideAnimation,
-          child: CustomScrollView(
-            slivers: [
-              _buildAppBar(),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 20,
-                  ),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Status Indicator
-                        if (widget.existingData != null) ...[
-                          _buildStatusIndicator(),
-                          const SizedBox(height: 24),
-                        ],
-
-                        // 1. البيانات الشخصية (Personal Information)
-                        _buildPersonalInformationSection(),
-                        const SizedBox(height: 24),
-
-                        // 2. البيانات الأكاديمية (Academic Information)
-                        _buildAcademicInformationSection(),
-                        const SizedBox(height: 24),
-
-                        // 3. بيانات ولي الأمر (Guardian Information)
-                        _buildGuardianInformationSection(),
-                        const SizedBox(height: 24),
-
-                        // 4. المرفقات (Documents)
-                        _buildDocumentsSection(),
-                        const SizedBox(height: 32),
-
-                        // Submit Button
-                        _buildSubmitButton(),
-                        const SizedBox(height: 16),
-
-                        // Privacy Note
-                        _buildPrivacyNote(),
-                        const SizedBox(height: 32),
-                      ],
-                    ),
-                  ),
+    final p = AppPalette.of(context);
+    return PopScope(
+      // Back steps through the wizard before leaving the screen.
+      canPop: _step == 0,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _goToStep(_step - 1);
+      },
+      child: Scaffold(
+        backgroundColor: p.background,
+        body: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              _buildTopBar(p),
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  // Navigation is through Continue/Back so each step is
+                  // validated before the next one opens.
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    for (var i = 0; i < _stepCount; i++) _buildStepPage(p, i),
+                  ],
                 ),
+              ),
+              _buildBottomBar(p),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopBar(AppPalette p) {
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(
+          AppSpace.xs, AppSpace.xxs, AppSpace.xs, AppSpace.xs),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(44, 44),
+                onPressed: () => Navigator.of(context).maybePop(),
+                child: Icon(
+                  _step == 0 ? AppIcons.chevronBack : CupertinoIcons.xmark,
+                  color: p.tint,
+                  size: _step == 0 ? 24 : 20,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  'step_of'.tr(args: ['${_step + 1}', '$_stepCount']),
+                  textAlign: TextAlign.center,
+                  style: AppType.footnote.copyWith(color: p.secondaryLabel),
+                ),
+              ),
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(44, 44),
+                onPressed: _showFundInfoDialog,
+                child: Icon(CupertinoIcons.question_circle,
+                    color: p.tint, size: 24),
               ),
             ],
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpace.xs),
+            child: Row(
+              children: [
+                for (var i = 0; i < _stepCount; i++) ...[
+                  if (i > 0) const SizedBox(width: 6),
+                  Expanded(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      // Completed steps can be revisited; later ones are
+                      // reached by validating forward.
+                      onTap: i < _step ? () => _goToStep(i) : null,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: AnimatedContainer(
+                          duration: AppMotion.standard,
+                          curve: AppMotion.curve,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: i <= _step ? p.tint : p.fill,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStepPage(AppPalette p, int i) {
+    final content = switch (i) {
+      0 => _buildPersonalInformationSection(),
+      1 => _buildAcademicInformationSection(),
+      2 => _buildGuardianInformationSection(),
+      _ => _buildDocumentsSection(),
+    };
+    return _KeepAlive(
+      child: Form(
+        key: _stepKeys[i],
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics()),
+          padding: const EdgeInsets.fromLTRB(
+              AppSpace.screen, AppSpace.sm, AppSpace.screen, AppSpace.xl),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _stepTitles[i].tr(),
+                style: AppType.title1.copyWith(color: p.label),
+              ),
+              const SizedBox(height: AppSpace.xxs),
+              Text(
+                'fill_form_to_register'.tr(),
+                style: AppType.subheadline.copyWith(color: p.secondaryLabel),
+              ),
+              const SizedBox(height: AppSpace.lg),
+              if (i == 0 && widget.existingData != null) ...[
+                _buildStatusIndicator(),
+                const SizedBox(height: AppSpace.lg),
+              ],
+              content,
+              if (i == _stepCount - 1) ...[
+                const SizedBox(height: AppSpace.lg),
+                _buildPrivacyNote(),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomBar(AppPalette p) {
+    final last = _step == _stepCount - 1;
+    final label = !last
+        ? 'continue'.tr()
+        : _isReadOnly
+            ? 'cannot_edit'.tr()
+            : _isRejected
+                ? 'resubmit_application'.tr()
+                : 'register'.tr();
+    final bottom = MediaQuery.paddingOf(context).bottom;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: p.background,
+        border: Border(top: BorderSide(color: p.separator, width: 0.5)),
+      ),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(AppSpace.screen, AppSpace.sm,
+            AppSpace.screen, AppSpace.sm + bottom),
+        child: Row(
+          children: [
+            if (_step > 0) ...[
+              SizedBox(
+                width: 100,
+                child: OutlinedButton(
+                  onPressed: () => _goToStep(_step - 1),
+                  child: Text('back'.tr()),
+                ),
+              ),
+              const SizedBox(width: AppSpace.sm),
+            ],
+            Expanded(
+              child: FilledButton(
+                onPressed: last && _isReadOnly ? null : _onContinue,
+                child: Text(label),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -1028,7 +1122,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.12),
+                    color: AppColors.primary.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
@@ -1079,7 +1173,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
       width: 40,
       height: 4,
       decoration: BoxDecoration(
-        color: AppColors.textTertiary.withOpacity(0.4),
+        color: AppColors.textTertiary.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(2),
       ),
     );
@@ -1104,11 +1198,11 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.primary.withOpacity(0.2),
+          color: AppColors.primary.withValues(alpha: 0.2),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -1119,7 +1213,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         children: [
           Row(
             children: [
-              Icon(Icons.assignment_outlined,
+              const Icon(Icons.assignment_outlined,
                   color: AppColors.primary, size: 22),
               const SizedBox(width: 10),
               Text(
@@ -1135,9 +1229,9 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.warning.withOpacity(0.08),
+              color: AppColors.warning.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppColors.warning.withOpacity(0.2)),
+              border: Border.all(color: AppColors.warning.withValues(alpha: 0.2)),
             ),
             child: Text(
               'ملاحظة هامة: يرجى الاطلاع على الضوابط التالية قبل تقديم طلب المساعدة المالية من صندوق رعاية الطالب الجامعي:',
@@ -1255,11 +1349,11 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.secondary.withOpacity(0.2),
+          color: AppColors.secondary.withValues(alpha: 0.2),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -1270,7 +1364,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         children: [
           Row(
             children: [
-              Icon(Icons.gavel_rounded, color: AppColors.secondary, size: 22),
+              const Icon(Icons.gavel_rounded, color: AppColors.secondary, size: 22),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -1304,7 +1398,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                       height: 24,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColors.secondary.withOpacity(0.15),
+                        color: AppColors.secondary.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
@@ -1333,10 +1427,10 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: AppColors.textTertiary.withOpacity(0.08),
+              color: AppColors.textTertiary.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: AppColors.textTertiary.withOpacity(0.2),
+                color: AppColors.textTertiary.withValues(alpha: 0.2),
               ),
             ),
             child: Row(
@@ -1368,120 +1462,6 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
     );
   }
 
-  Widget _buildAppBar() {
-    return SliverAppBar(
-      expandedHeight: 200,
-      floating: false,
-      pinned: true,
-      backgroundColor: AppColors.primary,
-      elevation: 0,
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
-          child: InkWell(
-            onTap: _showFundInfoDialog,
-            borderRadius: BorderRadius.circular(28),
-            child: Tooltip(
-              message: 'fund_info.dialog_title'.tr(),
-              child: AnimatedBuilder(
-                animation: _helpButtonPulseController,
-                builder: (context, child) {
-                  return Opacity(
-                    opacity: _helpButtonOpacity.value,
-                    child: Transform.scale(
-                      scale: _helpButtonScale.value,
-                      child: child,
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Icon(
-                    Icons.help_outline_rounded,
-                    color: AppColors.surface,
-                    size: 32,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-      flexibleSpace: FlexibleSpaceBar(
-        background: Container(
-          decoration: BoxDecoration(
-            gradient: AppColors.modernGradient,
-          ),
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: AppColors.surface.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      'student_registration'.tr(),
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.surface,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'app_title'.tr(),
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.surface,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: AppColors.surface.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          CupertinoIcons.info_circle,
-                          color: AppColors.surface.withOpacity(0.9),
-                          size: 16,
-                        ),
-                        const SizedBox(width: 8),
-                        Flexible(
-                          child: Text(
-                            'fill_form_to_register'.tr(),
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: AppColors.surface.withOpacity(0.9),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildStatusIndicator() {
     return Container(
       width: double.infinity,
@@ -1490,7 +1470,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: _getStatusColor(_applicationStatus).withOpacity(0.3),
+          color: _getStatusColor(_applicationStatus).withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -1560,7 +1540,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.error.withOpacity(0.1),
+                color: AppColors.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -1589,48 +1569,11 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
     );
   }
 
-  Widget _buildSectionHeader({
-    required String title,
-    required IconData icon,
-    required Color color,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, color: color, size: 20),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              title,
-              style: AppTextStyles.titleMedium.copyWith(
-                fontWeight: FontWeight.w600,
-                color: color,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   // 1. قسم البيانات الشخصية
   Widget _buildPersonalInformationSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionHeader(
-          title: 'personal_information'.tr(),
-          icon: CupertinoIcons.person,
-          color: AppColors.primary,
-        ),
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -1638,7 +1581,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -1754,11 +1697,6 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionHeader(
-          title: 'academic_information'.tr(),
-          icon: Icons.school_outlined,
-          color: AppColors.secondary,
-        ),
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -1766,7 +1704,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -1885,11 +1823,6 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionHeader(
-          title: 'guardian_information'.tr(),
-          icon: Icons.family_restroom,
-          color: AppColors.accent,
-        ),
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -1897,7 +1830,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -2021,24 +1954,19 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionHeader(
-          title: 'documents'.tr(),
-          icon: Icons.attach_file,
-          color: AppColors.error,
-        ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
-            color: AppColors.error.withOpacity(0.1),
+            color: AppColors.error.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: AppColors.error.withOpacity(0.2),
+              color: AppColors.error.withValues(alpha: 0.2),
             ),
           ),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 CupertinoIcons.exclamationmark_triangle,
                 color: AppColors.error,
                 size: 18,
@@ -2063,7 +1991,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -2157,12 +2085,12 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: hasFile
-                ? AppColors.success.withOpacity(0.05)
+                ? AppColors.success.withValues(alpha: 0.05)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: hasFile
-                  ? AppColors.success.withOpacity(0.3)
+                  ? AppColors.success.withValues(alpha: 0.3)
                   : Colors.transparent,
             ),
           ),
@@ -2172,8 +2100,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: hasFile
-                      ? AppColors.success.withOpacity(0.1)
-                      : AppColors.info.withOpacity(0.1),
+                      ? AppColors.success.withValues(alpha: 0.1)
+                      : AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -2211,7 +2139,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
-                          color: AppColors.success.withOpacity(0.1),
+                          color: AppColors.success.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
@@ -2234,8 +2162,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: hasFile
-                        ? AppColors.error.withOpacity(0.1)
-                        : AppColors.primary.withOpacity(0.1),
+                        ? AppColors.error.withValues(alpha: 0.1)
+                        : AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -2251,57 +2179,14 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
     );
   }
 
-  Widget _buildSubmitButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 52,
-      child: ElevatedButton(
-        onPressed: _isReadOnly ? null : _submitRegistration,
-        style: ElevatedButton.styleFrom(
-          backgroundColor:
-              _isReadOnly ? AppColors.surfaceVariant : AppColors.primary,
-          foregroundColor: AppColors.surface,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              _isReadOnly
-                  ? CupertinoIcons.lock
-                  : (_isRejected
-                      ? CupertinoIcons.refresh
-                      : CupertinoIcons.paperplane),
-              size: 20,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              _isReadOnly
-                  ? 'cannot_edit'.tr()
-                  : (_isRejected
-                      ? 'resubmit_application'.tr()
-                      : 'register'.tr()),
-              style: AppTextStyles.buttonLarge.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildPrivacyNote() {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.success.withOpacity(0.08),
+        color: AppColors.success.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.success.withOpacity(0.2),
+          color: AppColors.success.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -2310,7 +2195,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: AppColors.success.withOpacity(0.15),
+              color: AppColors.success.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Icon(
@@ -2372,13 +2257,13 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: AppColors.textTertiary.withOpacity(0.2),
+            color: AppColors.textTertiary.withValues(alpha: 0.2),
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: AppColors.textTertiary.withOpacity(0.2),
+            color: AppColors.textTertiary.withValues(alpha: 0.2),
           ),
         ),
         focusedBorder: OutlineInputBorder(
@@ -2422,7 +2307,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           color: AppColors.surfaceVariant,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.textTertiary.withOpacity(0.2),
+            color: AppColors.textTertiary.withValues(alpha: 0.2),
           ),
         ),
         child: Row(
@@ -2458,7 +2343,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
     }
 
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       isExpanded: true,
       items: items.map((String item) {
         return DropdownMenuItem<String>(
@@ -2478,13 +2363,13 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: AppColors.textTertiary.withOpacity(0.2),
+            color: AppColors.textTertiary.withValues(alpha: 0.2),
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: AppColors.textTertiary.withOpacity(0.2),
+            color: AppColors.textTertiary.withValues(alpha: 0.2),
           ),
         ),
         focusedBorder: OutlineInputBorder(
@@ -2524,7 +2409,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           color: _isReadOnly ? AppColors.surfaceVariant : AppColors.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.textTertiary.withOpacity(0.2),
+            color: AppColors.textTertiary.withValues(alpha: 0.2),
           ),
         ),
         child: Row(
@@ -2587,7 +2472,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         color: _isReadOnly ? AppColors.surfaceVariant : AppColors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.textTertiary.withOpacity(0.2),
+          color: AppColors.textTertiary.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -2605,7 +2490,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           Switch(
             value: value,
             onChanged: _isReadOnly ? null : onChanged,
-            activeColor: AppColors.primary,
+            activeThumbColor: AppColors.primary,
           ),
         ],
       ),
@@ -2620,7 +2505,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.textTertiary.withOpacity(0.2),
+            color: AppColors.textTertiary.withValues(alpha: 0.2),
           ),
         ),
         child: Row(
@@ -2652,7 +2537,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.error.withOpacity(0.3),
+            color: AppColors.error.withValues(alpha: 0.3),
           ),
         ),
         child: Column(
@@ -2706,7 +2591,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
           color: AppColors.surfaceVariant,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.textTertiary.withOpacity(0.2),
+            color: AppColors.textTertiary.withValues(alpha: 0.2),
           ),
         ),
         child: Row(
@@ -2741,7 +2626,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
     }
 
     return DropdownButtonFormField<String>(
-      value: _selectedProgramId,
+      initialValue: _selectedProgramId,
       isExpanded: true,
       items: _programs.map((program) {
         return DropdownMenuItem<String>(
@@ -2777,13 +2662,13 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: AppColors.textTertiary.withOpacity(0.2),
+            color: AppColors.textTertiary.withValues(alpha: 0.2),
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: AppColors.textTertiary.withOpacity(0.2),
+            color: AppColors.textTertiary.withValues(alpha: 0.2),
           ),
         ),
         focusedBorder: OutlineInputBorder(
@@ -2807,5 +2692,28 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen>
         return null;
       },
     );
+  }
+}
+
+/// Keeps a wizard step mounted while off-screen so its fields keep their
+/// state and can be validated on submit.
+class _KeepAlive extends StatefulWidget {
+  const _KeepAlive({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_KeepAlive> createState() => _KeepAliveState();
+}
+
+class _KeepAliveState extends State<_KeepAlive>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.child;
   }
 }

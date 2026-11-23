@@ -169,7 +169,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primary.withOpacity(0.3),
+                                color: AppColors.primary.withValues(alpha: 0.3),
                                 blurRadius: 20,
                                 offset: const Offset(0, 10),
                               ),
@@ -181,10 +181,10 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                 width: 80,
                                 height: 80,
                                 decoration: BoxDecoration(
-                                  color: AppColors.surface.withOpacity(0.2),
+                                  color: AppColors.surface.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(40),
                                   border: Border.all(
-                                    color: AppColors.surface.withOpacity(0.3),
+                                    color: AppColors.surface.withValues(alpha: 0.3),
                                     width: 2,
                                   ),
                                 ),
@@ -212,7 +212,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                       'update_your_personal_information'.tr(),
                                       style: AppTextStyles.bodyMedium.copyWith(
                                         color:
-                                            AppColors.surface.withOpacity(0.9),
+                                            AppColors.surface.withValues(alpha: 0.9),
                                       ),
                                     ),
                                   ],
@@ -383,7 +383,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
               margin: const EdgeInsets.all(8),
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -441,7 +441,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
+            color: AppColors.primary.withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),

@@ -671,14 +671,12 @@ class _CampaignDonationScreenState extends State<CampaignDonationScreen> {
 
     if (imageUrl.isEmpty) return placeholder();
 
-    return Image.network(
+    return AppNetworkImage(
       imageUrl,
       width: double.infinity,
       height: height,
-      fit: BoxFit.cover,
-      loadingBuilder: (context, child, progress) =>
-          progress == null ? child : placeholder(const AppActivityIndicator()),
-      errorBuilder: (context, error, stackTrace) => placeholder(),
+      placeholder: (_) => placeholder(const AppActivityIndicator()),
+      error: (_) => placeholder(),
     );
   }
 }

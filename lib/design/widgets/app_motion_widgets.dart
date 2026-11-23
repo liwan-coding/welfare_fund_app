@@ -61,12 +61,14 @@ class _AppRevealState extends State<AppReveal>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _curve,
-      child: widget.child,
-      builder: (context, child) => Opacity(
-        opacity: _curve.value,
-        child: Transform.translate(
+    // FadeTransition animates the layer alpha on the compositor, without the
+    // per-frame saveLayer that an Opacity widget needs.
+    return FadeTransition(
+      opacity: _curve,
+      child: AnimatedBuilder(
+        animation: _curve,
+        child: widget.child,
+        builder: (context, child) => Transform.translate(
           offset: Offset(0, (1 - _curve.value) * widget.offset),
           child: child,
         ),

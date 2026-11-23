@@ -23,7 +23,7 @@ class WebHeader extends StatefulWidget {
 }
 
 class _WebHeaderState extends State<WebHeader> {
-  bool _isScrolled = false;
+  final bool _isScrolled = false;
   
   @override
   Widget build(BuildContext context) {
@@ -34,18 +34,18 @@ class _WebHeaderState extends State<WebHeader> {
       decoration: BoxDecoration(
         // تأثير Glass morphism
         color: _isScrolled 
-            ? AppColors.surface.withOpacity(0.95)
+            ? AppColors.surface.withValues(alpha: 0.95)
             : AppColors.surface,
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(_isScrolled ? 0.1 : 0.05),
+            color: AppColors.primary.withValues(alpha: _isScrolled ? 0.1 : 0.05),
             blurRadius: _isScrolled ? 20 : 10,
             offset: const Offset(0, 4),
           ),
         ],
         border: Border(
           bottom: BorderSide(
-            color: AppColors.primary.withOpacity(0.08),
+            color: AppColors.primary.withValues(alpha: 0.08),
             width: 1,
           ),
         ),
@@ -97,7 +97,7 @@ class _WebHeaderState extends State<WebHeader> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
+                        gradient: const LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
@@ -108,7 +108,7 @@ class _WebHeaderState extends State<WebHeader> {
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primary.withOpacity(0.4),
+                            color: AppColors.primary.withValues(alpha: 0.4),
                             blurRadius: 15,
                             offset: const Offset(0, 6),
                           ),
@@ -132,7 +132,7 @@ class _WebHeaderState extends State<WebHeader> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ShaderMask(
-                  shaderCallback: (bounds) => LinearGradient(
+                  shaderCallback: (bounds) => const LinearGradient(
                     colors: [AppColors.primary, AppColors.secondary],
                   ).createShader(bounds),
                   child: Text(
@@ -338,17 +338,17 @@ class _NavItemWidgetState extends State<_NavItemWidget> {
               borderRadius: BorderRadius.circular(12),
               gradient: widget.isSelected ? LinearGradient(
                 colors: [
-                  AppColors.primary.withOpacity(0.15),
-                  AppColors.secondary.withOpacity(0.1),
+                  AppColors.primary.withValues(alpha: 0.15),
+                  AppColors.secondary.withValues(alpha: 0.1),
                 ],
               ) : (_isHovered ? LinearGradient(
                 colors: [
-                  AppColors.primary.withOpacity(0.08),
-                  AppColors.secondary.withOpacity(0.05),
+                  AppColors.primary.withValues(alpha: 0.08),
+                  AppColors.secondary.withValues(alpha: 0.05),
                 ],
               ) : null),
               border: widget.isSelected ? Border.all(
-                color: AppColors.primary.withOpacity(0.3),
+                color: AppColors.primary.withValues(alpha: 0.3),
                 width: 1.5,
               ) : null,
             ),
@@ -361,7 +361,7 @@ class _NavItemWidgetState extends State<_NavItemWidget> {
                     widget.item.icon,
                     color: widget.isSelected 
                         ? AppColors.primary 
-                        : (_isHovered ? AppColors.primary.withOpacity(0.8) : AppColors.textSecondary),
+                        : (_isHovered ? AppColors.primary.withValues(alpha: 0.8) : AppColors.textSecondary),
                     size: 20,
                   ),
                 ),
@@ -371,7 +371,7 @@ class _NavItemWidgetState extends State<_NavItemWidget> {
                   style: AppTextStyles.bodyMedium.copyWith(
                     color: widget.isSelected 
                         ? AppColors.primary 
-                        : (_isHovered ? AppColors.primary.withOpacity(0.8) : AppColors.textSecondary),
+                        : (_isHovered ? AppColors.primary.withValues(alpha: 0.8) : AppColors.textSecondary),
                     fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.w500,
                   ),
                 ),
@@ -385,7 +385,7 @@ class _NavItemWidgetState extends State<_NavItemWidget> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withOpacity(0.4),
+                          color: AppColors.primary.withValues(alpha: 0.4),
                           blurRadius: 6,
                         ),
                       ],
@@ -435,12 +435,12 @@ class _HoverIconButtonState extends State<_HoverIconButton> {
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: _isHovered 
-                  ? AppColors.primary.withOpacity(0.1)
-                  : AppColors.surfaceVariant.withOpacity(0.5),
+                  ? AppColors.primary.withValues(alpha: 0.1)
+                  : AppColors.surfaceVariant.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
                 color: _isHovered 
-                    ? AppColors.primary.withOpacity(0.2)
+                    ? AppColors.primary.withValues(alpha: 0.2)
                     : Colors.transparent,
               ),
             ),
@@ -485,10 +485,10 @@ class _HoverOutlinedButtonState extends State<_HoverOutlinedButton> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
           decoration: BoxDecoration(
-            color: _isHovered ? AppColors.primary.withOpacity(0.08) : Colors.transparent,
+            color: _isHovered ? AppColors.primary.withValues(alpha: 0.08) : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: _isHovered ? AppColors.primary : AppColors.primary.withOpacity(0.4),
+              color: _isHovered ? AppColors.primary : AppColors.primary.withValues(alpha: 0.4),
               width: 1.5,
             ),
           ),
@@ -545,7 +545,7 @@ class _HoverGradientButtonState extends State<_HoverGradientButton> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withOpacity(_isHovered ? 0.5 : 0.3),
+                color: AppColors.primary.withValues(alpha: _isHovered ? 0.5 : 0.3),
                 blurRadius: _isHovered ? 20 : 12,
                 offset: Offset(0, _isHovered ? 8 : 4),
               ),
@@ -615,15 +615,15 @@ class _UserMenuButtonState extends State<_UserMenuButton> {
           decoration: BoxDecoration(
             gradient: _isHovered ? LinearGradient(
               colors: [
-                AppColors.primary.withOpacity(0.08),
-                AppColors.secondary.withOpacity(0.05),
+                AppColors.primary.withValues(alpha: 0.08),
+                AppColors.secondary.withValues(alpha: 0.05),
               ],
             ) : null,
-            color: _isHovered ? null : AppColors.surfaceVariant.withOpacity(0.6),
+            color: _isHovered ? null : AppColors.surfaceVariant.withValues(alpha: 0.6),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: _isHovered 
-                  ? AppColors.primary.withOpacity(0.3)
+                  ? AppColors.primary.withValues(alpha: 0.3)
                   : AppColors.surfaceVariant,
               width: 1.5,
             ),
@@ -639,7 +639,7 @@ class _UserMenuButtonState extends State<_UserMenuButton> {
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.3),
+                      color: AppColors.primary.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 3),
                     ),
@@ -672,7 +672,7 @@ class _UserMenuButtonState extends State<_UserMenuButton> {
                       Container(
                         width: 6,
                         height: 6,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: AppColors.success,
                           shape: BoxShape.circle,
                         ),
@@ -762,7 +762,7 @@ class _UserMenuButtonState extends State<_UserMenuButton> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, size: 18, color: color),

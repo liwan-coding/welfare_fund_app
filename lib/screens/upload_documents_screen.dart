@@ -163,7 +163,7 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
         SnackBar(
           content: Text('please_select_at_least_one_document'.tr()),
           backgroundColor: AppColors.warning,
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
       return;
@@ -175,16 +175,21 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
 
     try {
       final Map<String, Uint8List> documentFiles = {};
-      if (_idCardImageBytes != null)
+      if (_idCardImageBytes != null) {
         documentFiles['id_card'] = _idCardImageBytes!;
-      if (_transcriptBytes != null)
+      }
+      if (_transcriptBytes != null) {
         documentFiles['enrollment_letter'] = _transcriptBytes!;
-      if (_incomeCertificateBytes != null)
+      }
+      if (_incomeCertificateBytes != null) {
         documentFiles['income_proof'] = _incomeCertificateBytes!;
-      if (_familyCardBytes != null)
+      }
+      if (_familyCardBytes != null) {
         documentFiles['bank_statements'] = _familyCardBytes!;
-      if (_otherDocumentsBytes != null)
+      }
+      if (_otherDocumentsBytes != null) {
         documentFiles['supporting_documents'] = _otherDocumentsBytes!;
+      }
 
       await _studentService.uploadStudentDocuments(
         registrationId: widget.registrationId,
@@ -196,7 +201,7 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
           SnackBar(
             content: Text('documents_uploaded_successfully'.tr()),
             backgroundColor: AppColors.success,
-            duration: Duration(seconds: 2),
+            duration: const Duration(seconds: 2),
           ),
         );
         Navigator.of(context).pop(true); // Return success
@@ -237,12 +242,12 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: documentPath != null
-              ? AppColors.success.withOpacity(0.3)
-              : AppColors.textTertiary.withOpacity(0.3),
+              ? AppColors.success.withValues(alpha: 0.3)
+              : AppColors.textTertiary.withValues(alpha: 0.3),
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textTertiary.withOpacity(0.1),
+            color: AppColors.textTertiary.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -257,8 +262,8 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: documentPath != null
-                      ? AppColors.success.withOpacity(0.1)
-                      : AppColors.primary.withOpacity(0.1),
+                      ? AppColors.success.withValues(alpha: 0.1)
+                      : AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -356,7 +361,7 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                   },
                   icon: const Icon(Icons.delete, color: AppColors.error),
                   style: IconButton.styleFrom(
-                    backgroundColor: AppColors.error.withOpacity(0.1),
+                    backgroundColor: AppColors.error.withValues(alpha: 0.1),
                   ),
                 ),
               ],
@@ -401,10 +406,10 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: AppColors.primary.withOpacity(0.3),
+                      color: AppColors.primary.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Column(
@@ -535,7 +540,7 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
           ),
           if (_isUploading)
             Container(
-              color: Colors.black.withOpacity(0.5),
+              color: Colors.black.withValues(alpha: 0.5),
               child: const Center(
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),

@@ -1,3 +1,4 @@
+import '../design/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 import '../design/app_icons.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
@@ -536,14 +537,14 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                       border: Border.all(
                         color: isSelected
                             ? AppColors.primary
-                            : AppColors.textPrimary.withOpacity(0.1),
+                            : AppColors.textPrimary.withValues(alpha: 0.1),
                         width: isSelected ? 2 : 1,
                       ),
                       boxShadow: [
                         BoxShadow(
                           color: isSelected
-                              ? AppColors.primary.withOpacity(0.3)
-                              : AppColors.textPrimary.withOpacity(0.05),
+                              ? AppColors.primary.withValues(alpha: 0.3)
+                              : AppColors.textPrimary.withValues(alpha: 0.05),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -566,7 +567,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                           'riyal'.tr(),
                           style: AppTextStyles.bodySmall.copyWith(
                             color: isSelected
-                                ? AppColors.surface.withOpacity(0.8)
+                                ? AppColors.surface.withValues(alpha: 0.8)
                                 : AppColors.textSecondary,
                           ),
                         ),
@@ -596,12 +597,12 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                 border: Border.all(
                   color: _isCustomAmount
                       ? AppColors.primary
-                      : AppColors.textPrimary.withOpacity(0.1),
+                      : AppColors.textPrimary.withValues(alpha: 0.1),
                   width: _isCustomAmount ? 2 : 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.textPrimary.withOpacity(0.05),
+                    color: AppColors.textPrimary.withValues(alpha: 0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -657,7 +658,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                         color: AppColors.surface,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: AppColors.textPrimary.withOpacity(0.1),
+                          color: AppColors.textPrimary.withValues(alpha: 0.1),
                           width: 1,
                         ),
                       ),
@@ -693,13 +694,13 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppColors.primary.withOpacity(0.1),
-                      AppColors.secondary.withOpacity(0.05),
+                      AppColors.primary.withValues(alpha: 0.1),
+                      AppColors.secondary.withValues(alpha: 0.05),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: AppColors.primary.withOpacity(0.2),
+                    color: AppColors.primary.withValues(alpha: 0.2),
                     width: 1,
                   ),
                 ),
@@ -739,7 +740,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                           _selectedCampaign != null &&
                           !_isLoading)
                       ? AppColors.primary
-                      : AppColors.textSecondary.withOpacity(0.3),
+                      : AppColors.textSecondary.withValues(alpha: 0.3),
                   foregroundColor: AppColors.surface,
                   elevation: 0,
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -747,7 +748,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  shadowColor: AppColors.primary.withOpacity(0.3),
+                  shadowColor: AppColors.primary.withValues(alpha: 0.3),
                 ),
                 child: _isLoading
                     ? Row(
@@ -807,11 +808,11 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppColors.primary.withOpacity(0.1),
+            color: AppColors.primary.withValues(alpha: 0.1),
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.textPrimary.withOpacity(0.05),
+              color: AppColors.textPrimary.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -835,7 +836,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppColors.error.withOpacity(0.2),
+            color: AppColors.error.withValues(alpha: 0.2),
           ),
         ),
         child: Column(
@@ -886,7 +887,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppColors.primary.withOpacity(0.1),
+            color: AppColors.primary.withValues(alpha: 0.1),
           ),
         ),
         child: Row(
@@ -922,7 +923,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.12),
+            color: AppColors.primary.withValues(alpha: 0.12),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -934,7 +935,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
           decoration: BoxDecoration(
             color: AppColors.surface,
             border: Border.all(
-              color: AppColors.primary.withOpacity(0.15),
+              color: AppColors.primary.withValues(alpha: 0.15),
               width: 1,
             ),
           ),
@@ -949,12 +950,11 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                     height: 140,
                     width: double.infinity,
                     child: campaign.imageUrl.isNotEmpty
-                        ? Image.network(
+                        ? AppNetworkImage(
                             campaign.imageUrl,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
+                            error: (context) =>
                                 Container(
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 gradient: AppColors.modernGradient,
                               ),
                               child: const Center(
@@ -967,7 +967,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                             ),
                           )
                         : Container(
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               gradient: AppColors.modernGradient,
                             ),
                             child: const Center(
@@ -988,7 +988,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            Colors.black.withOpacity(0.3),
+                            Colors.black.withValues(alpha: 0.3),
                           ],
                         ),
                       ),
@@ -1004,7 +1004,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.9),
+                        color: AppColors.primary.withValues(alpha: 0.9),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -1070,7 +1070,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                             child: Container(
                               height: 8,
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withOpacity(0.1),
+                                color: AppColors.primary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: FractionallySizedBox(
@@ -1106,7 +1106,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                           child: _buildCompactStatItem(
                             icon: Icons.trending_up_rounded,
                             value:
-                                '${campaign.currentAmount.toStringAsFixed(0)}',
+                                campaign.currentAmount.toStringAsFixed(0),
                             label: 'riyal'.tr(),
                             color: AppColors.success,
                           ),
@@ -1114,13 +1114,13 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                         Container(
                           width: 1,
                           height: 30,
-                          color: AppColors.primary.withOpacity(0.15),
+                          color: AppColors.primary.withValues(alpha: 0.15),
                         ),
                         Expanded(
                           child: _buildCompactStatItem(
                             icon: Icons.flag_rounded,
                             value:
-                                '${campaign.targetAmount.toStringAsFixed(0)}',
+                                campaign.targetAmount.toStringAsFixed(0),
                             label: 'riyal'.tr(),
                             color: AppColors.primary,
                           ),
@@ -1128,7 +1128,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                         Container(
                           width: 1,
                           height: 30,
-                          color: AppColors.primary.withOpacity(0.15),
+                          color: AppColors.primary.withValues(alpha: 0.15),
                         ),
                         Expanded(
                           child: _buildCompactStatItem(
@@ -1155,7 +1155,7 @@ class _QuickDonateAmountScreenState extends State<QuickDonateAmountScreen> {
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.primary,
                           side: BorderSide(
-                            color: AppColors.primary.withOpacity(0.25),
+                            color: AppColors.primary.withValues(alpha: 0.25),
                             width: 1,
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 8),

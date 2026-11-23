@@ -109,7 +109,7 @@ class _GiftDonationDetailsScreenState extends State<GiftDonationDetailsScreen> {
                 Text(
                   'سيتم إرسال إشعار الإهداء إلى المستلم المحدد',
                   style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.surface.withOpacity(0.9),
+                    color: AppColors.surface.withValues(alpha: 0.9),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -189,7 +189,7 @@ class _GiftDonationDetailsScreenState extends State<GiftDonationDetailsScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -221,7 +221,7 @@ class _GiftDonationDetailsScreenState extends State<GiftDonationDetailsScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: AppColors.surface.withOpacity(0.2),
+                        color: AppColors.surface.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(

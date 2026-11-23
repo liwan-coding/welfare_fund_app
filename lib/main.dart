@@ -1,8 +1,9 @@
+import 'dart:async';
+import 'dart:ui' show PlatformDispatcher;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, kReleaseMode;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'design/app_theme.dart';
@@ -24,44 +25,59 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   if (!kIsWeb) {
     await Firebase.initializeApp();
   }
-  print('🔔 Background message received: ${message.messageId}');
+  debugPrint('Background message received: ${message.messageId}');
 }
 
-void main() async {
+void main() {
+  // Raw print() is synchronous I/O and can leak data in release builds, so it
+  // is silenced there. Debug and profile builds are unchanged.
+  runZonedGuarded(
+    _bootstrap,
+    (error, stack) => debugPrint('Uncaught error: $error\n$stack'),
+    zoneSpecification: ZoneSpecification(
+      print: (self, parent, zone, line) {
+        if (!kReleaseMode) parent.print(zone, line);
+      },
+    ),
+  );
+}
+
+Future<void> _bootstrap() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase (only for non-web platforms or when options are available)
-  if (!kIsWeb) {
-    await Firebase.initializeApp();
-    // Set up background message handler
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  } else {
-    print(
-        '⚠️ Firebase not initialized on web - firebase_options.dart is required');
-    print('Run: dart pub global activate flutterfire_cli');
-    print('Then: flutterfire configure');
-  }
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    if (kReleaseMode) debugPrint('FlutterError: ${details.exceptionAsString()}');
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    debugPrint('Platform error: $error');
+    return true;
+  };
 
-  // Initialize EasyLocalization
-  await EasyLocalization.ensureInitialized();
+  // Decoded-image cache sized for a phone: enough for feed scrolling without
+  // holding the default 100MB of bitmaps.
+  PaintingBinding.instance.imageCache
+    ..maximumSize = 150
+    ..maximumSizeBytes = 80 << 20;
 
-  // Register web implementation for webview_flutter when running on web
-  if (kIsWeb) {
-    // Only register web platform when actually running on web
-    // This will be handled by conditional imports if needed
-  }
-
-  try {
-    // Initialize API Client
-    await ApiClient().initialize();
-    print('API Client initialized successfully');
-
-    // Initialize Auth Service
-    await AuthService().initialize();
-    print('Auth Service initialized successfully');
-  } catch (e) {
-    print('Error during initialization: $e');
-  }
+  // Independent start-up work runs in parallel instead of one await after
+  // another, which shortens time-to-first-frame.
+  await Future.wait<void>([
+    () async {
+      if (kIsWeb) return; // needs firebase_options.dart
+      await Firebase.initializeApp();
+      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    }(),
+    EasyLocalization.ensureInitialized(),
+    () async {
+      try {
+        await ApiClient().initialize();
+        await AuthService().initialize();
+      } catch (e) {
+        debugPrint('Error during initialization: $e');
+      }
+    }(),
+  ]);
 
   runApp(
     EasyLocalization(
@@ -129,8 +145,8 @@ class StudentWelfareFundApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PaymentProvider()),
         ChangeNotifierProvider(create: (_) => SettingPageProvider()),
       ],
-      child: Consumer<AuthProvider>(
-        builder: (context, authProvider, child) {
+      child: Builder(
+        builder: (context) {
           return MaterialApp(
             title: AppConstants.appName,
             debugShowCheckedModeBanner: false,
@@ -139,15 +155,6 @@ class StudentWelfareFundApp extends StatelessWidget {
             locale: context.locale,
             supportedLocales: context.supportedLocales,
             localizationsDelegates: context.localizationDelegates,
-
-            // RTL for Arabic, LTR for English
-            builder: (context, child) {
-              final isRtl = context.locale.languageCode == 'ar';
-              return Directionality(
-                textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-                child: child ?? const SizedBox.shrink(),
-              );
-            },
 
             // Theme configuration (Apple HIG). Dark theme is enabled once screens
             // stop hard-coding light colors.

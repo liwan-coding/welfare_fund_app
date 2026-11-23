@@ -249,11 +249,11 @@ class _StudentRegistrationDetailsScreenState
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
                               color: _getStatusColor(_registration!.status)
-                                  .withOpacity(0.1),
+                                  .withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: _getStatusColor(_registration!.status)
-                                    .withOpacity(0.2),
+                                    .withValues(alpha: 0.2),
                               ),
                             ),
                             child: Column(
@@ -557,7 +557,7 @@ class _StudentRegistrationDetailsScreenState
         color: AppColors.surfaceVariant,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.textTertiary.withOpacity(0.2),
+          color: AppColors.textTertiary.withValues(alpha: 0.2),
         ),
       ),
       child: ClipRRect(

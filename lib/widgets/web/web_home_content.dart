@@ -98,21 +98,21 @@ class WebHomeContent extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             AppColors.primary,
-            AppColors.primary.withOpacity(0.9),
-            AppColors.secondary.withOpacity(0.8),
+            AppColors.primary.withValues(alpha: 0.9),
+            AppColors.secondary.withValues(alpha: 0.8),
           ],
           stops: const [0.0, 0.5, 1.0],
         ),
         borderRadius: BorderRadius.circular(info.isDesktop ? 32 : 24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
+            color: AppColors.primary.withValues(alpha: 0.3),
             blurRadius: 40,
             offset: const Offset(0, 20),
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: AppColors.secondary.withOpacity(0.2),
+            color: AppColors.secondary.withValues(alpha: 0.2),
             blurRadius: 60,
             offset: const Offset(0, 30),
             spreadRadius: -10,
@@ -168,18 +168,18 @@ class WebHomeContent extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.white.withOpacity(0.2),
-                        Colors.white.withOpacity(0.1),
+                        Colors.white.withValues(alpha: 0.2),
+                        Colors.white.withValues(alpha: 0.1),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(50),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.35),
+                      color: Colors.white.withValues(alpha: 0.35),
                       width: 1.5,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -191,10 +191,10 @@ class WebHomeContent extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.volunteer_activism,
                           color: Colors.white,
                           size: 16,
@@ -222,7 +222,7 @@ class WebHomeContent extends StatelessWidget {
                   shaderCallback: (bounds) => LinearGradient(
                     colors: [
                       Colors.white,
-                      Colors.white.withOpacity(0.95),
+                      Colors.white.withValues(alpha: 0.95),
                     ],
                   ).createShader(bounds),
                   child: Text(
@@ -247,7 +247,7 @@ class WebHomeContent extends StatelessWidget {
                   child: Text(
                     'hero_subtitle'.tr(),
                     style: AppTextStyles.bodyLarge.copyWith(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                       fontSize: 18,
                       height: 1.75,
                       letterSpacing: 0.2,
@@ -306,19 +306,19 @@ class WebHomeContent extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.white.withOpacity(0.18),
-                  Colors.white.withOpacity(0.08),
+                  Colors.white.withValues(alpha: 0.18),
+                  Colors.white.withValues(alpha: 0.08),
                 ],
               ),
               borderRadius: BorderRadius.circular(40),
               border: Border.all(
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withValues(alpha: 0.3),
               ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
+                const Icon(
                   Icons.volunteer_activism,
                   color: Colors.white,
                   size: 16,
@@ -357,7 +357,7 @@ class WebHomeContent extends StatelessWidget {
             child: Text(
               'hero_subtitle'.tr(),
               style: AppTextStyles.bodyLarge.copyWith(
-                color: Colors.white.withOpacity(0.9),
+                color: Colors.white.withValues(alpha: 0.9),
                 height: 1.65,
               ),
               textAlign: TextAlign.center,
@@ -399,18 +399,18 @@ class WebHomeContent extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withOpacity(0.15),
-            Colors.white.withOpacity(0.05),
+            Colors.white.withValues(alpha: 0.15),
+            Colors.white.withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: Colors.white.withOpacity(0.25),
+          color: Colors.white.withValues(alpha: 0.25),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 30,
             offset: const Offset(0, 15),
           ),
@@ -439,24 +439,24 @@ class WebHomeContent extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Colors.white.withOpacity(0.3),
-                        Colors.white.withOpacity(0.1),
+                        Colors.white.withValues(alpha: 0.3),
+                        Colors.white.withValues(alpha: 0.1),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha: 0.3),
                       width: 1.5,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         blurRadius: 25,
                         spreadRadius: 0,
                       ),
                     ],
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.volunteer_activism,
                     size: 70,
                     color: Colors.white,
@@ -466,7 +466,7 @@ class WebHomeContent extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -539,7 +539,7 @@ class WebHomeContent extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.textPrimary.withOpacity(0.04),
+                    color: AppColors.textPrimary.withValues(alpha: 0.04),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -565,7 +565,7 @@ class WebHomeContent extends StatelessWidget {
         width: double.infinity,
         padding: EdgeInsets.all(info.isDesktop ? 56 : 36),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
@@ -577,7 +577,7 @@ class WebHomeContent extends StatelessWidget {
           borderRadius: BorderRadius.circular(28),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withOpacity(0.4),
+              color: AppColors.primary.withValues(alpha: 0.4),
               blurRadius: 30,
               offset: const Offset(0, 15),
             ),
@@ -592,7 +592,7 @@ class WebHomeContent extends StatelessWidget {
               child: Icon(
                 Icons.school_rounded,
                 size: 200,
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
               ),
             ),
             // Content
@@ -614,7 +614,7 @@ class WebHomeContent extends StatelessWidget {
                             Text(
                               'student_cta_subtitle'.tr(),
                               style: AppTextStyles.bodyLarge.copyWith(
-                                color: Colors.white.withOpacity(0.9),
+                                color: Colors.white.withValues(alpha: 0.9),
                                 height: 1.6,
                               ),
                             ),
@@ -644,7 +644,7 @@ class WebHomeContent extends StatelessWidget {
                       Text(
                         'student_cta_subtitle'.tr(),
                         style: AppTextStyles.bodyLarge.copyWith(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -667,14 +667,14 @@ class WebHomeContent extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 32),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.textPrimary,
       ),
       child: Center(
         child: Text(
           '© 2024 ${'app_title'.tr()} - ${'app_subtitle'.tr()}',
           style: AppTextStyles.bodySmall.copyWith(
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha: 0.7),
           ),
         ),
       ),
@@ -687,7 +687,7 @@ class _HeroPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.03)
+      ..color = Colors.white.withValues(alpha: 0.03)
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
     
@@ -702,7 +702,7 @@ class _HeroPatternPainter extends CustomPainter {
     
     // Draw decorative dots at intersections
     final dotPaint = Paint()
-      ..color = Colors.white.withOpacity(0.05)
+      ..color = Colors.white.withValues(alpha: 0.05)
       ..style = PaintingStyle.fill;
     
     for (double x = 0; x < size.width; x += spacing * 2) {
@@ -721,7 +721,7 @@ class _IllustrationPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.04)
+      ..color = Colors.white.withValues(alpha: 0.04)
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
     
@@ -868,10 +868,10 @@ class _ViewAllButtonState extends State<_ViewAllButton> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           decoration: BoxDecoration(
-            color: _isHovered ? AppColors.primary.withOpacity(0.1) : Colors.transparent,
+            color: _isHovered ? AppColors.primary.withValues(alpha: 0.1) : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: _isHovered ? AppColors.primary : AppColors.primary.withOpacity(0.3),
+              color: _isHovered ? AppColors.primary : AppColors.primary.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
@@ -888,7 +888,7 @@ class _ViewAllButtonState extends State<_ViewAllButton> {
               AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 transform: Matrix4.translationValues(_isHovered ? 4 : 0, 0, 0),
-                child: Icon(
+                child: const Icon(
                   Icons.arrow_forward_rounded,
                   color: AppColors.primary,
                   size: 18,
@@ -944,34 +944,34 @@ class _HeroButtonState extends State<_HeroButton> {
                     end: Alignment.bottomRight,
                     colors: [
                       Colors.white,
-                      Colors.white.withOpacity(0.95),
+                      Colors.white.withValues(alpha: 0.95),
                     ],
                   )
                 : null,
             color: widget.isPrimary 
                 ? null 
-                : (_isHovered ? Colors.white.withOpacity(0.2) : Colors.white.withOpacity(0.1)),
+                : (_isHovered ? Colors.white.withValues(alpha: 0.2) : Colors.white.withValues(alpha: 0.1)),
             borderRadius: BorderRadius.circular(20),
             border: widget.isPrimary 
-                ? Border.all(color: Colors.white.withOpacity(0.5), width: 1)
+                ? Border.all(color: Colors.white.withValues(alpha: 0.5), width: 1)
                 : Border.all(
-                    color: Colors.white.withOpacity(_isHovered ? 0.5 : 0.35),
+                    color: Colors.white.withValues(alpha: _isHovered ? 0.5 : 0.35),
                     width: 1.5,
                   ),
             boxShadow: widget.isPrimary ? [
               BoxShadow(
-                color: Colors.black.withOpacity(_isHovered ? 0.25 : 0.15),
+                color: Colors.black.withValues(alpha: _isHovered ? 0.25 : 0.15),
                 blurRadius: _isHovered ? 30 : 20,
                 offset: Offset(0, _isHovered ? 15 : 10),
               ),
               BoxShadow(
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withValues(alpha: 0.3),
                 blurRadius: 1,
                 spreadRadius: 0,
               ),
             ] : [
               BoxShadow(
-                color: Colors.white.withOpacity(_isHovered ? 0.15 : 0.08),
+                color: Colors.white.withValues(alpha: _isHovered ? 0.15 : 0.08),
                 blurRadius: _isHovered ? 20 : 10,
                 spreadRadius: 0,
               ),
@@ -985,8 +985,8 @@ class _HeroButtonState extends State<_HeroButton> {
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   color: widget.isPrimary 
-                      ? AppColors.primary.withOpacity(0.1)
-                      : Colors.white.withOpacity(0.15),
+                      ? AppColors.primary.withValues(alpha: 0.1)
+                      : Colors.white.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -1038,9 +1038,9 @@ class _DonationItemState extends State<_DonationItem> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         decoration: BoxDecoration(
-          color: _isHovered ? AppColors.surfaceVariant.withOpacity(0.5) : Colors.transparent,
+          color: _isHovered ? AppColors.surfaceVariant.withValues(alpha: 0.5) : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
-          border: widget.isLast ? null : Border(
+          border: widget.isLast ? null : const Border(
             bottom: BorderSide(
               color: AppColors.surfaceVariant,
               width: 1,
@@ -1092,13 +1092,13 @@ class _DonationItemState extends State<_DonationItem> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppColors.primary.withOpacity(0.1),
-                    AppColors.secondary.withOpacity(0.1),
+                    AppColors.primary.withValues(alpha: 0.1),
+                    AppColors.secondary.withValues(alpha: 0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppColors.primary.withOpacity(0.2),
+                  color: AppColors.primary.withValues(alpha: 0.2),
                 ),
               ),
               child: Text(

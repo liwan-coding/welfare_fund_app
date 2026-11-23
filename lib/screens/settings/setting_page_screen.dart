@@ -71,7 +71,7 @@ class _SettingPageScreenState extends State<SettingPageScreen>
         centerTitle: true,
         iconTheme: const IconThemeData(color: AppColors.surface),
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             AppIcons.chevronBack,
             color: AppColors.surface,
           ),
@@ -154,7 +154,7 @@ class _SettingPageScreenState extends State<SettingPageScreen>
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppColors.error.withOpacity(0.1),
+                color: AppColors.error.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -214,7 +214,7 @@ class _SettingPageScreenState extends State<SettingPageScreen>
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppColors.textTertiary.withOpacity(0.1),
+                color: AppColors.textTertiary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -260,7 +260,7 @@ class _SettingPageScreenState extends State<SettingPageScreen>
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: AppColors.textTertiary.withOpacity(0.08),
+              color: AppColors.textTertiary.withValues(alpha: 0.08),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
@@ -367,7 +367,7 @@ class _SettingPageScreenState extends State<SettingPageScreen>
                   top: 12,
                   bottom: 12,
                 ),
-                border: Border(
+                border: const Border(
                   left: BorderSide(
                     color: AppColors.primary,
                     width: 4,

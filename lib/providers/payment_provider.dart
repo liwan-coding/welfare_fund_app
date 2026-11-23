@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 import '../models/payment_response.dart' hide PaymentStatusResponse;
@@ -212,7 +211,7 @@ class PaymentProvider extends ChangeNotifier {
       notifyListeners();
 
       final clientReferenceId = _paymentService.generateClientReferenceId();
-      final returnUrl = 'about:blank'; // لن يُستخدم، موجود للتوافق فقط
+      const returnUrl = 'about:blank'; // لن يُستخدم، موجود للتوافق فقط
 
       // إذا وفّرتِ programId/campaignId نمرّرها مباشرة؛ وإلا نرسل itemId/itemType (سيحوّلها السيرفس)
       final response = await _paymentService.createPaymentSession(

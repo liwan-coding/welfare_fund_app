@@ -177,7 +177,7 @@ class PaymentService {
   String generateClientReferenceId() {
     final ts = DateTime.now().millisecondsSinceEpoch;
     final rand = (ts % 100000).toString().padLeft(5, '0');
-    return 'donation${ts}$rand';
+    return 'donation$ts$rand';
   }
 
   /// إنشاء جلسة دفع لتبرع موجود

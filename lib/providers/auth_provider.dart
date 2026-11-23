@@ -49,10 +49,10 @@ class AuthProvider extends ChangeNotifier {
       // Handle different response structures
       if (profile['data'] != null) {
         _userProfile = profile['data'];
-        print('AuthProvider: Using profile.data: ${_userProfile}');
+        print('AuthProvider: Using profile.data: $_userProfile');
       } else {
         _userProfile = profile;
-        print('AuthProvider: Using profile directly: ${_userProfile}');
+        print('AuthProvider: Using profile directly: $_userProfile');
       }
       
       _isAuthenticated = true;

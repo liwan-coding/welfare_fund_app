@@ -172,14 +172,12 @@ class _CampaignImage extends StatelessWidget {
 
     if (url.isEmpty) return placeholder();
 
-    return Image.network(
+    return AppNetworkImage(
       url,
       width: double.infinity,
       height: height,
-      fit: BoxFit.cover,
-      loadingBuilder: (context, child, progress) =>
-          progress == null ? child : placeholder(const AppActivityIndicator()),
-      errorBuilder: (context, error, stackTrace) => placeholder(),
+      placeholder: (_) => placeholder(const AppActivityIndicator()),
+      error: (_) => placeholder(),
     );
   }
 }

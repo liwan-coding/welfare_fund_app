@@ -92,7 +92,7 @@ class _SplashScreenState extends State<SplashScreen>
 
       // get device token
       final token = await messaging.getToken();
-      print('📱 FCM TOKEN: $token');
+      debugPrint('FCM token acquired');
 
       // listen for notifications while app is open
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -157,21 +157,31 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _startAnimations() async {
-    await Future.delayed(const Duration(milliseconds: 300));
+    // Yield one tick so provider notifications do not fire during initState.
+    await Future<void>.delayed(Duration.zero);
     if (!mounted) return;
-    _fadeController.forward();
 
-    await Future.delayed(const Duration(milliseconds: 800));
-    if (!mounted) return;
-    _slideController.forward();
-
-    await Future.delayed(const Duration(milliseconds: 500));
-    if (!mounted) return;
-    _scaleController.forward();
-
-    if (!mounted) return;
+    // Auth restore runs while the entrance animation plays, instead of after
+    // it; the splash then only holds for a short brand minimum.
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    await authProvider.initialize();
+    final ready = Future.wait<void>([
+      authProvider.initialize(),
+      Future<void>.delayed(const Duration(milliseconds: 900)),
+    ]);
+
+    _fadeController.forward();
+    Future<void>.delayed(const Duration(milliseconds: 120), () {
+      if (mounted) _slideController.forward();
+    });
+    Future<void>.delayed(const Duration(milliseconds: 240), () {
+      if (mounted) _scaleController.forward();
+    });
+
+    try {
+      await ready;
+    } catch (e) {
+      debugPrint('SplashScreen: init error: $e');
+    }
 
     if (!mounted) return;
     _checkForPaymentRedirect();
@@ -202,12 +212,7 @@ class _SplashScreenState extends State<SplashScreen>
       }
     }
 
-    // Navigate to home after animations complete
-    Future.delayed(AppConstants.splashToHomeDelay, () {
-      if (mounted && !_navigated) {
-        _navigateToHome();
-      }
-    });
+    if (!_navigated) _navigateToHome();
   }
 
   Future<void> _navigateToPaymentSuccess(
@@ -342,7 +347,7 @@ class _SplashScreenState extends State<SplashScreen>
                   height: 200,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppColors.surface.withOpacity(0.1),
+                    color: AppColors.surface.withValues(alpha: 0.1),
                   ),
                 ),
               ),
@@ -354,7 +359,7 @@ class _SplashScreenState extends State<SplashScreen>
                   height: 300,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppColors.surface.withOpacity(0.05),
+                    color: AppColors.surface.withValues(alpha: 0.05),
                   ),
                 ),
               ),
@@ -388,7 +393,7 @@ class _SplashScreenState extends State<SplashScreen>
                                         boxShadow: [
                                           BoxShadow(
                                             color: AppColors.primary
-                                                .withOpacity(0.3),
+                                                .withValues(alpha: 0.3),
                                             blurRadius: 30,
                                             offset: const Offset(0, 15),
                                           ),
@@ -424,7 +429,7 @@ class _SplashScreenState extends State<SplashScreen>
                                       fontFamily: 'Calibri',
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: AppColors.surface.withOpacity(0.8),
+                                      color: AppColors.surface.withValues(alpha: 0.8),
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
@@ -447,11 +452,11 @@ class _SplashScreenState extends State<SplashScreen>
                               padding: const EdgeInsets.all(
                                   AppConstants.largePadding),
                               decoration: BoxDecoration(
-                                color: AppColors.surface.withOpacity(0.15),
+                                color: AppColors.surface.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(
                                     AppConstants.largeRadius),
                                 border: Border.all(
-                                  color: AppColors.surface.withOpacity(0.2),
+                                  color: AppColors.surface.withValues(alpha: 0.2),
                                   width: 1,
                                 ),
                               ),
@@ -477,7 +482,7 @@ class _SplashScreenState extends State<SplashScreen>
                                       fontFamily: 'Calibri',
                                       fontSize: 14,
                                       fontWeight: FontWeight.normal,
-                                      color: AppColors.surface.withOpacity(0.9),
+                                      color: AppColors.surface.withValues(alpha: 0.9),
                                       height: 1.5,
                                     ),
                                     textAlign: TextAlign.center,
@@ -498,7 +503,7 @@ class _SplashScreenState extends State<SplashScreen>
                                     AppConstants.defaultRadius),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.primary.withOpacity(0.2),
+                                    color: AppColors.primary.withValues(alpha: 0.2),
                                     blurRadius: 20,
                                     offset: const Offset(0, 10),
                                   ),

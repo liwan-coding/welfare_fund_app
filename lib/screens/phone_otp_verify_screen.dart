@@ -55,8 +55,8 @@ class _PhoneOtpVerifyScreenState extends State<PhoneOtpVerifyScreen> {
   static String _maskPhone(String phone) {
     final digits = phone.replaceAll(RegExp(r'\D'), '');
     if (digits.isEmpty) return '****';
-    if (digits.length <= 4) return '****' + digits;
-    return '****' + digits.substring(digits.length - 4);
+    if (digits.length <= 4) return '****$digits';
+    return '****${digits.substring(digits.length - 4)}';
   }
 
   /// Always show phone as ****XXXX (last 4 digits only)

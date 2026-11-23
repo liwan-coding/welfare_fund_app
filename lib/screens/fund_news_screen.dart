@@ -1,3 +1,4 @@
+import '../design/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 import '../design/app_icons.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons, CupertinoPageRoute;
@@ -149,7 +150,7 @@ class _FundNewsScreenState extends State<FundNewsScreen> {
         child: Center(
           child: Column(
             children: [
-              Icon(CupertinoIcons.exclamationmark_circle,
+              const Icon(CupertinoIcons.exclamationmark_circle,
                   size: 56, color: AppColors.error),
               const SizedBox(height: AppConstants.defaultPadding),
               Text(
@@ -179,7 +180,7 @@ class _FundNewsScreenState extends State<FundNewsScreen> {
         child: Center(
           child: Column(
             children: [
-              Icon(Icons.newspaper_rounded,
+              const Icon(Icons.newspaper_rounded,
                   size: 64, color: AppColors.textTertiary),
               const SizedBox(height: AppConstants.defaultPadding),
               Text(
@@ -294,7 +295,7 @@ class _NewsCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppConstants.largeRadius),
           boxShadow: [
             BoxShadow(
-              color: AppColors.textPrimary.withOpacity(0.08),
+              color: AppColors.textPrimary.withValues(alpha: 0.08),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
@@ -309,12 +310,11 @@ class _NewsCard extends StatelessWidget {
                   if (imageUrl.isNotEmpty)
                     AspectRatio(
                       aspectRatio: 16 / 10,
-                      child: Image.network(
+                      child: AppNetworkImage(
                         imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
+                        error: (_) => Container(
                           color: AppColors.surfaceVariant,
-                          child: Icon(Icons.image_not_supported_rounded,
+                          child: const Icon(Icons.image_not_supported_rounded,
                               color: AppColors.textTertiary, size: 40),
                         ),
                       ),
@@ -338,7 +338,7 @@ class _NewsCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: AppColors.accent.withOpacity(0.2),
+                            color: AppColors.accent.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -361,7 +361,7 @@ class _NewsCard extends StatelessWidget {
                           const SizedBox(height: 6),
                           Row(
                             children: [
-                              Icon(CupertinoIcons.clock,
+                              const Icon(CupertinoIcons.clock,
                                   size: 14, color: AppColors.textTertiary),
                               const SizedBox(width: 4),
                               Text(
@@ -384,12 +384,11 @@ class _NewsCard extends StatelessWidget {
                   if (imageUrl.isNotEmpty)
                     AspectRatio(
                       aspectRatio: 2.2,
-                      child: Image.network(
+                      child: AppNetworkImage(
                         imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
+                        error: (_) => Container(
                           color: AppColors.surfaceVariant,
-                          child: Icon(Icons.image_not_supported_rounded,
+                          child: const Icon(Icons.image_not_supported_rounded,
                               color: AppColors.textTertiary, size: 40),
                         ),
                       ),
@@ -430,7 +429,7 @@ class _NewsCard extends StatelessWidget {
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              Icon(CupertinoIcons.clock,
+                              const Icon(CupertinoIcons.clock,
                                   size: 14, color: AppColors.textTertiary),
                               const SizedBox(width: 4),
                               Text(

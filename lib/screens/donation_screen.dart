@@ -288,7 +288,7 @@ class _DonationScreenState extends State<DonationScreen> {
       SnackBar(
         content: Text('payment_cancelled'.tr()),
         backgroundColor: Colors.orange,
-        duration: Duration(seconds: 3),
+        duration: const Duration(seconds: 3),
       ),
     );
   }

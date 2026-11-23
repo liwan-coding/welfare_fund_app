@@ -1,3 +1,4 @@
+import '../design/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../constants/app_colors.dart';
@@ -54,10 +55,9 @@ class FundNewsDetailScreen extends StatelessWidget {
             backgroundColor: AppColors.primary,
             flexibleSpace: FlexibleSpaceBar(
               background: imageUrl.isNotEmpty
-                  ? Image.network(
+                  ? AppNetworkImage(
                       imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _placeholderBackground(),
+                      error: (_) => _placeholderBackground(),
                     )
                   : _placeholderBackground(),
             ),
@@ -108,7 +108,7 @@ class FundNewsDetailScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        Icon(Icons.calendar_today_rounded,
+                        const Icon(Icons.calendar_today_rounded,
                             size: 18, color: AppColors.textTertiary),
                         const SizedBox(width: 8),
                         Text(
@@ -164,7 +164,7 @@ class FundNewsDetailScreen extends StatelessWidget {
       ),
       child: Center(
         child: Icon(Icons.article_rounded,
-            size: 80, color: Colors.white.withOpacity(0.5)),
+            size: 80, color: Colors.white.withValues(alpha: 0.5)),
       ),
     );
   }

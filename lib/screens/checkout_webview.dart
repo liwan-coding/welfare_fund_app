@@ -237,7 +237,7 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
           WebViewWidget(controller: _controller),
           if (_isLoading)
             Container(
-              color: AppColors.background.withOpacity(0.8),
+              color: AppColors.background.withValues(alpha: 0.8),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

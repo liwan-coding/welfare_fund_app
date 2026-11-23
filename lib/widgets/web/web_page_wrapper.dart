@@ -100,7 +100,7 @@ class WebPageWrapper extends StatelessWidget {
         horizontal: info.horizontalPadding,
         vertical: 32,
       ),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: AppColors.modernGradient,
       ),
       child: Center(
@@ -183,14 +183,14 @@ class _BackButtonState extends State<_BackButton> {
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: _isHovered 
-                ? Colors.white.withOpacity(0.2)
-                : Colors.white.withOpacity(0.1),
+                ? Colors.white.withValues(alpha: 0.2)
+                : Colors.white.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Colors.white.withOpacity(_isHovered ? 0.4 : 0.2),
+              color: Colors.white.withValues(alpha: _isHovered ? 0.4 : 0.2),
             ),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.arrow_back_rounded,
             color: Colors.white,
             size: 22,

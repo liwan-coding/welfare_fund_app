@@ -841,7 +841,9 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         _hasCheckedStatus ||
         _hasPopped ||
         _pollingDisabled ||
-        _isHandlingSuccess) return;
+        _isHandlingSuccess) {
+      return;
+    }
 
     print('PaymentWebView: Starting periodic payment status check...');
     _checkPaymentStatusAndComplete();
@@ -1136,7 +1138,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
             WebViewWidget(controller: _controller),
             if (_isLoading)
               Container(
-                color: AppColors.background.withOpacity(0.8),
+                color: AppColors.background.withValues(alpha: 0.8),
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

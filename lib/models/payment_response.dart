@@ -72,7 +72,7 @@ class PaymentResponse {
     };
   }
 
-  static String? _asString(dynamic v) => v == null ? null : v.toString();
+  static String? _asString(dynamic v) => v?.toString();
 }
 
 /// (اختياري) لردّ /api/v1/payments/status/{sessionId}

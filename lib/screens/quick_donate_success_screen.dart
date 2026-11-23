@@ -130,7 +130,7 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primary.withOpacity(0.3),
+                        color: AppColors.primary.withValues(alpha: 0.3),
                         blurRadius: 20,
                         offset: const Offset(0, 8),
                       ),
@@ -185,12 +185,12 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: AppColors.textPrimary.withOpacity(0.1),
+                    color: AppColors.textPrimary.withValues(alpha: 0.1),
                     width: 1,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.textPrimary.withOpacity(0.08),
+                      color: AppColors.textPrimary.withValues(alpha: 0.08),
                       blurRadius: 15,
                       offset: const Offset(0, 8),
                     ),
@@ -293,13 +293,13 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppColors.success.withOpacity(0.1),
-                      AppColors.primary.withOpacity(0.05),
+                      AppColors.success.withValues(alpha: 0.1),
+                      AppColors.primary.withValues(alpha: 0.05),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: AppColors.success.withOpacity(0.2),
+                    color: AppColors.success.withValues(alpha: 0.2),
                     width: 1,
                   ),
                 ),
@@ -361,7 +361,7 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        shadowColor: AppColors.success.withOpacity(0.3),
+                        shadowColor: AppColors.success.withValues(alpha: 0.3),
                       ),
                     ),
                   ),
@@ -389,7 +389,7 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        shadowColor: AppColors.primary.withOpacity(0.3),
+                        shadowColor: AppColors.primary.withValues(alpha: 0.3),
                       ),
                     ),
                   ),
@@ -405,7 +405,7 @@ class _QuickDonateSuccessScreenState extends State<QuickDonateSuccessScreen>
                   color: AppColors.surfaceVariant,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: AppColors.textPrimary.withOpacity(0.1),
+                    color: AppColors.textPrimary.withValues(alpha: 0.1),
                     width: 1,
                   ),
                 ),

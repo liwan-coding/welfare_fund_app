@@ -90,22 +90,25 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
   ///   {APP_URL}/storage/{path}
   String _resolveLogoUrl(String? path) {
     if (path == null || path.isEmpty) {
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint('[FundPartners] resolveLogo: input is null or empty');
+      }
       return '';
     }
     final p = path.replaceAll(RegExp(r'\\'), '/').trim();
     if (p.isEmpty) {
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint('[FundPartners] resolveLogo: input trimmed empty');
+      }
       return '';
     }
     final base = AppConfig.serverBaseUrl.replaceAll(RegExp(r'/+$'), '');
     final baseUri = Uri.tryParse(base);
     String url;
     if (p.startsWith('http://') || p.startsWith('https://')) {
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint('[FundPartners] resolveLogo: using full URL from API');
+      }
       url = p;
       if (baseUri != null) {
         final imgUri = Uri.tryParse(p);
@@ -115,18 +118,21 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
                 imgUri.host.isEmpty)) {
           url =
               '${baseUri.scheme}://${baseUri.host}${baseUri.port != 80 && baseUri.port != 443 ? ':${baseUri.port}' : ''}${imgUri.path}${imgUri.query.isNotEmpty ? '?${imgUri.query}' : ''}';
-          if (kDebugMode)
+          if (kDebugMode) {
             debugPrint('[FundPartners] resolveLogo: replaced localhost → $url');
+          }
         }
       }
     } else if (p.startsWith('//')) {
       url = 'https:$p';
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint('[FundPartners] resolveLogo: protocol-relative → $url');
+      }
     } else {
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint(
             '[FundPartners] resolveLogo: building from path (logo only): "$p"');
+      }
       final withSlash = p.startsWith('/') ? p : '/$p';
       final pathForStorage = withSlash.toLowerCase().contains('storage')
           ? withSlash
@@ -153,7 +159,7 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
           centerTitle: true,
           iconTheme: const IconThemeData(color: AppColors.surface),
           leading: IconButton(
-            icon: Icon(
+            icon: const Icon(
               AppIcons.chevronBack,
               color: AppColors.surface,
               size: 20,
@@ -223,10 +229,10 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppColors.error.withOpacity(0.08),
+                  color: AppColors.error.withValues(alpha: 0.08),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   CupertinoIcons.exclamationmark_circle,
                   size: 56,
                   color: AppColors.error,
@@ -274,7 +280,7 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
                   color: AppColors.surfaceVariant,
                   borderRadius: BorderRadius.circular(24),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.handshake_rounded,
                   size: 64,
                   color: AppColors.textTertiary,
@@ -379,13 +385,13 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primary.withOpacity(0.06),
-            AppColors.secondary.withOpacity(0.06),
+            AppColors.primary.withValues(alpha: 0.06),
+            AppColors.secondary.withValues(alpha: 0.06),
           ],
         ),
         borderRadius: BorderRadius.circular(AppConstants.largeRadius),
         border: Border.all(
-          color: AppColors.primary.withOpacity(0.15),
+          color: AppColors.primary.withValues(alpha: 0.15),
           width: 1,
         ),
       ),
@@ -398,7 +404,7 @@ class _FundPartnersScreenState extends State<FundPartnersScreen>
               borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.25),
+                  color: AppColors.primary.withValues(alpha: 0.25),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -522,7 +528,7 @@ class _FeaturedPartnerCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppConstants.largeRadius),
           boxShadow: [
             BoxShadow(
-              color: AppColors.textPrimary.withOpacity(0.08),
+              color: AppColors.textPrimary.withValues(alpha: 0.08),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
@@ -575,7 +581,7 @@ class _FeaturedPartnerCard extends StatelessWidget {
             ),
             if (hasLink) ...[
               const SizedBox(height: 8),
-              Icon(
+              const Icon(
                 Icons.open_in_new_rounded,
                 size: 18,
                 color: AppColors.primary,
@@ -620,7 +626,7 @@ class _PartnerCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppConstants.largeRadius),
           boxShadow: [
             BoxShadow(
-              color: AppColors.textPrimary.withOpacity(0.06),
+              color: AppColors.textPrimary.withValues(alpha: 0.06),
               blurRadius: 14,
               offset: const Offset(0, 4),
             ),
@@ -714,8 +720,8 @@ Widget _buildLogoPlaceholder(String name, double size) {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          AppColors.primary.withOpacity(0.85),
-          AppColors.secondary.withOpacity(0.85),
+          AppColors.primary.withValues(alpha: 0.85),
+          AppColors.secondary.withValues(alpha: 0.85),
         ],
       ),
       borderRadius: BorderRadius.circular(size * 0.2),

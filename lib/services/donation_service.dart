@@ -152,7 +152,7 @@ class DonationService {
       if (kDebugMode) {
         debugPrint('[DONATION_LOG] DonationService: استجابة API statusCode=${response.statusCode} bodyLength=${response.body.length}');
         if (response.statusCode != 200 && response.statusCode != 201) {
-          debugPrint('[DONATION_LOG] DonationService: جسم الاستجابة (غير 200/201): ${response.body.length > 400 ? response.body.substring(0, 400) + "..." : response.body}');
+          debugPrint('[DONATION_LOG] DonationService: جسم الاستجابة (غير 200/201): ${response.body.length > 400 ? "${response.body.substring(0, 400)}..." : response.body}');
         }
       }
 
@@ -988,6 +988,6 @@ class DonationService {
   String generateClientReferenceId() {
     final ts = DateTime.now().millisecondsSinceEpoch;
     final rand = (ts % 100000).toString().padLeft(5, '0');
-    return 'donation${ts}$rand';
+    return 'donation$ts$rand';
   }
 }

@@ -68,15 +68,19 @@ class _PaymentFailedScreenState extends State<PaymentFailedScreen> {
       // استخراج عنوان الحملة إذا كان متوفراً
       _campaignTitle = uri.queryParameters['campaign_title'];
 
-      if (_donationId == null && widget.donationId != null)
+      if (_donationId == null && widget.donationId != null) {
         _donationId = widget.donationId;
-      if (_sessionId == null && widget.sessionId != null)
+      }
+      if (_sessionId == null && widget.sessionId != null) {
         _sessionId = widget.sessionId;
-      if (_errorMessage == null && widget.errorMessage != null)
+      }
+      if (_errorMessage == null && widget.errorMessage != null) {
         _errorMessage = widget.errorMessage;
+      }
       if (_amount == null && widget.amount != null) _amount = widget.amount;
-      if (_campaignTitle == null && widget.campaignTitle != null)
+      if (_campaignTitle == null && widget.campaignTitle != null) {
         _campaignTitle = widget.campaignTitle;
+      }
 
       if (kDebugMode) {
         print('PaymentFailedScreen: donation_id = $_donationId');
@@ -164,7 +168,7 @@ class _PaymentFailedScreenState extends State<PaymentFailedScreen> {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: AppColors.error.withOpacity(0.1),
+                  color: AppColors.error.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -194,7 +198,7 @@ class _PaymentFailedScreenState extends State<PaymentFailedScreen> {
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: AppColors.textSecondary.withOpacity(0.2),
+                    color: AppColors.textSecondary.withValues(alpha: 0.2),
                     width: 1,
                   ),
                 ),
@@ -228,7 +232,7 @@ class _PaymentFailedScreenState extends State<PaymentFailedScreen> {
                     if (_donationId != null) ...[
                       const SizedBox(height: 8),
                       Text(
-                        'donation_id'.tr() + ': $_donationId',
+                        '${'donation_id'.tr()}: $_donationId',
                         style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.textSecondary,
                           fontFamily: 'monospace',

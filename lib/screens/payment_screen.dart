@@ -408,7 +408,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                         end: Alignment.bottomCenter,
                         colors: [
                           AppColors.primary,
-                          AppColors.primary.withOpacity(0.8)
+                          AppColors.primary.withValues(alpha: 0.8)
                         ],
                       ),
                     ),
@@ -430,7 +430,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                           Text(
                             'choose_donation_amount_and_enter_your_data'.tr(),
                             style: AppTextStyles.bodyLarge.copyWith(
-                              color: AppColors.surface.withOpacity(0.9),
+                              color: AppColors.surface.withValues(alpha: 0.9),
                             ),
                           ),
                         ],
@@ -442,7 +442,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                   icon: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppColors.surface.withOpacity(0.2),
+                      color: AppColors.surface.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(AppIcons.chevronBack,
@@ -499,7 +499,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                               ? [
                                                   BoxShadow(
                                                     color: AppColors.primary
-                                                        .withOpacity(0.2),
+                                                        .withValues(alpha: 0.2),
                                                     blurRadius: 8,
                                                     offset: const Offset(0, 4),
                                                   ),
@@ -612,7 +612,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'donor_phone_label'.tr() + ' *',
+                                      '${'donor_phone_label'.tr()} *',
                                       style: AppTextStyles.bodyMedium.copyWith(
                                         color: AppColors.textPrimary,
                                         fontWeight: FontWeight.w600,
@@ -658,7 +658,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                 backgroundColor: AppColors.primary,
                                 foregroundColor: AppColors.surface,
                                 elevation: 8,
-                                shadowColor: AppColors.primary.withOpacity(0.3),
+                                shadowColor: AppColors.primary.withValues(alpha: 0.3),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16)),
                                 padding:
@@ -715,10 +715,10 @@ class _PaymentScreenState extends State<PaymentScreen>
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: AppColors.info.withOpacity(0.1),
+                          color: AppColors.info.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                              color: AppColors.info.withOpacity(0.3), width: 1),
+                              color: AppColors.info.withValues(alpha: 0.3), width: 1),
                         ),
                         child: Row(
                           children: [
@@ -757,7 +757,7 @@ class _PaymentScreenState extends State<PaymentScreen>
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8)),
               child: Icon(icon, color: AppColors.primary, size: 20),
             ),

@@ -47,13 +47,10 @@ class HeroBanner extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             if (url.isNotEmpty)
-              Image.network(
+              AppNetworkImage(
                 url,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, progress) => progress == null
-                    ? child
-                    : const AppSkeleton(height: height, radius: 0),
-                errorBuilder: (_, __, ___) => const _BrandBackdrop(),
+                placeholder: (_) => const AppSkeleton(height: height, radius: 0),
+                error: (_) => const _BrandBackdrop(),
               )
             else
               const _BrandBackdrop(),

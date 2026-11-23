@@ -177,7 +177,7 @@ class _StudentRegistrationsListScreenState
               color: AppColors.surface,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.textTertiary.withOpacity(0.1),
+                  color: AppColors.textTertiary.withValues(alpha: 0.1),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -357,7 +357,7 @@ class _StudentRegistrationsListScreenState
       label: Text(label),
       selected: isSelected,
       onSelected: (selected) => _onStatusChanged(value),
-      selectedColor: AppColors.primary.withOpacity(0.2),
+      selectedColor: AppColors.primary.withValues(alpha: 0.2),
       checkmarkColor: AppColors.primary,
       labelStyle: TextStyle(
         color: isSelected ? AppColors.primary : AppColors.textSecondary,
@@ -378,7 +378,7 @@ class _StudentRegistrationsListScreenState
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textTertiary.withOpacity(0.1),
+            color: AppColors.textTertiary.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -431,11 +431,11 @@ class _StudentRegistrationsListScreenState
                           horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: _getStatusColor(registration.status)
-                            .withOpacity(0.1),
+                            .withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: _getStatusColor(registration.status)
-                              .withOpacity(0.3),
+                              .withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(

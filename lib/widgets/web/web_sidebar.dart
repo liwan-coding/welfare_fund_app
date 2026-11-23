@@ -27,7 +27,7 @@ class WebSidebar extends StatelessWidget {
         color: AppColors.surface,
         boxShadow: [
           BoxShadow(
-            color: AppColors.textPrimary.withOpacity(0.08),
+            color: AppColors.textPrimary.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(4, 0),
           ),
@@ -104,7 +104,7 @@ class WebSidebar extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: AppColors.modernGradient,
       ),
       child: SafeArea(
@@ -115,7 +115,7 @@ class WebSidebar extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.surface.withOpacity(0.2),
+                color: AppColors.surface.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Image.asset(
@@ -139,7 +139,7 @@ class WebSidebar extends StatelessWidget {
             Text(
               'app_subtitle'.tr(),
               style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.surface.withOpacity(0.8),
+                color: AppColors.surface.withValues(alpha: 0.8),
               ),
               textAlign: TextAlign.center,
             ),
@@ -172,12 +172,12 @@ class WebSidebar extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               gradient: isSelected ? LinearGradient(
                 colors: [
-                  AppColors.primary.withOpacity(0.15),
-                  AppColors.secondary.withOpacity(0.1),
+                  AppColors.primary.withValues(alpha: 0.15),
+                  AppColors.secondary.withValues(alpha: 0.1),
                 ],
               ) : null,
               border: isSelected ? Border.all(
-                color: AppColors.primary.withOpacity(0.3),
+                color: AppColors.primary.withValues(alpha: 0.3),
                 width: 1,
               ) : null,
             ),
@@ -188,7 +188,7 @@ class WebSidebar extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: isSelected 
-                        ? AppColors.primary.withOpacity(0.15) 
+                        ? AppColors.primary.withValues(alpha: 0.15) 
                         : AppColors.surfaceVariant,
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -234,10 +234,10 @@ class WebSidebar extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.surfaceVariant.withOpacity(0.5),
+            color: AppColors.surfaceVariant.withValues(alpha: 0.5),
             border: Border(
               top: BorderSide(
-                color: AppColors.textTertiary.withOpacity(0.2),
+                color: AppColors.textTertiary.withValues(alpha: 0.2),
               ),
             ),
           ),

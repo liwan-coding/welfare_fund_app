@@ -215,7 +215,7 @@ class _PaymentLoadingScreenState extends State<PaymentLoadingScreen>
                                 borderRadius: BorderRadius.circular(60),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.primary.withOpacity(0.3),
+                                    color: AppColors.primary.withValues(alpha: 0.3),
                                     blurRadius: 30,
                                     offset: const Offset(0, 15),
                                   ),
@@ -264,7 +264,7 @@ class _PaymentLoadingScreenState extends State<PaymentLoadingScreen>
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: AppColors.surface.withOpacity(0.8),
+                          color: AppColors.surface.withValues(alpha: 0.8),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -276,7 +276,7 @@ class _PaymentLoadingScreenState extends State<PaymentLoadingScreen>
                         width: 200,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: AppColors.surface.withOpacity(0.2),
+                          color: AppColors.surface.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(2),
                         ),
                         child: AnimatedBuilder(
